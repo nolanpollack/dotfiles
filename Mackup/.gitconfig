@@ -3,12 +3,6 @@
 	name = Nolan Pollack
 [core]
 	pager = delta --diff-so-fancy
-[page]
-	diff = delta --diff-so-fancy
-	show = delta
-	log = delta
-	blame = delta
-	reflog = delta
 [interactive]
 	diffFilter = delta --color-only
 [diff]
