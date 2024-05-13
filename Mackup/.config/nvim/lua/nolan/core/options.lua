@@ -13,3 +13,7 @@ opt.shiftwidth = 4
 opt.softtabstop = 4
 opt.expandtab = true
 opt.autoindent = true
+
+opt.breakindent = true
+opt.breakindentopt = "sbr"
+opt.showbreak = "↳"
