@@ -107,7 +107,7 @@ return {
 					capabilities = capabilities,
 					cmd = {
 						"clangd",
-						"--fallback-style=webkit",
+						"--fallback-style=webkit", -- so indent uses 4 spaces if no clang format file
 					},
 				})
 			end,
