@@ -94,3 +94,6 @@ brew_with_logging() {
             ;;
     esac
 }
+
+# zsh-autosuggestions
+source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
