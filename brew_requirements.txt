@@ -6,4 +6,5 @@ neovim
 node
 ripgrep
 tealdeer
+zip
 zsh-autosuggestions
