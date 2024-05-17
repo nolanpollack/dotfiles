@@ -1,0 +1,8 @@
+fd
+fzf
+gcc
+mackup
+neovim
+node
+ripgrep
+tealdeer
