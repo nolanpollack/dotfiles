@@ -97,3 +97,5 @@ brew_with_logging() {
 
 # zsh-autosuggestions
 source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+eval "$(fzf --zsh)"
