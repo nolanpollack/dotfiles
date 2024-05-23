@@ -99,3 +99,5 @@ brew_with_logging() {
 source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 eval "$(fzf --zsh)"
+
+export EDITOR=nvim
