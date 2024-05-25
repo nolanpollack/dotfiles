@@ -70,6 +70,15 @@ return {
 						fallback()
 					end
 				end, { "i", "s" }),
+
+				-- close completion menu with <C-e>
+				["<C-e>"] = cmp.mapping(function(fallback)
+					if cmp.visible() then
+						cmp.close()
+					else
+						fallback()
+					end
+				end, { "i", "s" }),
 			},
 			-- sources for autocompletion
 			sources = cmp.config.sources({
