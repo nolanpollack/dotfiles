@@ -14,6 +14,7 @@ return {
 		"saadparwaiz1/cmp_luasnip", -- for autocompletion
 		"rafamadriz/friendly-snippets", -- useful snippets
 		"onsails/lspkind.nvim", -- vs-code like pictograms
+		"kawre/neotab.nvim", -- tabout
 	},
 	config = function()
 		local cmp = require("cmp")
@@ -21,6 +22,8 @@ return {
 		local luasnip = require("luasnip")
 
 		local lspkind = require("lspkind")
+
+		local neotab = require("neotab")
 
 		-- loads vscode style snippets from installed plugins (e.g. friendly-snippets)
 		require("luasnip.loaders.from_vscode").lazy_load()
@@ -50,13 +53,13 @@ return {
 				end),
 
 				-- tab to scroll down in menu
-				["<Tab>"] = cmp.mapping(function(fallback)
+				["<Tab>"] = cmp.mapping(function()
 					if cmp.visible() then
 						cmp.select_next_item()
 					elseif luasnip.locally_jumpable(1) then
 						luasnip.jump(1)
 					else
-						fallback()
+						neotab.tabout()
 					end
 				end, { "i", "s" }),
 
