@@ -101,3 +101,4 @@ source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 eval "$(fzf --zsh)"
 
 export EDITOR=nvim
+export COLORTERM='truecolor' 
