@@ -10,3 +10,9 @@ fi
 
 # install any required brew formulae which isn't installed
 xargs brew install < ./brew_requirements.txt 
+
+# Install tmux package manager
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
+# Install tmux packages
+~/.tmux/plugins/tpm/scripts/install_plugins.sh
