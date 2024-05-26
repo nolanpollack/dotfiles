@@ -1,4 +1,5 @@
 fd
+fnm
 fzf
 gcc
 mackup
@@ -6,5 +7,6 @@ neovim
 node
 ripgrep
 tealdeer
+tmux
 zip
 zsh-autosuggestions
