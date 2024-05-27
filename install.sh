@@ -15,4 +15,4 @@ xargs brew install < ./brew_requirements.txt
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 # Install tmux packages
-~/.tmux/plugins/tpm/scripts/install_plugins.sh
+/bin/bash ~/.tmux/plugins/tpm/scripts/install_plugins.sh
