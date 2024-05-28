@@ -69,10 +69,10 @@ return {
 
 		-- Change the Diagnostic symbols in the sign column (gutter)
 		-- (not in youtube nvim video)
-		local signs = { Error = " ", Warn = " ", Hint = "󰠠 ", Info = " " }
-		for type, icon in pairs(signs) do
+		local symbols = { Error = "󰅙", Info = "󰋼", Hint = "󰌵", Warn = "" }
+		for type, icon in pairs(symbols) do
 			local hl = "DiagnosticSign" .. type
-			vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
+			vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
 		end
 
 		vim.lsp.inlay_hint.enable()
