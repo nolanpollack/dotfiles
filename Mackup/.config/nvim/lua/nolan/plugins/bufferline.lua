@@ -44,5 +44,8 @@ return {
 			end,
 			{ desc = "Pick buffer" }
 		)
+		vim.keymap.set({ "n", "v" }, "<leader>bd", ":bdelete<CR>", { desc = "Delete buffer" })
+		vim.keymap.set({ "n", "v" }, "<leader>bse", ":BufferLineSortByExtension<CR>", { desc = "Sort by extension" })
+		vim.keymap.set({ "n", "v" }, "<leader>bsn", ":BufferLineSortByDirectory<CR>", { desc = "Sort by directory" })
 	end,
 }
