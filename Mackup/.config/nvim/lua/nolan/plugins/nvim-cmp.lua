@@ -15,6 +15,7 @@ return {
 		"rafamadriz/friendly-snippets", -- useful snippets
 		"onsails/lspkind.nvim", -- vs-code like pictograms
 		"kawre/neotab.nvim", -- tabout
+		"luckasRanarison/tailwind-tools.nvim", -- tailwind highlighting
 	},
 	config = function()
 		local cmp = require("cmp")
@@ -94,6 +95,7 @@ return {
 			-- configure lspkind for vs-code like pictograms in completion menu
 			formatting = {
 				format = lspkind.cmp_format({
+					before = require("tailwind-tools.cmp").lspkind_format,
 					maxwidth = 50,
 					ellipsis_char = "...",
 				}),
