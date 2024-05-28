@@ -75,6 +75,8 @@ return {
 			vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
 		end
 
+		vim.lsp.inlay_hint.enable()
+
 		mason_lspconfig.setup_handlers({
 			-- default handler for installed servers
 			function(server_name)
@@ -95,6 +97,9 @@ return {
 							completion = {
 								callSnippet = "Replace",
 							},
+							hint = {
+								enable = true,
+							},
 						},
 					},
 				})
@@ -105,6 +110,24 @@ return {
 					cmd = {
 						"clangd",
 						"--fallback-style=webkit", -- so indent uses 4 spaces if no clang format file
+					},
+				})
+			end,
+			["tsserver"] = function()
+				lspconfig["tsserver"].setup({
+					capabilities = capabilities,
+					settings = {
+						typescript = {
+							inlayHints = {
+								includeInlayEnumMemberValueHints = true,
+								includeInlayFunctionLikeReturnTypeHints = true,
+								includeInlayFunctionParameterTypeHints = true,
+								includeInlayParameterNameHints = "all",
+								includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+								includeInlayPropertyDeclarationTypeHints = true,
+								includeInlayVariableTypeHints = true,
+							},
+						},
 					},
 				})
 			end,
