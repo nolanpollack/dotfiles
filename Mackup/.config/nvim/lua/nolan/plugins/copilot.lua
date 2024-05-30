@@ -9,6 +9,10 @@ return {
 			},
 			suggestion = {
 				auto_trigger = true,
+				keymap = {
+					accept = "<CR>",
+					dismiss = "<C-Space>",
+				},
 			},
 		})
 	end,
