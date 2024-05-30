@@ -5,7 +5,6 @@ return {
 	dependencies = {
 		"windwp/nvim-ts-autotag",
 		"nvim-treesitter/nvim-treesitter-textobjects",
-		"nvim-treesitter/nvim-treesitter-refactor",
 	},
 	config = function()
 		-- import nvim-treesitter plugin
@@ -58,9 +57,6 @@ return {
 					},
 					include_surrounding_whitespace = true,
 				},
-			},
-			refactor = {
-				highlight_definitions = { enable = true },
 			},
 		})
 
