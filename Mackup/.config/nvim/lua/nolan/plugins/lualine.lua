@@ -1,6 +1,6 @@
 return {
 	"nvim-lualine/lualine.nvim",
-	dependencies = { "nvim-tree/nvim-web-devicons" },
+	dependencies = { "nvim-tree/nvim-web-devicons", "SmiteshP/nvim-navic" },
 	config = function()
 		local lualine = require("lualine")
 		lualine.setup({
@@ -26,7 +26,7 @@ return {
 				lualine_a = { "mode" },
 				lualine_b = { "filename" },
 				lualine_c = { "branch", "diff", "diagnostics" },
-				lualine_x = { "encoding" },
+				lualine_x = {},
 				lualine_y = { "progress", "location" },
 				lualine_z = { "filetype" },
 			},
@@ -39,7 +39,11 @@ return {
 				lualine_z = {},
 			},
 			tabline = {},
-			winbar = {},
+			winbar = {
+				lualine_c = {
+					{ "navic", color_correction = "dynamic" },
+				},
+			},
 			inactive_winbar = {},
 			extensions = { "nvim-tree", "man" },
 		})

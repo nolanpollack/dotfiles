@@ -13,6 +13,7 @@ return {
 			"<cmd>Trouble lsp_document_symbols toggle focus=false win.position=right<cr>",
 			desc = "LSP Document symbols (Trouble)",
 		},
+		{ "<leader>xt", "<cmd>Trouble todo toggle<cr>", desc = "Todo comments (Trouble)" },
 	},
 	opts = {},
 }

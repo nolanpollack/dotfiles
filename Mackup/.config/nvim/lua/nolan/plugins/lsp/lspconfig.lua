@@ -31,7 +31,6 @@ return {
 
 				opts.desc = "Show LSP definitions"
 				keymap.set("n", "gd", "<cmd>Telescope lsp_definitions<CR>", opts) -- show lsp definitions
-
 				-- opts.desc = "Show LSP implementations"
 				-- keymap.set("n", "gi", "<cmd>Telescope lsp_implementations<CR>", opts) -- show lsp implementations
 				--
@@ -44,9 +43,6 @@ return {
 				opts.desc = "Smart rename"
 				keymap.set({ "n", "v" }, "<leader>rn", vim.lsp.buf.rename, opts) -- smart rename
 
-				-- opts.desc = "Show buffer diagnostics"
-				-- keymap.set("n", "<leader>D", "<cmd>Telescope diagnostics bufnr=0<CR>", opts) -- show  diagnostics for file
-				--
 				-- opts.desc = "Restart LSP"
 				-- keymap.set("n", "<leader>rs", ":LspRestart<CR>", opts) -- mapping to restart lsp if necessary
 			end,
@@ -56,7 +52,6 @@ return {
 		local capabilities = cmp_nvim_lsp.default_capabilities()
 
 		-- Change the Diagnostic symbols in the sign column (gutter)
-		-- (not in youtube nvim video)
 		local symbols = { Error = "󰅙", Info = "󰋼", Hint = "󰌵", Warn = "" }
 		for type, icon in pairs(symbols) do
 			local hl = "DiagnosticSign" .. type
