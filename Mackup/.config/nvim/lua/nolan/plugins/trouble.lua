@@ -8,10 +8,11 @@ return {
 			"<cmd>Trouble lsp toggle focus=false win.position=right<cr>",
 			desc = "LSP Definitions / references / ... (Trouble)",
 		},
-		-- {
-		--     "<leader>xs",
-		--
-		-- }
+		{
+			"<leader>xs",
+			"<cmd>Trouble lsp_document_symbols toggle focus=false win.position=right<cr>",
+			desc = "LSP Document symbols (Trouble)",
+		},
 	},
 	opts = {},
 }

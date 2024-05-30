@@ -5,6 +5,7 @@ return {
 	dependencies = {
 		"windwp/nvim-ts-autotag",
 		"nvim-treesitter/nvim-treesitter-textobjects",
+		"nvim-treesitter/nvim-treesitter-refactor",
 	},
 	config = function()
 		-- import nvim-treesitter plugin
@@ -32,7 +33,7 @@ return {
 					node_decremental = "<bs>",
 				},
 			},
-			-- textobjects
+			-- TODO: Find more useful textobjects
 			textobjects = {
 				select = {
 					enable = true,
@@ -58,11 +59,11 @@ return {
 					include_surrounding_whitespace = true,
 				},
 			},
+			refactor = {
+				highlight_definitions = { enable = true },
+			},
 		})
 
-		-- set keymap
-		local keymap = vim.keymap -- for conciseness
-
-		keymap.set("n", "<leader>ti", "<cmd>InspectTree<CR>", { desc = "Inspect treesitter nodes" })
+		vim.keymap.set("n", "<leader>ti", "<cmd>InspectTree<CR>", { desc = "Inspect treesitter nodes" })
 	end,
 }
