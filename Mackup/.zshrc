@@ -102,3 +102,4 @@ eval "$(fzf --zsh)"
 
 export EDITOR=nvim
 export COLORTERM='truecolor' 
+alias prettier="npx prettier"
