@@ -48,7 +48,7 @@ return {
 								select = true,
 							})
 						end
-					elseif cmp.visible then
+					elseif cmp.visible() then
 						cmp.close()
 					else
 						fallback()
