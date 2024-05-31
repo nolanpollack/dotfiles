@@ -48,6 +48,8 @@ return {
 								select = true,
 							})
 						end
+					elseif cmp.visible then
+						cmp.close()
 					else
 						fallback()
 					end
@@ -57,26 +59,26 @@ return {
 				["<C-j>"] = cmp.mapping.select_next_item(),
 
 				-- tab to scroll down in menu
-				-- ["<Tab>"] = cmp.mapping(function()
-				-- 	if cmp.visible() then
-				-- 		cmp.select_next_item()
-				-- 	elseif luasnip.locally_jumpable(1) then
-				-- 		luasnip.jump(1)
-				-- 	else
-				-- 		neotab.tabout()
-				-- 	end
-				-- end, { "i", "s" }),
-				--
+				["<Tab>"] = cmp.mapping(function()
+					if luasnip.locally_jumpable(1) then
+						luasnip.jump(1)
+					elseif cmp.visible() then
+						cmp.select_next_item()
+					else
+						neotab.tabout()
+					end
+				end, { "i", "s" }),
+
 				-- -- shift+tab to scroll up in menu
-				-- ["<S-Tab>"] = cmp.mapping(function(fallback)
-				-- 	if cmp.visible() then
-				-- 		cmp.select_prev_item()
-				-- 	elseif luasnip.locally_jumpable(-1) then
-				-- 		luasnip.jump(-1)
-				-- 	else
-				-- 		fallback()
-				-- 	end
-				-- end, { "i", "s" }),
+				["<S-Tab>"] = cmp.mapping(function(fallback)
+					if luasnip.locally_jumpable(-1) then
+						luasnip.jump(-1)
+					elseif cmp.visible() then
+						cmp.select_prev_item()
+					else
+						fallback()
+					end
+				end, { "i", "s" }),
 
 				-- close completion menu with <A-e>
 				["<A-e>"] = cmp.mapping(function(fallback)
