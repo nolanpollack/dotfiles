@@ -13,7 +13,23 @@ return {
 			"<cmd>Trouble lsp_document_symbols toggle focus=false win.position=right<cr>",
 			desc = "LSP Document symbols (Trouble)",
 		},
+		{
+			"gr",
+			"<cmd>Trouble goto_references<cr>",
+			desc = "Go to References (Trouble)",
+		},
 		{ "<leader>xt", "<cmd>Trouble todo toggle<cr>", desc = "Todo comments (Trouble)" },
 	},
-	opts = {},
+	opts = {
+		modes = {
+			goto_references = {
+				mode = "lsp_references",
+				focus = true,
+				open_no_results = false,
+				keys = {
+					["<cr>"] = "jump_close",
+				},
+			},
+		},
+	},
 }
