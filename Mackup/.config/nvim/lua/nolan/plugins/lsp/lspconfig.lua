@@ -25,17 +25,8 @@ return {
 				-- See `:help vim.lsp.*` for documentation on any of the below functions
 				local opts = { buffer = ev.buf, silent = true }
 
-				-- Currently using trouble for references
-				-- opts.desc = "Show LSP references"
-				-- keymap.set("n", "gr", "<cmd>Telescope lsp_references<CR>", opts) -- show definition, references
-
 				opts.desc = "Show LSP definitions"
 				keymap.set("n", "gd", "<cmd>Telescope lsp_definitions<CR>", opts) -- show lsp definitions
-				-- opts.desc = "Show LSP implementations"
-				-- keymap.set("n", "gi", "<cmd>Telescope lsp_implementations<CR>", opts) -- show lsp implementations
-				--
-				-- opts.desc = "Show LSP type definitions"
-				-- keymap.set("n", "gt", "<cmd>Telescope lsp_type_definitions<CR>", opts) -- show lsp type definitions
 
 				opts.desc = "See available code actions"
 				keymap.set({ "n", "v" }, "<tab>", vim.lsp.buf.code_action, opts) -- see available code actions, in visual mode will apply to selection
@@ -43,8 +34,8 @@ return {
 				opts.desc = "Smart rename"
 				keymap.set({ "n", "v" }, "<leader>rn", vim.lsp.buf.rename, opts) -- smart rename
 
-				-- opts.desc = "Restart LSP"
-				-- keymap.set("n", "<leader>rs", ":LspRestart<CR>", opts) -- mapping to restart lsp if necessary
+				opts.desc = "View diagnostic"
+				keymap.set({ "n", "v" }, "<leader>dd", vim.diagnostic.open_float, opts) -- view diagnostic
 			end,
 		})
 
