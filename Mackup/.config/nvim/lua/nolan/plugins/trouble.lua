@@ -25,7 +25,12 @@ return {
 			goto_references = {
 				mode = "lsp_references",
 				focus = true,
-				open_no_results = false,
+				preview = {
+					type = "split",
+					relative = "editor",
+					position = "right",
+					size = 0.5,
+				},
 				keys = {
 					["<cr>"] = "jump_close",
 				},
