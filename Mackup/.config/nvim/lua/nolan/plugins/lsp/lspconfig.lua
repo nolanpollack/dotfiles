@@ -51,6 +51,8 @@ return {
 
 		vim.lsp.inlay_hint.enable()
 
+		lspconfig.rust_analyzer.setup({})
+
 		mason_lspconfig.setup_handlers({
 			-- default handler for installed servers
 			function(server_name)

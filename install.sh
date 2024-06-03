@@ -17,7 +17,9 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 # Install tmux packages
 bash ~/.tmux/plugins/tpm/scripts/install_plugins.sh
 
+# Install rust
 curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh
+rustup component add rust-analyzer
 
 sudo add-apt-repository ppa:wslutilities/wslu
 sudo apt update
