@@ -30,16 +30,16 @@ return {
 				"bashls", -- Bash
 				"clangd", -- C
 				"cssls", -- CSS
-				"dockerls", -- Docker
 				"docker_compose_language_service", -- Docker Compose
+				"dockerls", -- Docker
 				"gradle_ls", -- Gradle
 				"html", -- HTML
 				"jdtls", -- Java
-				"tsserver", -- JavaScript/TypeScript
 				"kotlin_language_server", -- Kotlin
 				"lua_ls", -- Lua
 				"pyright", -- Python
 				"tailwindcss", -- Tailwind CSS
+				"tsserver", -- JavaScript/TypeScript
 			},
 		})
 
