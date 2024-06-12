@@ -2,6 +2,7 @@ fd
 fnm
 fzf
 gcc
+git-delta
 mackup
 neovim
 node
