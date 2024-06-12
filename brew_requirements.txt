@@ -10,3 +10,4 @@ tealdeer
 tmux
 zip
 zsh-autosuggestions
+zsh-syntax-highlighting

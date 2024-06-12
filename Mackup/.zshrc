@@ -62,6 +62,9 @@ brew_with_logging() {
     esac
 }
 
+# Must be sourced last
+source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
 
 # Aliases
 alias vim=nvim
