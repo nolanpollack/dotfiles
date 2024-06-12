@@ -24,3 +24,7 @@ rustup component add rust-analyzer
 sudo add-apt-repository ppa:wslutilities/wslu
 sudo apt update
 sudo apt install wslu
+
+# Set up wsl.conf so PATH doesn't include /mnt/c/Program Files/... etc
+# This stops lag in zsh syntax highlighting
+sudo ln -s wsl.conf /etc/wsl.conf
