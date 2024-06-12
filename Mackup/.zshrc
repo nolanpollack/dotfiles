@@ -71,5 +71,4 @@ source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zs
 
 # Aliases
 alias vim=nvim
-alias tldr='tldr --pager'
 alias prettier="npx prettier"
