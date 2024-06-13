@@ -1,15 +1,19 @@
+[include]
+    path = ~/dotfiles/catppuccin.gitconfig
 [user]
 	email = nolanfpollack@gmail.com
 	name = Nolan Pollack
+[init]
+	defaultBranch = main
 [core]
-	pager = delta --diff-so-fancy
+	pager = delta
 [interactive]
 	diffFilter = delta --color-only
 [diff]
 	colorMoved = default
 [delta]
+    diff-so-fancy = true
 	navigate = true
 	line-numbers = true
 	side-by-side = true
-[init]
-	defaultBranch = main
+    features = catppuccin-mocha
