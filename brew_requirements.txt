@@ -1,4 +1,5 @@
 bat
+eza
 fd
 fnm
 fzf
