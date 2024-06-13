@@ -27,4 +27,4 @@ sudo apt install wslu
 
 # Set up wsl.conf so PATH doesn't include /mnt/c/Program Files/... etc
 # This stops lag in zsh syntax highlighting
-sudo ln -s wsl.conf /etc/wsl.conf
+sudo ln -s "${HOME}/dotfiles/wsl.conf" /etc/wsl.conf
