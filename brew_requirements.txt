@@ -1,4 +1,5 @@
 bat
+docker
 eza
 fd
 fnm
