@@ -5,3 +5,6 @@ alias prettier="npx prettier"
 alias ls="eza --group-directories-first --icons=auto"
 alias l="eza -al --icons=auto --group-directories-first"
 alias lt="eza -T --icons=auto"
+
+# bat
+alias batlog="bat --paging=never -l log"
