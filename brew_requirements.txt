@@ -6,6 +6,7 @@ fzf
 gcc
 git-delta
 glow
+grc
 mackup
 neovim
 node
