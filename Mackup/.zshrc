@@ -11,7 +11,10 @@ ZSH_DIRECTORY=~/dotfiles/Mackup/.zsh
 source "$ZSH_DIRECTORY/env.zsh"
 
 # Plugins
-plugins=(git)
+plugins=(git docker)
+# Allows docker commands to autocomplete with option-stacking
+zstyle ':completion:*:*:docker:*' option-stacking yes
+zstyle ':completion:*:*:docker-*:*' option-stacking yes
 
 # Powerlevel10k
 source "$ZSH_DIRECTORY/p10k.zsh"
