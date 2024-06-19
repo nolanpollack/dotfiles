@@ -8,3 +8,6 @@ alias lt="eza -T --icons=auto"
 
 # bat
 alias batlog="bat --paging=never -l log"
+
+# Docker compose
+alias dc="docker compose"
