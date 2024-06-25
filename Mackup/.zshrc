@@ -29,7 +29,7 @@ source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source "$ZSH_DIRECTORY/fzf.zsh"
 
 # zsh-vi-mode
-source /home/linuxbrew/.linuxbrew/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
+source "$ZSH_DIRECTORY/zsh-vi-mode.zsh"
 
 # zsh-syntax-highlighting - Must be sourced last
 source "$ZSH_DIRECTORY/zsh-syntax-highlighting.zsh"
