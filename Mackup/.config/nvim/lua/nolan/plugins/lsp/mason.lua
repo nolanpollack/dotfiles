@@ -38,6 +38,7 @@ return {
 				"kotlin_language_server", -- Kotlin
 				"lua_ls", -- Lua
 				"pyright", -- Python
+				"rust_analyzer", -- Rust
 				"tailwindcss", -- Tailwind CSS
 				"tsserver", -- JavaScript/TypeScript
 			},
