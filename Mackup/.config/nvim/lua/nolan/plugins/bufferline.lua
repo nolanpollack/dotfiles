@@ -8,6 +8,7 @@ return {
 		bufferline.setup({
 			highlights = require("catppuccin.groups.integrations.bufferline").get(),
 			options = {
+				always_show_bufferline = false,
 				diagnostics = "nvim_lsp",
 				diagnostics_indicator = function(_, _, diagnostics_dict, _)
 					local s = " "
