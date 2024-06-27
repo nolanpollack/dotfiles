@@ -31,3 +31,6 @@ sudo ln -s "${HOME}/dotfiles/wsl.conf" /etc/wsl.conf
 
 # Rebuild bat's cache so it recognizes catpuccin theme
 bat cache --build
+
+# Set up catppuccin theme for zsh syntax highlighting
+fast-theme ~/dotfiles/Mackup/.zsh/catppuccin-mocha.ini
