@@ -6,5 +6,10 @@ return {
 				done_icon = "✓",
 			},
 		},
+		notification = {
+			window = {
+				winblend = 0,
+			},
+		},
 	},
 }

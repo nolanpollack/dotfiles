@@ -9,6 +9,7 @@ return {
 				navic = {
 					enabled = true,
 				},
+				fidget = true,
 			},
 		})
 
