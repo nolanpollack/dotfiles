@@ -19,7 +19,7 @@ source "$ZSH_DIRECTORY/brew.zsh"
 # zsh-autosuggestions
 source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
-# fzf - catppuccin color scheme
+# fzf 
 source "$ZSH_DIRECTORY/fzf.zsh"
 
 # zsh-vi-mode
