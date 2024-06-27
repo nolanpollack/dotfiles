@@ -24,6 +24,11 @@ return {
 					},
 				},
 			},
+			extensions = {
+				smart_open = {
+					match_algorithm = "fzf",
+				},
+			},
 		})
 
 		telescope.load_extension("fzf")
