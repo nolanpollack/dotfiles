@@ -11,3 +11,6 @@ alias batlog="bat --paging=never -l log"
 
 # Docker compose
 alias dc="docker compose"
+
+# Copy to windows clipboard 
+alias clip="/mnt/c/Windows/System32/clip.exe"
