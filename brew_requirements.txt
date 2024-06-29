@@ -1,9 +1,12 @@
+aws/tap/copilot-cli
+awscli
 bat
 eza
 fd
 fnm
 fzf
 gcc
+gh
 git-delta
 glow
 grc
