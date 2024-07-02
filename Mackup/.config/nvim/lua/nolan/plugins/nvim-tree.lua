@@ -58,7 +58,8 @@ return {
 
 				-- custom mappings
 				vim.keymap.set("n", "?", api.tree.toggle_help, opts("Help"))
-				vim.keymap.set("n", "v", api.node.open.vertical, opts("Open: Vertical Split"))
+				vim.keymap.set("n", "sv", api.node.open.vertical, opts("Open: Vertical Split"))
+				vim.keymap.set("n", "sh", api.node.open.horizontal, opts("Open: Horizontal Split"))
 			end,
 		})
 
