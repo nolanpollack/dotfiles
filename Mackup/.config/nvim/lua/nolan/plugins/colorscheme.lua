@@ -10,6 +10,7 @@ return {
 					enabled = true,
 				},
 				fidget = true,
+				noice = true,
 			},
 		})
 
