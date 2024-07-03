@@ -10,7 +10,9 @@ gh
 git-delta
 glow
 grc
+jq
 lazydocker
+lnav
 mackup
 neovim
 node
