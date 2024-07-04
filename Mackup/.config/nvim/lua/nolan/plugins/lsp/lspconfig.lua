@@ -49,6 +49,15 @@ return {
 			vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
 		end
 
+		local function organize_imports()
+			local params = {
+				command = "_typescript.organizeImports",
+				arguments = { vim.api.nvim_buf_get_name(0) },
+				title = "",
+			}
+			vim.lsp.buf.execute_command(params)
+		end
+
 		vim.lsp.inlay_hint.enable()
 
 		mason_lspconfig.setup_handlers({
@@ -90,6 +99,12 @@ return {
 			["tsserver"] = function()
 				lspconfig["tsserver"].setup({
 					capabilities = capabilities,
+					commands = {
+						OrganizeImports = {
+							organize_imports,
+							description = "Organize Imports",
+						},
+					},
 					settings = {
 						typescript = {
 							inlayHints = {
