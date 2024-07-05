@@ -17,3 +17,5 @@
 	line-numbers = true
 	side-by-side = true
     features = catppuccin-mocha
+[color]
+	ui = auto

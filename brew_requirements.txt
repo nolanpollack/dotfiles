@@ -16,6 +16,7 @@ lnav
 mackup
 neovim
 node
+repo
 ripgrep
 tealdeer
 tmux
