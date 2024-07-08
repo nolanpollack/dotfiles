@@ -10,11 +10,11 @@ ZSH_DIRECTORY=~/dotfiles/Mackup/.zsh
 # Environment variables
 source "$ZSH_DIRECTORY/env.zsh"
 
-# Oh-My-Zsh and Powerlevel10k
-source "$ZSH_DIRECTORY/oh-my-zsh.zsh"
-
 # Homebrew
 source "$ZSH_DIRECTORY/brew.zsh"
+
+# Oh-My-Zsh and Powerlevel10k
+source "$ZSH_DIRECTORY/oh-my-zsh.zsh"
 
 # zsh-autosuggestions
 source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
