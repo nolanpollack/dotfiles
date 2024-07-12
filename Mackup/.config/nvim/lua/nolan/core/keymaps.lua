@@ -16,14 +16,18 @@ keymap.set("n", "<leader>sx", "<cmd>close<CR>", { desc = "Close current split" }
 keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move line down in visual mode" })
 keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move line up in visual mode" })
 
--- Scrolling
-keymap.set({ "n", "v" }, "<C-u>", "<C-u>zz", { desc = "Better half up scroll", remap = true })
-keymap.set({ "n", "v" }, "<C-d>", "<C-d>zz", { desc = "Better half down scroll", remap = true })
-
 keymap.set("n", "<leader>a", "gg<S-v>G", { desc = "Select all" })
+
+-- Better motions
+keymap.set({ "n", "v" }, "H", "^", { desc = "First non-whitespace character in line" })
+keymap.set({ "n", "v" }, "L", "$", { desc = "Last character in line" })
+keymap.set({ "n", "v" }, "M", "%", { desc = "Jump to matching bracket" })
+keymap.set({ "n", "v" }, "Y", "y$", { desc = "Yank to end of line" })
 
 -- Move in insert mode, And Command-line mode
 keymap.set({ "i", "c" }, "<C-j>", "<Down>", { desc = "Move Down in insert mode" })
 keymap.set({ "i", "c" }, "<C-k>", "<Up>", { desc = "Move Up in insert mode" })
 keymap.set({ "i", "c" }, "<C-h>", "<Left>", { desc = "Move Left in insert mode" })
 keymap.set({ "i", "c" }, "<C-l>", "<Right>", { desc = "Move Right in insert mode" })
+
+keymap.set("n", "<leader>rl", ":set relativenumber!<CR>", { desc = "Toggle relative line numbers", silent = true })
