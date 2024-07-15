@@ -18,6 +18,7 @@ return {
 				{ pattern = "split window horizontally", icon = "", color = "orange" },
 				{ pattern = "make splits equal", icon = "󰇼" },
 				{ pattern = "close", icon = "󰅖" },
+				{ pattern = "treesitter", icon = "󰔱" },
 			},
 		},
 		spec = {
