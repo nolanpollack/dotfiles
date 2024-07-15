@@ -63,6 +63,8 @@ return {
 				["<Tab>"] = cmp.mapping(function()
 					if luasnip.locally_jumpable(1) then
 						luasnip.jump(1)
+					elseif cmp.visible() and cmp.get_selected_entry() and not cmp.get_active_entry() then -- This will select the preselected item in the completion menu
+						cmp.select_next_item({ count = 0 })
 					elseif cmp.visible() then
 						cmp.select_next_item()
 					else
