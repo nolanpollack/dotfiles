@@ -37,17 +37,10 @@ return {
 						["af"] = { query = "@function.outer", desc = "outer function" },
 						["if"] = { query = "@function.inner", desc = "inner function" },
 
-						["a="] = { query = "@assignment.outer", desc = "outer assignment" },
-						["i="] = { query = "@assignment.inner", desc = "inner assignment" },
-
-						["ac"] = { query = "@comment.outer", desc = "outer comment" },
-						["ic"] = { query = "@comment.inner", desc = "inner comment" },
-
 						["aa"] = { query = "@parameter.outer", desc = "outer argument" },
 						["ia"] = { query = "@parameter.inner", desc = "inner argument" },
 					},
 					selection_modes = {
-						["@parameter.outer"] = "v", -- charwise
 						["@function.outer"] = "V", -- linewise
 					},
 					include_surrounding_whitespace = true,
