@@ -35,7 +35,7 @@ return {
 				keymap.set({ "n", "v" }, "<leader>rn", vim.lsp.buf.rename, opts) -- smart rename
 
 				opts.desc = "View diagnostic"
-				keymap.set({ "n", "v" }, "<leader>dd", vim.diagnostic.open_float, opts) -- view diagnostic
+				keymap.set({ "n", "v" }, "<leader>d", vim.diagnostic.open_float, opts) -- view diagnostic
 			end,
 		})
 
