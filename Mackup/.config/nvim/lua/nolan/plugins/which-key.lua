@@ -5,6 +5,7 @@ return {
 		"echasnovski/mini.icons",
 	},
 	opts = {
+		expand = 1,
 		icons = {
 			rules = {
 				{ pattern = "select all", icon = "󰒆", color = "orange" },
