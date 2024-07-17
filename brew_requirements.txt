@@ -1,11 +1,11 @@
 aws/tap/copilot-cli
 awscli
 bat
+btop
 eza
 fd
 fnm
 fzf
-gcc
 gh
 git-delta
 glow
