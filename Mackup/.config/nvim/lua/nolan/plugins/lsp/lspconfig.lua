@@ -120,6 +120,7 @@ return {
 					},
 				})
 			end,
+			["jdtls"] = function() end,
 		})
 	end,
 }
