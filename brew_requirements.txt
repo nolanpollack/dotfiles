@@ -21,6 +21,7 @@ ripgrep
 tealdeer
 tmux
 zip
+zoxide
 zsh-autosuggestions
 zsh-fast-syntax-highlighting
 zsh-vi-mode
