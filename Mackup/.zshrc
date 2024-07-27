@@ -27,6 +27,8 @@ source <(copilot completion zsh)
 # zsh-vi-mode
 source "$ZSH_DIRECTORY/zsh-vi-mode.zsh"
 
+eval "$(zoxide init zsh)"
+
 # fast-syntax-highlighting - Must be sourced last
 source "$ZSH_DIRECTORY/fast-syntax-highlighting.zsh"
 
