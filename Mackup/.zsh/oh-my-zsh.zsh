@@ -1,5 +1,5 @@
 # Plugins
-plugins=(git docker tmux)
+plugins=(git docker tmux fzf-tab)
 
 # Allows docker commands to autocomplete with option-stacking
 zstyle ':completion:*:*:docker:*' option-stacking yes
