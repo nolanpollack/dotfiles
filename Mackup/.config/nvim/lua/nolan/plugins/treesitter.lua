@@ -48,6 +48,8 @@ return {
 			},
 		})
 
+		vim.treesitter.language.register("bash", "zsh")
+
 		vim.keymap.set("n", "<leader>ti", "<cmd>InspectTree<CR>", { desc = "Inspect treesitter nodes" })
 	end,
 }
