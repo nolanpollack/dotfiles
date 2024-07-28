@@ -1,20 +1,26 @@
 let mapleader=" "
 
+set clipboard+=unnamed
+
 inoremap jk  <Esc>
 nmap H ^
 nmap L $
 nmap M %
 
-inoremap <c-k> <up>
-inoremap <c-j> <Action>(Tree-selectNext)
 nmap gr <Action>(FindUsages)
 nmap <leader><leader> <Action>(SearchEverywhere)
 map <Leader>e <Action>(ActivateProjectToolWindow)
 map <tab> <Action>(ShowIntentionActions)
 map <leader>rn <Action>(RenameElement)
+map <leader>mp <Action>(ReformatCode)
+nmap K <Action>(ShowHoverInfo)
 
-Plug 'justinmk/vim-sneak'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
 Plug 'michaeljsmith/vim-indent-object'
 set which-key
+set easymotion
+
+set g:EasyMotion_do_mapping 0
+
+nmap s <Plug>(easymotion-s2)
