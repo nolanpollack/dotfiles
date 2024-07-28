@@ -10,6 +10,7 @@ gh
 git-delta
 glow
 grc
+joshmedeski/sesh/sesh
 jq
 lazydocker
 lnav
@@ -19,9 +20,8 @@ node
 repo
 ripgrep
 tealdeer
-tmux
+yq
 zip
-zoxide
 zsh-autosuggestions
 zsh-fast-syntax-highlighting
 zsh-vi-mode
