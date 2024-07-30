@@ -24,9 +24,6 @@ source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 # fzf 
 source "$ZSH_DIRECTORY/fzf.zsh"
 
-# aws copilot
-source <(copilot completion zsh)
-
 # zsh-vi-mode
 source "$ZSH_DIRECTORY/zsh-vi-mode.zsh"
 
