@@ -22,14 +22,21 @@ tmux_set() {
 rarrow=$(tmux_get '@tmux_power_right_arrow_icon' '')
 session_icon="$(tmux_get '@tmux_power_session_icon' '')"
 
-MAUVE='#cba6f7'
-BASE=#262626 #235
-BLUE=#89b4fa #236
 FLAMINGO=#f2cdcd
+MAUVE='#cba6f7'
+MAROON=#eba0ac
+PEACH=#fab387
+GREEN=#a6e3a1
+SAPPHIRE=#74c7ec
+BLUE=#89b4fa #236
+LAVENDER=#b4befe
+OVERLAY0=#6c7086
 SURFACE1=#45475a #237
+BASE="#1e1e2e"
+MANTLE=#181825
+CRUST=#11111b
 
 FG="#f38ba8"
-BG="#1e1e2e"
 
 # Status options
 tmux_set status-interval 1
@@ -37,58 +44,79 @@ tmux_set status on
 
 # Basic status bar colors
 tmux_set status-fg "$FG"
-tmux_set status-bg "$BG"
+tmux_set status-bg "$BASE"
 tmux_set status-attr none
 
+PREFIX_FG=$MANTLE
+PREFIX_BG=$BLUE
+
+SESSION_FG=$MANTLE
+SESSION_BG=$MAUVE
+
 # tmux-prefix-highlight
-tmux_set @prefix_highlight_fg "$BG"
-tmux_set @prefix_highlight_bg "$BLUE"
+tmux_set @prefix_highlight_fg "$PREFIX_BG"
+tmux_set @prefix_highlight_bg "$PREFIX_FG"
 tmux_set @prefix_highlight_show_copy_mode 'on'
-tmux_set @prefix_highlight_copy_mode_attr "fg=$MAUVE,bg=$BG,bold"
+tmux_set @prefix_highlight_copy_mode_attr "fg=$PREFIX_BG,bg=$PREFIX_FG,bold" # TODO
 tmux_set @prefix_highlight_output_prefix ""
-tmux_set @prefix_highlight_output_suffix " #[fg=$BLUE]#[bg=$MAUVE]$rarrow"
+tmux_set @prefix_highlight_output_suffix " #[fg=$PREFIX_FG]#[bg=$SESSION_BG]$rarrow"
 
 #     
 # Left side of status bar
 tmux_set status-left-bg "$BASE"
 tmux_set status-left-fg "$BASE"
 tmux_set status-left-length 150
-LS="#{prefix_highlight}#[fg=$BASE,bg=$MAUVE,bold] $session_icon #S #[fg=$MAUVE,bg=$BG]$rarrow"
+LS="#{prefix_highlight}\
+#[fg=$BASE,bg=$SESSION_BG,bold] $session_icon \
+#[fg=$SESSION_BG,bg=$SESSION_FG]$rarrow \
+#[fg=$SESSION_BG,bg=$SESSION_FG]#S \
+#[fg=$SESSION_FG,bg=$BASE]$rarrow"
 tmux_set status-left "$LS"
 
 tmux_set status-right ""
 
 # Window status format
-tmux_set window-status-format         "#[fg=$BG,bg=""$SURFACE1""]""$rarrow""#[fg=""$FLAMINGO"",bg=""$SURFACE1""] #I #W #[fg=$SURFACE1,bg=$BG]$rarrow"
-tmux_set window-status-current-format "#[fg=$BG,bg=$FLAMINGO]$rarrow#[fg=$BG,bg=$FLAMINGO,bold] #I #W #[fg=$FLAMINGO,bg=$BG,nobold]$rarrow"
+tmux_set window-status-format "#[fg=$BASE,bg=""$FLAMINGO""]""$rarrow\
+#[fg=""$BASE"",bg=$FLAMINGO]#I""\
+#[fg=""$FLAMINGO"",bg=""$SURFACE1""]$rarrow #W \
+#[fg=$SURFACE1,bg=$BASE]$rarrow"
+
+CURRENT_HIGHLIGHT=$PEACH
+CURRENT_BG=$FLAMINGO
+CURRENT_TEXT=$BASE
+tmux_set window-status-current-format "#[fg=$BASE,bg=$CURRENT_HIGHLIGHT]$rarrow\
+#[fg=$BASE,bg=$CURRENT_HIGHLIGHT,bold]#I\
+#[fg=$CURRENT_HIGHLIGHT,bg=$CURRENT_BG,bold]$rarrow\
+#[fg=$CURRENT_TEXT,bg=$CURRENT_BG,bold] #W \
+#[fg=$CURRENT_BG,bg=$BASE,nobold]$rarrow"
 
 # Window status style
-tmux_set window-status-style          "fg=$FLAMINGO,bg=$BG,none"
-tmux_set window-status-last-style     "fg=$FLAMINGO,bg=$BG,bold"
-tmux_set window-status-activity-style "fg=$FLAMINGO,bg=$BG,bold"
+tmux_set window-status-style          "fg=$FLAMINGO,bg=$BASE,none"
+tmux_set window-status-last-style     "fg=$FLAMINGO,bg=$BASE,bold"
+tmux_set window-status-activity-style "fg=$FLAMINGO,bg=$BASE,bold"
 
 # Window separator
 tmux_set window-status-separator ""
 
 # Pane border
-tmux_set pane-border-style "fg=$MAUVE,bg=default"
+tmux_set pane-border-style "fg=$MANTLE,bg=default"
 
 # Active pane border
 tmux_set pane-active-border-style "fg=$MAUVE,bg=default"
 
 # Pane number indicator
-tmux_set display-panes-colour "$FLAMINGO"
-tmux_set display-panes-active-colour "$MAUVE"
+tmux_set display-panes-colour "$MANTLE"
+tmux_set display-panes-active-colour "$BLUE"
 
 # Clock mode
 tmux_set clock-mode-colour "$MAUVE"
 tmux_set clock-mode-style 24
 
 # Message
-tmux_set message-style "fg=$MAUVE,bg=$BG"
+tmux_set message-style "fg=$MAUVE,bg=$BASE"
 
 # Command message
-tmux_set message-command-style "fg=$MAUVE,bg=$BG"
+tmux_set message-command-style "fg=$MAUVE,bg=$BASE"
 
 # Copy mode highlight
-tmux_set mode-style "bg=$MAUVE,fg=$FG"
+tmux_set mode-style "bg=$MAUVE,fg=$MANTLE"
