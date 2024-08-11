@@ -1,8 +1,8 @@
 return {
 	"OXY2DEV/markview.nvim",
-	branch = "dev",
+	lazy = false,
 	dependencies = {
-		"nvim-tree/nvim-web-devicons", -- Used by the code bloxks
+		"echasnovski/mini.icons",
 	},
 
 	config = function()
