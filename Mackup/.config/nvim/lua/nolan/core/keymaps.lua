@@ -19,8 +19,8 @@ keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move line up in visual mode" 
 keymap.set("n", "<leader>a", "gg<S-v>G", { desc = "Select all" })
 
 -- Better motions
-keymap.set({ "n", "v" }, "H", "^", { desc = "First non-whitespace character in line" })
-keymap.set({ "n", "v" }, "L", "$", { desc = "Last character in line" })
+keymap.set({ "n", "v", "o" }, "H", "^", { desc = "First non-whitespace character in line" })
+keymap.set({ "n", "v", "o" }, "L", "$", { desc = "Last character in line" })
 keymap.set({ "n", "v" }, "M", "%", { desc = "Jump to matching bracket" })
 keymap.set({ "n", "v" }, "Y", "y$", { desc = "Yank to end of line" })
 
