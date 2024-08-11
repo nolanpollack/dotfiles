@@ -20,6 +20,7 @@ return {
 				{ pattern = "make splits equal", icon = "󰇼" },
 				{ pattern = "close", icon = "󰅖" },
 				{ pattern = "treesitter", icon = "󰔱" },
+				{ pattern = "oil", icon = "󰙅" },
 			},
 		},
 		spec = {
