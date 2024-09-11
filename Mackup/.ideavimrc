@@ -1,11 +1,19 @@
 let mapleader=" "
 
-set clipboard+=unnamed
+set clipboard+=unnamedplus
 
 inoremap jk  <Esc>
-nmap H ^
-nmap L $
-nmap M %
+noremap H ^
+noremap L $
+noremap M %
+
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-surround'
+Plug 'michaeljsmith/vim-indent-object'
+set which-key
+set easymotion
+
+let g:EasyMotion_do_mapping = 0
 
 nmap gr <Action>(FindUsages)
 nmap <leader><leader> <Action>(SearchEverywhere)
@@ -14,13 +22,19 @@ map <tab> <Action>(ShowIntentionActions)
 map <leader>rn <Action>(RenameElement)
 map <leader>mp <Action>(ReformatCode)
 nmap K <Action>(ShowHoverInfo)
+map <leader>g <Action>(Generate)
+map <Enter> <Action>(EditorSelectWord)
+map <backspace> <Action>(EditorUnSelectWord)
 
-Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-surround'
-Plug 'michaeljsmith/vim-indent-object'
-set which-key
-set easymotion
+map zat <Action>(ExpandCollapseToggleAction)
+map zrc <Action>(CollapseRegionRecursively)
+map zro <Action>(ExpandRegionRecursively)
+map zac <Action>(CollapseAllRegions)
+map zao <Action>(ExpandAllRegions)
 
-set g:EasyMotion_do_mapping 0
+noremap <c-h> <c-w>h
+noremap <c-j> <c-w>j
+noremap <c-k> <c-w>k
+noremap <c-l> <c-w>l
 
 nmap s <Plug>(easymotion-s2)
