@@ -20,6 +20,7 @@ node
 repo
 ripgrep
 tealdeer
+thefuck
 yq
 zip
 zsh-autosuggestions

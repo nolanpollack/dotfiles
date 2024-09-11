@@ -16,6 +16,8 @@ source "$ZSH_DIRECTORY/brew.zsh"
 # Oh-My-Zsh and Powerlevel10k
 source "$ZSH_DIRECTORY/oh-my-zsh.zsh"
 
+eval $(thefuck --alias)
+
 # zsh-autosuggestions
 source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
