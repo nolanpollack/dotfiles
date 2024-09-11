@@ -1,7 +1,7 @@
 return {
-	"williamboman/mason.nvim",
+	"williamboman/mason-lspconfig.nvim",
 	dependencies = {
-		"williamboman/mason-lspconfig.nvim",
+		"williamboman/mason.nvim",
 		"WhoIsSethDaniel/mason-tool-installer.nvim",
 	},
 	config = function()
@@ -26,22 +26,7 @@ return {
 
 		mason_lspconfig.setup({
 			-- list of servers for mason to install
-			ensure_installed = {
-				"bashls", -- Bash
-				"clangd", -- C
-				"cssls", -- CSS
-				"docker_compose_language_service", -- Docker Compose
-				"dockerls", -- Docker
-				"gradle_ls", -- Gradle
-				"html", -- HTML
-				"jdtls", -- Java
-				"kotlin_language_server", -- Kotlin
-				"lua_ls", -- Lua
-				"pyright", -- Python
-				"rust_analyzer", -- Rust
-				"tailwindcss", -- Tailwind CSS
-				"tsserver", -- JavaScript/TypeScript
-			},
+			ensure_installed = {},
 		})
 
 		mason_tool_installer.setup({
