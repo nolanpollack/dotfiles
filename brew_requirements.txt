@@ -2,6 +2,7 @@ aws/tap/copilot-cli
 awscli
 bat
 btop
+checkstyle
 eza
 fd
 fnm
@@ -10,6 +11,7 @@ gcc
 gh
 git-delta
 glow
+gradle
 grc
 joshmedeski/sesh/sesh
 jq
@@ -23,7 +25,6 @@ ripgrep
 tealdeer
 thefuck
 yq
-zip
 zsh-autosuggestions
 zsh-fast-syntax-highlighting
 zsh-vi-mode
