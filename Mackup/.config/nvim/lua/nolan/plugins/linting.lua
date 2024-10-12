@@ -10,10 +10,12 @@ return {
 			javascriptreact = { "eslint_d" },
 			typescriptreact = { "eslint_d" },
 			python = { "pylint" },
+			java = { "checkstyle" },
 		}
 
 		lint.linters.pylint.cmd = "python"
 		lint.linters.pylint.args = { "-m", "pylint", "-f", "json" }
+		lint.linters.checkstyle.args = { "-c", "/home/nolan/dotfiles/northeastern_checkstyle.xml" }
 
 		local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })
 
