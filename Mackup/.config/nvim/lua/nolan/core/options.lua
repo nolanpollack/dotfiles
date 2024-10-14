@@ -22,3 +22,9 @@ opt.foldmethod = "expr"
 opt.foldexpr = "nvim_treesitter#foldexpr()"
 opt.foldenable = false
 opt.foldtext = "nvim_treesitter#foldtext()"
+
+vim.filetype.add({
+	filename = {
+		["pre-commit"] = "bash",
+	},
+})
