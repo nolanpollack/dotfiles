@@ -60,15 +60,15 @@ return {
 				["<C-j>"] = cmp.mapping.select_next_item(),
 
 				-- tab to scroll down in menu
-				["<Tab>"] = cmp.mapping(function()
+				["<Tab>"] = cmp.mapping(function(fallback)
 					if luasnip.locally_jumpable(1) then
 						luasnip.jump(1)
-					elseif cmp.visible() and cmp.get_selected_entry() and not cmp.get_active_entry() then -- This will select the preselected item in the completion menu
-						cmp.select_next_item({ count = 0 })
-					elseif cmp.visible() then
-						cmp.select_next_item()
+						-- 	elseif cmp.visible() and cmp.get_selected_entry() and not cmp.get_active_entry() then -- This will select the preselected item in the completion menu
+						-- 		cmp.select_next_item({ count = 0 })
+						-- 	elseif cmp.visible() then
+						-- 		cmp.select_next_item()
 					else
-						neotab.tabout()
+						fallback()
 					end
 				end, { "i", "s" }),
 

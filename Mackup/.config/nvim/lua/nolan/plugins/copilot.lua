@@ -10,7 +10,7 @@ return {
 			suggestion = {
 				auto_trigger = true,
 				keymap = {
-					accept = "<S-CR>",
+					accept = "<Tab>",
 					dismiss = "<C-Space>",
 				},
 			},
