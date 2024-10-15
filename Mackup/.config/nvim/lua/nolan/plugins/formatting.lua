@@ -35,5 +35,10 @@ return {
 				timeout_ms = 1000,
 			})
 		end, { desc = "Make Pretty (Format file or range in visual mode)" })
+
+		vim.api.nvim_create_autocmd("FileType", {
+			pattern = "java",
+			command = "setlocal tabstop=2 shiftwidth=2",
+		})
 	end,
 }
