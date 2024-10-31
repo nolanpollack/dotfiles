@@ -5,7 +5,5 @@ return {
 		{ "nvim-telescope/telescope.nvim" },
 		{ "echasnovski/mini.icons" },
 	},
-	config = function()
-		require("octo").setup()
-	end,
+    opts = {},
 }
