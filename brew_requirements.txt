@@ -22,6 +22,7 @@ neovim
 node
 repo
 ripgrep
+rm-improved
 tealdeer
 thefuck
 yq
