@@ -27,4 +27,7 @@ vim.filetype.add({
 	filename = {
 		["pre-commit"] = "bash",
 	},
+	extension = {
+		["jenkins"] = "groovy",
+	},
 })
