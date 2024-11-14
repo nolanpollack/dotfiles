@@ -23,6 +23,7 @@ node
 repo
 ripgrep
 rm-improved
+speedtest-cli
 tealdeer
 thefuck
 yq
