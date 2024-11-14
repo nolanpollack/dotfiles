@@ -1,6 +1,6 @@
 export HOMEBREW_NO_ENV_HINTS=TRUE
 
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
 # save installed brew packages to requirements
 brew_install_and_update_requirements() {
     if command brew install "$@"; then

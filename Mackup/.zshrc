@@ -16,6 +16,9 @@ source "$ZSH_DIRECTORY/brew.zsh"
 # Oh-My-Zsh and Powerlevel10k
 source "$ZSH_DIRECTORY/oh-my-zsh.zsh"
 
+# fzf-tab
+source "$ZSH_DIRECTORY/fzf-tab.zsh"
+
 eval $(thefuck --alias)
 
 # zsh-autosuggestions
