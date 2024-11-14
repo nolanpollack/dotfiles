@@ -13,24 +13,24 @@ source "$ZSH_DIRECTORY/env.zsh"
 # Homebrew
 source "$ZSH_DIRECTORY/brew.zsh"
 
-# Oh-My-Zsh and Powerlevel10k
-source "$ZSH_DIRECTORY/oh-my-zsh.zsh"
-
-# fzf-tab
-source "$ZSH_DIRECTORY/fzf-tab.zsh"
-
 eval $(thefuck --alias)
+
+# Oh-My-Zsh and Powerlevel10k. ANYTHING THAT ADDS COMPLETIONS MUST BE SOURCED BEFORE THIS
+source "$ZSH_DIRECTORY/oh-my-zsh.zsh"
 
 # zsh-autosuggestions
 source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+eval "$(zoxide init zsh)"
+
+# fzf-tab
+source "$ZSH_DIRECTORY/fzf-tab.zsh"
 
 # fzf 
 source "$ZSH_DIRECTORY/fzf.zsh"
 
 # zsh-vi-mode
 source "$ZSH_DIRECTORY/zsh-vi-mode.zsh"
-
-eval "$(zoxide init zsh)"
 
 # fast-syntax-highlighting - Must be sourced last
 source "$ZSH_DIRECTORY/fast-syntax-highlighting.zsh"
