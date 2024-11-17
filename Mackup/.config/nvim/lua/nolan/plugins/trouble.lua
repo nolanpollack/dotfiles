@@ -18,6 +18,11 @@ return {
 			"<cmd>Trouble goto_references<cr>",
 			desc = "Go to References (Trouble)",
 		},
+		{
+			"gi",
+			"<cmd>Trouble lsp_implementations toggle focus=false win.position=right<cr>",
+			desc = "Go to implementations (Trouble)",
+		},
 		{ "<leader>xt", "<cmd>Trouble todo toggle<cr>", desc = "Todo comments (Trouble)" },
 	},
 	opts = {
