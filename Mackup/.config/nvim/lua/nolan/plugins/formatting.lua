@@ -1,10 +1,12 @@
 return {
 	"stevearc/conform.nvim",
-	event = { "BufReadPre", "BufNewFile" },
-	config = function()
-		local conform = require("conform")
+	opts = function()
+		vim.api.nvim_create_autocmd("FileType", {
+			pattern = "java",
+			command = "setlocal tabstop=2 shiftwidth=2",
+		})
 
-		conform.setup({
+		return {
 			formatters_by_ft = {
 				css = { "prettier" },
 				html = { "prettier" },
@@ -27,19 +29,20 @@ return {
 				async = false,
 				timeout_ms = 1000,
 			},
-		})
-
-		vim.keymap.set({ "n", "v" }, "<leader>mp", function()
-			conform.format({
-				lsp_fallback = true,
-				async = true,
-				timeout_ms = 1000,
-			})
-		end, { desc = "Make Pretty (Format file or range in visual mode)" })
-
-		vim.api.nvim_create_autocmd("FileType", {
-			pattern = "java",
-			command = "setlocal tabstop=2 shiftwidth=2",
-		})
+		}
 	end,
+	keys = {
+		{
+			"<leader>mp",
+			function()
+				require("conform").format({
+					lsp_fallback = true,
+					async = true,
+					timeout_ms = 1000,
+				})
+			end,
+			{ "n", "v" },
+			{ desc = "Make Pretty (Format file or range in visual mode)" },
+		},
+	},
 }
