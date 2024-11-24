@@ -6,58 +6,54 @@ return {
 		"nvim-treesitter/nvim-treesitter-textobjects",
 	},
 	lazy = vim.fn.argc(-1) == 0, -- load treesitter early when opening a file from the cmdline
-	keys = {
-		{ "<leader>ti", "<cmd>InspectTree<CR>", desc = "Inspect treesitter nodes" },
-	},
-	opts = function()
+	init = function()
 		vim.treesitter.language.register("bash", "zsh")
 		vim.treesitter.language.register("bash", "tmux")
 		vim.treesitter.language.register("java", "aidl")
-
-		-- configure treesitter
-		return { -- enable syntax highlighting
-			-- automatically install missing parsers when entering buffer
-			auto_install = true,
-			highlight = {
-				enable = true,
+	end,
+	keys = {
+		{ "<leader>ti", "<cmd>InspectTree<CR>", desc = "Inspect treesitter nodes" },
+	},
+	main = "nvim-treesitter.configs",
+	opts = {
+		-- automatically install missing parsers when entering buffer
+		auto_install = true,
+		highlight = {
+			enable = true,
+		},
+		-- enable indentation
+		indent = { enable = true },
+		incremental_selection = {
+			enable = true,
+			keymaps = {
+				init_selection = "<CR>",
+				node_incremental = "<CR>",
+				scope_incremental = false,
+				node_decremental = "<bs>",
 			},
-			-- enable indentation
-			indent = { enable = true },
-			incremental_selection = {
+		},
+		textobjects = {
+			select = {
 				enable = true,
+				-- Automatically jump forward to textobj, similar to targets.vim
+				lookahead = true,
 				keymaps = {
-					init_selection = "<CR>",
-					node_incremental = "<CR>",
-					scope_incremental = false,
-					node_decremental = "<bs>",
+					["af"] = { query = "@function.outer", desc = "outer function" },
+					["if"] = { query = "@function.inner", desc = "inner function" },
+
+					["aa"] = { query = "@parameter.outer", desc = "outer argument" },
+					["ia"] = { query = "@parameter.inner", desc = "inner argument" },
+
+					["ac"] = { query = "@class.outer", desc = "outer class" },
+					["ic"] = { query = "@class.inner", desc = "inner class" },
+
+					["igc"] = { query = "@comment.outer", desc = "inner comment" },
+					["agc"] = { query = "@comment.outer", desc = "outer comment" },
+				},
+				selection_modes = {
+					["@function.outer"] = "V", -- linewise
 				},
 			},
-			textobjects = {
-				select = {
-					enable = true,
-					-- Automatically jump forward to textobj, similar to targets.vim
-					lookahead = true,
-					keymaps = {
-						["af"] = { query = "@function.outer", desc = "outer function" },
-						["if"] = { query = "@function.inner", desc = "inner function" },
-
-						["aa"] = { query = "@parameter.outer", desc = "outer argument" },
-						["ia"] = { query = "@parameter.inner", desc = "inner argument" },
-
-						["ac"] = { query = "@class.outer", desc = "outer class" },
-						["ic"] = { query = "@class.inner", desc = "inner class" },
-
-						["igc"] = { query = "@comment.outer", desc = "inner comment" },
-						["agc"] = { query = "@comment.outer", desc = "outer comment" },
-					},
-					selection_modes = {
-						["@function.outer"] = "V", -- linewise
-					},
-				},
-			},
-		}
-	end,
-	config = function(_, opts)
-		require("nvim-treesitter.configs").setup(opts)
-	end,
+		},
+	},
 }
