@@ -10,6 +10,7 @@ return {
 		"danielfalk/smart-open.nvim",
 		"olacin/telescope-gitmoji.nvim",
 	},
+    event = {"BufReadPre", "BufNewFile"},
 	keys = {
 		{ "<leader>fs", "<cmd>Telescope live_grep<cr>", desc = "Find String in cwd" },
 		{ "<leader>fc", "<cmd>Telescope grep_string<cr>", desc = "Find string under Cursor in cwd" },

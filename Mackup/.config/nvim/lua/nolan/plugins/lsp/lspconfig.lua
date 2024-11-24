@@ -6,7 +6,7 @@ return {
 		"hrsh7th/cmp-nvim-lsp",
 		{ "antosha417/nvim-lsp-file-operations", config = true },
 		{ "folke/neodev.nvim", opts = {} },
-		{ "nvim-java/nvim-java" },
+		-- { "nvim-java/nvim-java" },
 	},
 	config = function()
 		-- import lspconfig plugin
@@ -123,24 +123,7 @@ return {
 				})
 			end,
 			["jdtls"] = function()
-				lspconfig["jdtls"].setup({
-					capabilities = capabilities,
-					settings = {
-						java = {
-							inlayHints = { parameterNames = { enabled = "all" } },
-							jdt = {
-								ls = {
-									androidSupport = {
-										enabled = true,
-									},
-								},
-							},
-                            signatureHelp = {
-                                enabled = true,
-                            },
-						},
-					},
-				})
+                -- Do nothing because we are using nvim-jdtls plugin
 			end,
 		})
 	end,
