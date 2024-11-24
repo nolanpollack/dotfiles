@@ -28,6 +28,7 @@ return {
 
 		-- Include javadoc snippets with java
 		luasnip.filetype_extend("java", { "javadoc" })
+		luasnip.filetype_extend("java", { "java-testing" })
 
 		return {
 			completion = {
