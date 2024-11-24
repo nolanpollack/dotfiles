@@ -1,22 +1,21 @@
 return {
 	"stevearc/oil.nvim",
-	opts = {},
 	dependencies = { { "echasnovski/mini.icons", opts = {} } },
-	config = function()
-		require("oil").setup({
-			keymaps = {
-				["<leader>sv"] = {
-					"actions.select",
-					opts = { vertical = true },
-					desc = "Open the entry in a vertical split",
-				},
-				["<leader>sh"] = {
-					"actions.select",
-					opts = { horizontal = true },
-					desc = "Open the entry in a horizontal split",
-				},
+	keys = {
+		{ "<leader>o", "<cmd>Oil --float<CR>", desc = "Open oil" },
+	},
+	opts = {
+		keymaps = {
+			["<leader>sv"] = {
+				"actions.select",
+				opts = { vertical = true },
+				desc = "Open the entry in a vertical split",
 			},
-		})
-		vim.keymap.set("n", "<leader>o", "<cmd>Oil --float<CR>", { desc = "Open oil" })
-	end,
+			["<leader>sh"] = {
+				"actions.select",
+				opts = { horizontal = true },
+				desc = "Open the entry in a horizontal split",
+			},
+		},
+	},
 }
