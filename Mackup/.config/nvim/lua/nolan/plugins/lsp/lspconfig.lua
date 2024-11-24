@@ -128,6 +128,13 @@ return {
 					settings = {
 						java = {
 							inlayHints = { parameterNames = { enabled = "all" } },
+							jdt = {
+								ls = {
+									androidSupport = {
+										enabled = true,
+									},
+								},
+							},
 						},
 					},
 				})
