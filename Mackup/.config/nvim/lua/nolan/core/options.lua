@@ -31,3 +31,5 @@ vim.filetype.add({
 		["jenkins"] = "groovy",
 	},
 })
+
+opt.termguicolors = true

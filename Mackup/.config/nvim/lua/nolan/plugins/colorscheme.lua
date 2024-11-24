@@ -11,6 +11,7 @@ return {
 				},
 				fidget = true,
 				noice = true,
+                diffview = true,
 			},
 		})
 

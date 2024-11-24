@@ -1,14 +1,15 @@
 return {
 	"nvim-tree/nvim-tree.lua",
 	dependencies = "nvim-tree/nvim-web-devicons",
-	config = function()
-		local nvimtree = require("nvim-tree")
-
+	keys = {
+		{ "<leader>e", "<cmd>NvimTreeFindFileToggle<CR>", { desc = "Toggle file explorer" } },
+	},
+	opts = function()
 		-- recommended settings from nvim-tree documentation
 		vim.g.loaded_netrw = 1
 		vim.g.loaded_netrwPlugin = 1
 
-		nvimtree.setup({
+		return {
 			view = {
 				width = 35,
 				relativenumber = true,
@@ -61,11 +62,6 @@ return {
 				vim.keymap.set("n", "sv", api.node.open.vertical, opts("Open: Vertical Split"))
 				vim.keymap.set("n", "sh", api.node.open.horizontal, opts("Open: Horizontal Split"))
 			end,
-		})
-
-		-- set keymaps
-		local keymap = vim.keymap -- for conciseness
-
-		keymap.set("n", "<leader>e", "<cmd>NvimTreeFindFileToggle<CR>", { desc = "Toggle file explorer" }) -- toggle file explorer
+		}
 	end,
 }

@@ -26,7 +26,7 @@ return {
 		-- loads vscode style snippets from installed plugins (e.g. friendly-snippets)
 		require("luasnip.loaders.from_vscode").lazy_load()
 
-		-- Include javadoc snippets with java
+		-- Include javadoc and junit snippets with java
 		luasnip.filetype_extend("java", { "javadoc" })
 		luasnip.filetype_extend("java", { "java-testing" })
 
