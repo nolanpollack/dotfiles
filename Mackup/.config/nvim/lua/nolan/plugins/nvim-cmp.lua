@@ -59,7 +59,6 @@ return {
 					if copilot.is_visible() then
 						copilot.accept()
 					elseif luasnip.locally_jumpable(1) then
-						-- TODO: Better handle when copilot and luasnip are both active
 						luasnip.jump(1)
 					else
 						fallback()
