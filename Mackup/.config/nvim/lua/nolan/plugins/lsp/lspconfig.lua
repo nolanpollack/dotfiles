@@ -122,6 +122,16 @@ return {
 					},
 				})
 			end,
+			["jdtls"] = function()
+				lspconfig["jdtls"].setup({
+					capabilities = capabilities,
+					settings = {
+						java = {
+							inlayHints = { parameterNames = { enabled = "all" } },
+						},
+					},
+				})
+			end,
 		})
 	end,
 }
