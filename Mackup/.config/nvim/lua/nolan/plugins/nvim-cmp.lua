@@ -15,22 +15,21 @@ return {
 		"saadparwaiz1/cmp_luasnip", -- for autocompletion
 		"rafamadriz/friendly-snippets", -- useful snippets
 		"onsails/lspkind.nvim", -- vs-code like pictograms
-		"kawre/neotab.nvim", -- tabout
 		"luckasRanarison/tailwind-tools.nvim", -- tailwind highlighting
 	},
-	config = function()
+	opts = function()
 		local cmp = require("cmp")
-
 		local luasnip = require("luasnip")
-
 		local lspkind = require("lspkind")
-
-		local neotab = require("neotab")
+		local copilot = require("copilot.suggestion")
 
 		-- loads vscode style snippets from installed plugins (e.g. friendly-snippets)
 		require("luasnip.loaders.from_vscode").lazy_load()
 
-		cmp.setup({
+		-- Include javadoc snippets with java
+		luasnip.filetype_extend("java", { "javadoc" })
+
+		return {
 			completion = {
 				completeopt = "menu,menuone,preview,noselect",
 			},
@@ -42,13 +41,9 @@ return {
 			mapping = {
 				["<CR>"] = cmp.mapping(function(fallback)
 					if cmp.visible() and cmp.get_active_entry() then
-						if luasnip.expandable() then
-							luasnip.expand()
-						else
-							cmp.confirm({
-								select = true,
-							})
-						end
+						cmp.confirm({
+							select = true,
+						})
 					elseif cmp.visible() then
 						cmp.close()
 					else
@@ -61,12 +56,11 @@ return {
 
 				-- tab to scroll down in menu
 				["<Tab>"] = cmp.mapping(function(fallback)
-					if luasnip.locally_jumpable(1) then
+					if copilot.is_visible() then
+						copilot.accept()
+					elseif luasnip.locally_jumpable(1) then
+						-- TODO: Better handle when copilot and luasnip are both active
 						luasnip.jump(1)
-						-- 	elseif cmp.visible() and cmp.get_selected_entry() and not cmp.get_active_entry() then -- This will select the preselected item in the completion menu
-						-- 		cmp.select_next_item({ count = 0 })
-						-- 	elseif cmp.visible() then
-						-- 		cmp.select_next_item()
 					else
 						fallback()
 					end
@@ -76,17 +70,6 @@ return {
 				["<S-Tab>"] = cmp.mapping(function(fallback)
 					if luasnip.locally_jumpable(-1) then
 						luasnip.jump(-1)
-					elseif cmp.visible() then
-						cmp.select_prev_item()
-					else
-						fallback()
-					end
-				end, { "i", "s" }),
-
-				-- close completion menu with <A-e>
-				["<A-e>"] = cmp.mapping(function(fallback)
-					if cmp.visible() then
-						cmp.close()
 					else
 						fallback()
 					end
@@ -94,10 +77,10 @@ return {
 			},
 			-- sources for autocompletion
 			sources = cmp.config.sources({
+				{ name = "nvim_lsp" },
 				{ name = "luasnip" }, -- snippets
 				{ name = "buffer" }, -- text within current buffer
 				{ name = "path" }, -- file system paths
-				{ name = "nvim_lsp" },
 			}),
 
 			-- configure lspkind for vs-code like pictograms in completion menu
@@ -118,6 +101,6 @@ return {
 				}),
 				matching = { disallow_symbol_nonprefix_matching = false },
 			}),
-		})
+		}
 	end,
 }
