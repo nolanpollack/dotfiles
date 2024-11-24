@@ -24,8 +24,8 @@ return {
 			lualine_a = { "mode" },
 			lualine_b = { { "filename", path = 1 } },
 			lualine_c = {},
-			lualine_x = {},
-			lualine_y = { "branch", "diff", "diagnostics" },
+			lualine_x = { "diagnostics" },
+			lualine_y = { "branch", "diff" },
 			lualine_z = { "filetype" },
 		},
 		inactive_sections = {

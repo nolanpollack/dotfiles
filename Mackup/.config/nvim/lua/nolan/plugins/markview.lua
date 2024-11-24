@@ -4,8 +4,5 @@ return {
 	dependencies = {
 		"echasnovski/mini.icons",
 	},
-
-	config = function()
-		require("markview").setup()
-	end,
+    opts = {}
 }
