@@ -39,11 +39,17 @@ return {
 
 						["aa"] = { query = "@parameter.outer", desc = "outer argument" },
 						["ia"] = { query = "@parameter.inner", desc = "inner argument" },
+
+						["ac"] = { query = "@class.outer", desc = "outer class" },
+						["ic"] = { query = "@class.inner", desc = "inner class" },
+
+						["igc"] = { query = "@comment.outer", desc = "inner comment" },
+						["agc"] = { query = "@comment.outer", desc = "outer comment" },
 					},
 					selection_modes = {
 						["@function.outer"] = "V", -- linewise
 					},
-					include_surrounding_whitespace = true,
+					-- include_surrounding_whitespace = true,
 				},
 			},
 		})
