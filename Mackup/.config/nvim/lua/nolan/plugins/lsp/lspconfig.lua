@@ -135,6 +135,9 @@ return {
 									},
 								},
 							},
+                            signatureHelp = {
+                                enabled = true,
+                            },
 						},
 					},
 				})
