@@ -6,7 +6,6 @@ return {
 		"hrsh7th/cmp-nvim-lsp",
 		{ "antosha417/nvim-lsp-file-operations", config = true },
 		{ "folke/neodev.nvim", opts = {} },
-		-- { "nvim-java/nvim-java" },
 	},
 	config = function()
 		-- import lspconfig plugin
