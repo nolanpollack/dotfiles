@@ -60,6 +60,8 @@ return {
 
 		vim.lsp.inlay_hint.enable()
 
+		local mason_registry = require("mason-registry")
+
 		mason_lspconfig.setup_handlers({
 			-- default handler for installed servers
 			function(server_name)
@@ -121,7 +123,18 @@ return {
 				})
 			end,
 			["jdtls"] = function()
-                -- Do nothing because we are using nvim-jdtls plugin
+				-- Do nothing because we are using nvim-jdtls plugin
+			end,
+			["groovyls"] = function()
+				lspconfig["groovyls"].setup({
+					capabilities = capabilities,
+					cmd = {
+						"java",
+						"-jar",
+						mason_registry.get_package("groovy-language-server"):get_install_path()
+							.. "/build/libs/groovy-language-server-all.jar",
+					},
+				})
 			end,
 		})
 	end,
