@@ -29,6 +29,7 @@ return {
 			{ "<leader>f", group = "Find", icon = "" },
 			{ "<leader>b", group = "Buffer", icon = "" },
 			{ "<leader>bs", "Sort", icon = "󰒺" },
+			{ "<leader>g", group = "git" },
 		},
 	},
 	keys = {

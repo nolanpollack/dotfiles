@@ -18,7 +18,7 @@ return {
 				})
 			end,
 			{ "n", "v" },
-			{ desc = "Make Pretty (Format file or range in visual mode)" },
+			desc = "Make Pretty (Format file or range in visual mode)",
 		},
 	},
 	opts = {
