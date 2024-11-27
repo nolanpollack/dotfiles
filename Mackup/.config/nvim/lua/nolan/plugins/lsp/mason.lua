@@ -39,6 +39,9 @@ return {
 				"shellcheck", -- bash linter
 				"pylint",
 				"eslint_d",
+				"jdtls",
+				"java-debug-adapter",
+				"java-test",
 			},
 		})
 	end,
