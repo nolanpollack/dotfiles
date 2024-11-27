@@ -11,7 +11,7 @@ return {
 			python = { "pylint" },
 			typescript = { "eslint_d" },
 			typescriptreact = { "eslint_d" },
-			groovy = { "npm-groovy-lint" },
+			-- groovy = { "npm-groovy-lint" },
 		}
 
 		lint.linters.pylint.cmd = "python"
