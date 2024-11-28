@@ -50,7 +50,7 @@ return {
 								local severity = diagnostic.severity
 								local name = vim.diagnostic.severity[severity]:lower()
 								-- Make first character of name upper
-								name = name:gsub("^%l", string.upper)
+								name = name:sub(1,1):upper() .. name:sub(2)
 								local sign = vim.fn.sign_getdefined("DiagnosticSign" .. name)[1].text
 								table.insert(hover_text, 1, string.format("%s %s", sign, diagnostic.message))
 							end
@@ -76,11 +76,8 @@ return {
 					end)
 				end
 
-				-- Bind the custom function to a keymapping
 				vim.keymap.set("n", "K", hover_with_diagnostics, { noremap = true, silent = true })
 
-				-- opts.desc = "Hover"
-				-- keymap.set("n", "K", vim.lsp.buf.hover, opts)
 				opts.desc = "Show LSP definitions"
 				keymap.set("n", "gd", "<cmd>Telescope lsp_definitions<CR>", opts) -- show lsp definitions
 
@@ -89,9 +86,6 @@ return {
 
 				opts.desc = "Smart rename"
 				keymap.set({ "n", "v" }, "<leader>rn", vim.lsp.buf.rename, opts) -- smart rename
-
-				opts.desc = "View diagnostic"
-				keymap.set({ "n", "v" }, "<leader>dk", vim.diagnostic.open_float, opts) -- view diagnostic
 			end,
 		})
 
