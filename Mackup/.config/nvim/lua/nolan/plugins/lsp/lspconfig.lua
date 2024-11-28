@@ -55,17 +55,18 @@ return {
 							-- Make first character of name upper
 							name = name:sub(1, 1):upper() .. name:sub(2)
 							local sign = vim.fn.sign_getdefined("DiagnosticSign" .. name)[1].text
-							table.insert(hover_text, 1, string.format("%s %s", sign, diagnostic.message))
+							table.insert(hover_text, 1, string.format(" %s %s", sign, diagnostic.message))
 						end
 					end
 
 					if #hover_text == 0 then
+						vim.notify("No information available")
 						return
 					end
 
 					local bufnr = vim.lsp.util.open_floating_preview(hover_text, "markdown", {
 						border = "rounded",
-                        focus_id = ctx.method
+						focus_id = ctx.method,
 					})
 
 					if #diagnostics > 0 then
@@ -76,7 +77,7 @@ return {
 								"DiagnosticSign" .. vim.diagnostic.severity[diagnostic.severity]:lower(),
 								#diagnostics - i,
 								0,
-								-1
+								2
 							)
 						end
 					end
