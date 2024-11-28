@@ -27,10 +27,57 @@ return {
 				-- See `:help vim.lsp.*` for documentation on any of the below functions
 				local opts = { buffer = ev.buf, silent = true }
 
-                -- Rounded border for hover
-				vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
-					border = "rounded",
-				})
+				local function hover_with_diagnostics()
+					local hover_params = vim.lsp.util.make_position_params()
+
+					vim.lsp.buf_request(0, "textDocument/hover", hover_params, function(_, result, _, _)
+						if not result or not result.contents then
+							return
+						end
+
+						local diagnostics = vim.diagnostic.get(0, { lnum = vim.api.nvim_win_get_cursor(0)[1] - 1 })
+
+						local hover_text = vim.lsp.util.convert_input_to_markdown_lines(result.contents)
+
+						if #diagnostics > 0 then
+							table.sort(diagnostics, function(a, b)
+								return a.severity > b.severity
+							end)
+							if #hover_text > 0 then
+								table.insert(hover_text, 1, "---")
+							end
+							for _, diagnostic in ipairs(diagnostics) do
+								local severity = diagnostic.severity
+								local name = vim.diagnostic.severity[severity]:lower()
+								-- Make first character of name upper
+								name = name:gsub("^%l", string.upper)
+								local sign = vim.fn.sign_getdefined("DiagnosticSign" .. name)[1].text
+								table.insert(hover_text, 1, string.format("%s %s", sign, diagnostic.message))
+							end
+						end
+						vim.diagnostic.open_float()
+
+						local bufnr = vim.lsp.util.open_floating_preview(hover_text, "markdown", {
+							border = "rounded",
+						})
+
+						if #diagnostics > 0 then
+							for i, diagnostic in ipairs(diagnostics) do
+								vim.api.nvim_buf_add_highlight(
+									bufnr,
+									-1,
+									"DiagnosticSign" .. vim.diagnostic.severity[diagnostic.severity]:lower(),
+									#diagnostics - i,
+									0,
+									-1
+								)
+							end
+						end
+					end)
+				end
+
+				-- Bind the custom function to a keymapping
+				vim.keymap.set("n", "K", hover_with_diagnostics, { noremap = true, silent = true })
 
 				-- opts.desc = "Hover"
 				-- keymap.set("n", "K", vim.lsp.buf.hover, opts)
