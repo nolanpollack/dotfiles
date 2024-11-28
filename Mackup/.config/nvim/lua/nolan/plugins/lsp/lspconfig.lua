@@ -18,6 +18,8 @@ return {
 
 		local keymap = vim.keymap -- for conciseness
 
+		vim.lsp.inlay_hint.enable()
+
 		vim.api.nvim_create_autocmd("LspAttach", {
 			group = vim.api.nvim_create_augroup("UserLspConfig", {}),
 			callback = function(ev)
@@ -25,6 +27,13 @@ return {
 				-- See `:help vim.lsp.*` for documentation on any of the below functions
 				local opts = { buffer = ev.buf, silent = true }
 
+                -- Rounded border for hover
+				vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
+					border = "rounded",
+				})
+
+				-- opts.desc = "Hover"
+				-- keymap.set("n", "K", vim.lsp.buf.hover, opts)
 				opts.desc = "Show LSP definitions"
 				keymap.set("n", "gd", "<cmd>Telescope lsp_definitions<CR>", opts) -- show lsp definitions
 
@@ -35,7 +44,7 @@ return {
 				keymap.set({ "n", "v" }, "<leader>rn", vim.lsp.buf.rename, opts) -- smart rename
 
 				opts.desc = "View diagnostic"
-				keymap.set({ "n", "v" }, "<leader>d", vim.diagnostic.open_float, opts) -- view diagnostic
+				keymap.set({ "n", "v" }, "<leader>dk", vim.diagnostic.open_float, opts) -- view diagnostic
 			end,
 		})
 
@@ -57,8 +66,6 @@ return {
 			}
 			vim.lsp.buf.execute_command(params)
 		end
-
-		vim.lsp.inlay_hint.enable()
 
 		local mason_registry = require("mason-registry")
 
