@@ -42,6 +42,7 @@ return {
 				"jdtls",
 				"java-debug-adapter",
 				"java-test",
+                "groovyls",
 			},
 		})
 	end,
