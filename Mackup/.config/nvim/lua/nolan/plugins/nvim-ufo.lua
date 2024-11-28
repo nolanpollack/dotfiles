@@ -22,15 +22,6 @@ return {
 				require("ufo").closeAllFolds()
 			end,
 		},
-		{
-			"K",
-			function()
-				local winid = require("ufo").peekFoldedLinesUnderCursor()
-				if not winid then
-					vim.lsp.buf.hover()
-				end
-			end,
-		},
 	},
 	opts = function()
 		local handler = function(virtText, lnum, endLnum, width, truncate)
