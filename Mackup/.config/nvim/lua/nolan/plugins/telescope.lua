@@ -17,7 +17,7 @@ return {
 		{ "<leader>ft", "<cmd>TodoTelescope<cr>", desc = "Find Todos" },
 		{ "<leader>fb", "<cmd>Telescope buffers<cr>", desc = "Find Buffers" },
 		{ "<leader>fg", "<cmd>Telescope gitmoji<cr>", desc = "Find Gitmoji for commits" },
-		{ "<leader>fp", "<cmd>Telescope builtin<cr>", desc = "Find telescope Pickers" },
+		{ "<leader>ff", "<cmd>Telescope builtin<cr>", desc = "Find telescope Pickers" },
 		{ "<leader><leader>", "<cmd>Telescope smart_open<cr>", desc = "Smart open files" },
 	},
 	opts = function()
