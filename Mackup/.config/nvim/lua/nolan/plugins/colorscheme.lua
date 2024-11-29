@@ -11,7 +11,15 @@ return {
 				},
 				fidget = true,
 				noice = true,
-                diffview = true,
+				diffview = true,
+			},
+			highlight_overrides = {
+				mocha = function(colors)
+					return {
+						CmpItemMenu = { fg = colors.subtext0 },
+                        Pmenu = { bg = "NONE" },
+					}
+				end,
 			},
 		})
 
