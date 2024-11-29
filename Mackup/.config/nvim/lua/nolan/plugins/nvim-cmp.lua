@@ -1,6 +1,6 @@
 return {
 	"hrsh7th/nvim-cmp",
-	event = "InsertEnter",
+	event = { "InsertEnter", "CmdlineEnter" },
 	dependencies = {
 		"hrsh7th/cmp-buffer", -- source for text in buffer
 		"hrsh7th/cmp-path", -- source for file system paths
@@ -85,13 +85,35 @@ return {
 
 			-- configure lspkind for vs-code like pictograms in completion menu
 			formatting = {
-				format = lspkind.cmp_format({
-					before = require("tailwind-tools.cmp").lspkind_format,
-					maxwidth = 50,
-					ellipsis_char = "...",
-				}),
-			},
+				fields = { "kind", "abbr", "menu" },
+				format = function(entry, vim_item)
+					local kind = lspkind.cmp_format({
+						before = require("tailwind-tools.cmp").lspkind_format,
+						maxwidth = 50,
+						ellipsis_char = "...",
+					})(entry, vim_item)
 
+					local strings = vim.split(kind.kind, "%s", { trimempty = true })
+					kind.kind = (strings[1] or "")
+					kind.menu = "(" .. (strings[2] or "") .. ")"
+
+					return kind
+				end,
+			},
+            window = {
+                completion = {
+                    border = "rounded"
+                },
+                documentation = {
+                    border = "rounded"
+                }
+            },
+			cmp.setup.cmdline("/", {
+				mapping = cmp.mapping.preset.cmdline(),
+				sources = {
+					{ name = "buffer" },
+				},
+			}),
 			cmp.setup.cmdline(":", {
 				mapping = cmp.mapping.preset.cmdline(),
 				sources = cmp.config.sources({
