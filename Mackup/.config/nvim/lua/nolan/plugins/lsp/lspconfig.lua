@@ -34,15 +34,14 @@ return {
 						return
 					end
 
-
 					local diagnostics = vim.diagnostic.get(0, { lnum = vim.api.nvim_win_get_cursor(0)[1] - 1 })
 
-					if (not result or not result.contents) and #diagnostics == 0 then
-						vim.notify("No information available")
-						return
+					local hover_text
+					if not result or not result.contents then
+						hover_text = {}
+					else
+						hover_text = vim.lsp.util.convert_input_to_markdown_lines(result.contents)
 					end
-
-					local hover_text = vim.lsp.util.convert_input_to_markdown_lines(result.contents)
 
 					if #diagnostics > 0 then
 						table.sort(diagnostics, function(a, b)
