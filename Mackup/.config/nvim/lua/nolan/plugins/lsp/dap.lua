@@ -55,4 +55,28 @@ return {
 		end,
 	},
 	{ "rcarriga/nvim-dap-ui", dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" } },
+	{
+		"jbyuki/one-small-step-for-vimkind",
+		dependencies = { "mfussenegger/nvim-dap" },
+		filetype = {
+			"lua",
+		},
+		config = function()
+			local dap = require("dap")
+			dap.configurations.lua = {
+				{
+					type = "nlua",
+					request = "attach",
+					name = "Attach to running Neovim instance",
+				},
+			}
+
+			dap.adapters.nlua = function(callback, config)
+				callback({ type = "server", host = "127.0.0.1", port = 8090 })
+			end
+			vim.keymap.set("n", "<leader>dl", function()
+				require("osv").launch({port=8090})
+			end, { noremap = true })
+		end,
+	},
 }
