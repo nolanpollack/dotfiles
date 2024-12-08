@@ -40,6 +40,7 @@ return {
 				init_options = {
 					bundles = bundles,
 				},
+				capabilities = require("cmp_nvim_lsp").default_capabilities(),
 				settings = opts.settings,
 			})
 		end
