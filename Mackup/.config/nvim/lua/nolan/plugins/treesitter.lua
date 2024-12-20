@@ -21,6 +21,9 @@ return {
 		highlight = {
 			enable = true,
 		},
+        ensure_installed = {
+            "latex"
+        },
 		-- enable indentation
 		indent = { enable = true },
 		incremental_selection = {
