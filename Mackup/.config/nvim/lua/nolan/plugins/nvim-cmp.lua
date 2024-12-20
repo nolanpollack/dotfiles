@@ -22,6 +22,7 @@ return {
 		local luasnip = require("luasnip")
 		local lspkind = require("lspkind")
 		local copilot = require("copilot.suggestion")
+        local neotab = require("neotab");
 
 		-- loads vscode style snippets from installed plugins (e.g. friendly-snippets)
 		require("luasnip.loaders.from_vscode").lazy_load()
@@ -62,7 +63,7 @@ return {
 					elseif luasnip.locally_jumpable(1) then
 						luasnip.jump(1)
 					else
-						fallback()
+						neotab.tabout()
 					end
 				end, { "i", "s" }),
 
