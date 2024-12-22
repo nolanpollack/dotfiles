@@ -4,5 +4,5 @@ return {
 	dependencies = {
 		"echasnovski/mini.icons",
 	},
-    opts = {}
+	opts = {},
 }
