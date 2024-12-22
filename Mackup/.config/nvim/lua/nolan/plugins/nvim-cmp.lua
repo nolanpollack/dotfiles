@@ -22,7 +22,7 @@ return {
 		local luasnip = require("luasnip")
 		local lspkind = require("lspkind")
 		local copilot = require("copilot.suggestion")
-        local neotab = require("neotab");
+		local neotab = require("neotab")
 
 		-- loads vscode style snippets from installed plugins (e.g. friendly-snippets)
 		require("luasnip.loaders.from_vscode").lazy_load()
@@ -57,7 +57,7 @@ return {
 				["<C-j>"] = cmp.mapping.select_next_item(),
 
 				-- tab to scroll down in menu
-				["<Tab>"] = cmp.mapping(function(fallback)
+				["<Tab>"] = cmp.mapping(function()
 					if copilot.is_visible() then
 						copilot.accept()
 					elseif luasnip.locally_jumpable(1) then
@@ -86,29 +86,28 @@ return {
 
 			-- configure lspkind for vs-code like pictograms in completion menu
 			formatting = {
-				fields = { "kind", "abbr", "menu" },
+				fields = { "abbr", "kind", "menu" },
 				format = function(entry, vim_item)
 					local kind = lspkind.cmp_format({
 						before = require("tailwind-tools.cmp").lspkind_format,
 						maxwidth = 50,
-						ellipsis_char = "...",
-					})(entry, vim_item)
+                        ellipsis_char = "...",
+                    })(entry, vim_item)
 
 					local strings = vim.split(kind.kind, "%s", { trimempty = true })
-					kind.kind = (strings[1] or "")
-					kind.menu = "(" .. (strings[2] or "") .. ")"
+					kind.kind = (strings[1] or "") .. " " .. (strings[2] or "")
 
 					return kind
 				end,
 			},
-            window = {
-                completion = {
-                    border = "rounded"
-                },
-                documentation = {
-                    border = "rounded"
-                }
-            },
+			window = {
+				completion = {
+					border = "rounded",
+				},
+				documentation = {
+					border = "rounded",
+				},
+			},
 			cmp.setup.cmdline("/", {
 				mapping = cmp.mapping.preset.cmdline(),
 				sources = {
