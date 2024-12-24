@@ -32,3 +32,15 @@ keymap.set({ "i", "c" }, "<C-h>", "<Left>", { desc = "Move Left in insert mode" 
 keymap.set({ "i", "c" }, "<C-l>", "<Right>", { desc = "Move Right in insert mode" })
 
 keymap.set("n", "<leader>rl", ":set relativenumber!<CR>", { desc = "Toggle relative line numbers", silent = true })
+
+local function ansi_colorize()
+	local buf = vim.api.nvim_get_current_buf()
+
+	local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+	vim.api.nvim_chan_send(vim.api.nvim_open_term(buf, {}), table.concat(lines, "\r\n"))
+end
+
+vim.api.nvim_create_autocmd("BufReadPost", {
+	pattern = "*.ansi",
+	callback = ansi_colorize, -- Call your Lua function here
+})
