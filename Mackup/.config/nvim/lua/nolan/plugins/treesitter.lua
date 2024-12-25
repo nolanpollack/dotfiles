@@ -13,6 +13,8 @@ return {
 	end,
 	keys = {
 		{ "<leader>ti", "<cmd>InspectTree<CR>", desc = "Inspect treesitter nodes" },
+        {"<S-M-h>", "<cmd>TSTextobjectSwapPrevious @parameter.inner<CR>", desc = "Swap to next parameter"},
+        {"<S-M-l>", "<cmd>TSTextobjectSwapNext @parameter.inner<CR>", desc = "Swap to previous parameter"},
 	},
 	main = "nvim-treesitter.configs",
 	opts = {
@@ -22,7 +24,8 @@ return {
 			enable = true,
 		},
         ensure_installed = {
-            "latex"
+            "latex",
+            "regex"
         },
 		-- enable indentation
 		indent = { enable = true },
