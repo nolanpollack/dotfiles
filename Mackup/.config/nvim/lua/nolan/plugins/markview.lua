@@ -4,5 +4,6 @@ return {
 	dependencies = {
 		"echasnovski/mini.icons",
 	},
-	opts = {},
+	ft = { "markdown", "Avante" },
+	opts = { filetypes = { "markdown", "Avante" } },
 }

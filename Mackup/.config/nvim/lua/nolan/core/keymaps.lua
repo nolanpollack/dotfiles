@@ -17,8 +17,6 @@ keymap.set("n", "<leader>ss", "<C-w>x", { desc = "Swap windows" }) -- swap windo
 keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move line down in visual mode" })
 keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move line up in visual mode" })
 
-keymap.set("n", "<leader>a", "gg<S-v>G", { desc = "Select all" })
-
 -- Better motions
 keymap.set({ "n", "v", "o" }, "H", "^", { desc = "First non-whitespace character in line" })
 keymap.set({ "n", "v", "o" }, "L", "$", { desc = "Last character in line" })

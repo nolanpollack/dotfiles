@@ -33,7 +33,9 @@ source "$ZSH_DIRECTORY/fzf.zsh"
 source "$ZSH_DIRECTORY/zsh-vi-mode.zsh"
 
 # fast-syntax-highlighting - Must be sourced last
-source "$ZSH_DIRECTORY/fast-syntax-highlighting.zsh"
+# source "$ZSH_DIRECTORY/fast-syntax-highlighting.zsh"
 
 # Aliases
 source "$ZSH_DIRECTORY/aliases.zsh"
+
+export XDG_RUNTIME_DIR=/tmp
