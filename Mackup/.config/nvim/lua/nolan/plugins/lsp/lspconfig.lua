@@ -20,7 +20,7 @@ return {
 
 		vim.lsp.inlay_hint.enable()
 
-        vim.lsp.log.set_format_func(vim.inspect)
+		vim.lsp.log.set_format_func(vim.inspect)
 
 		vim.api.nvim_create_autocmd("LspAttach", {
 			group = vim.api.nvim_create_augroup("UserLspConfig", {}),
@@ -38,27 +38,28 @@ return {
 
 					local diagnostics = vim.diagnostic.get(0, { lnum = vim.api.nvim_win_get_cursor(0)[1] - 1 })
 
-					local hover_text
-					if not result or not result.contents then
-						hover_text = {}
-					else
-						hover_text = vim.lsp.util.convert_input_to_markdown_lines(result.contents)
-					end
+					local hover_text = {}
 
 					if #diagnostics > 0 then
 						table.sort(diagnostics, function(a, b)
-							return a.severity > b.severity
+							return a.severity < b.severity
 						end)
-						if #hover_text > 0 then
-							table.insert(hover_text, 1, "---")
-						end
 						for _, diagnostic in ipairs(diagnostics) do
 							local severity = diagnostic.severity
 							local name = vim.diagnostic.severity[severity]:lower()
 							-- Make first character of name upper
 							name = name:sub(1, 1):upper() .. name:sub(2)
 							local sign = vim.fn.sign_getdefined("DiagnosticSign" .. name)[1].text
-							table.insert(hover_text, 1, string.format(" %s %s", sign, diagnostic.message))
+							table.insert(hover_text, string.format(" %s %s", sign, diagnostic.message))
+						end
+					end
+
+					if result and result.contents then
+						if #hover_text > 0 then
+							table.insert(hover_text, "---")
+						end
+						for _, line in ipairs(vim.lsp.util.convert_input_to_markdown_lines(result.contents)) do
+							table.insert(hover_text, line)
 						end
 					end
 
@@ -73,15 +74,18 @@ return {
 					})
 
 					if #diagnostics > 0 then
+						local offset = 0
 						for i, diagnostic in ipairs(diagnostics) do
 							vim.api.nvim_buf_add_highlight(
 								bufnr,
 								-1,
 								"DiagnosticSign" .. vim.diagnostic.severity[diagnostic.severity]:lower(),
-								#diagnostics - i,
+								i - 1 + offset,
 								0,
 								2
 							)
+							-- for multi line messages, so it highlights correct line
+							offset = #vim.split(diagnostic.message, "\n") - 1
 						end
 					end
 				end
