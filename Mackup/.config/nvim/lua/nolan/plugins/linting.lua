@@ -5,6 +5,7 @@ return {
 		local lint = require("lint")
 
 		lint.linters_by_ft = {
+            bash = { "shellcheck" },
 			java = { "checkstyle" },
 			javascript = { "eslint_d" },
 			javascriptreact = { "eslint_d" },
