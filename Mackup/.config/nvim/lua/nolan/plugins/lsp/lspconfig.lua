@@ -85,7 +85,7 @@ return {
 								2
 							)
 							-- for multi line messages, so it highlights correct line
-							offset = #vim.split(diagnostic.message, "\n") - 1
+							offset = offset + #vim.split(diagnostic.message, "\n") - 1
 						end
 					end
 				end
