@@ -30,19 +30,37 @@ return {
 				end,
 				desc = "Debug step into",
 			},
+			{
+				"<leader>duio",
+				function()
+					require("dapui").open()
+				end,
+				desc = "Open dap UI (Should make this automatic)",
+			},
+			{
+				"<leader>duic",
+				function()
+					require("dapui").close()
+				end,
+				desc = "close dap UI (Should make this automatic)",
+			},
 		},
 		config = function()
+			local dapui = require("dapui")
+			-- TODO: Load dapui lazily when dap loads
+			dapui.setup()
+
 			local sign = vim.fn.sign_define
 
 			sign("DapBreakpoint", { text = "●", texthl = "DapBreakpoint", linehl = "", numhl = "" })
 			sign("DapBreakpointCondition", { text = "●", texthl = "DapBreakpointCondition", linehl = "", numhl = "" })
 			sign("DapLogPoint", { text = "◆", texthl = "DapLogPoint", linehl = "", numhl = "" })
 
-			local dap, dapui, wk = require("dap"), require("dapui"), require("which-key")
+			local dap, wk = require("dap"), require("which-key")
 			wk.add({ "<leader>d", group = "Debug" })
-			-- dap.listeners.before.attach.dapui_config = function()
-			-- 	dapui.open()
-			-- end
+			dap.listeners.before.attach.dapui_config = function()
+				dapui.open()
+			end
 			-- dap.listeners.before.launch.dapui_config = function()
 			-- 	dapui.open()
 			-- end
@@ -75,7 +93,7 @@ return {
 				callback({ type = "server", host = "127.0.0.1", port = 8090 })
 			end
 			vim.keymap.set("n", "<leader>dl", function()
-				require("osv").launch({port=8090})
+				require("osv").launch({ port = 8090 })
 			end, { noremap = true })
 		end,
 	},
