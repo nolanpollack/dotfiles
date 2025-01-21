@@ -15,4 +15,4 @@ alias batlog="bat --paging=never -l log"
 # Docker compose
 alias dc="docker compose"
 
-alias copy=xclip -sel clip
+alias copy="xclip -sel clip"
