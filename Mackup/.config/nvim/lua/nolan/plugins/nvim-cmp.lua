@@ -21,7 +21,7 @@ return {
 		local cmp = require("cmp")
 		local luasnip = require("luasnip")
 		local lspkind = require("lspkind")
-		-- local copilot = require("copilot.suggestion")
+		local copilot = require("copilot.suggestion")
 		local neotab = require("neotab")
 
 		-- loads vscode style snippets from installed plugins (e.g. friendly-snippets)
@@ -58,9 +58,9 @@ return {
 
 				-- tab to scroll down in menu
 				["<Tab>"] = cmp.mapping(function()
-					-- if copilot.is_visible() then
-					-- 	copilot.accept()
-					if luasnip.locally_jumpable(1) then
+					if copilot.is_visible() then
+						copilot.accept()
+                    elseif luasnip.locally_jumpable(1) then
 						luasnip.jump(1)
 					else
 						neotab.tabout()
