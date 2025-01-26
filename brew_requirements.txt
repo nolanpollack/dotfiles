@@ -24,6 +24,7 @@ mackup
 neovim
 node
 pv
+openjdk@17
 repo
 ripgrep
 rm-improved
@@ -31,6 +32,7 @@ speedtest-cli
 tealdeer
 thefuck
 xclip
+tokei
 yq
 zsh-autosuggestions
 zsh-fast-syntax-highlighting
