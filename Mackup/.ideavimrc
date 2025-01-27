@@ -16,6 +16,7 @@ set easymotion
 let g:EasyMotion_do_mapping = 0
 
 nmap gr <Action>(FindUsages)
+nmap gi <Action>(GotoImplementation)
 nmap <leader><leader> <Action>(SearchEverywhere)
 map <Leader>e <Action>(ActivateProjectToolWindow)
 map <tab> <Action>(ShowIntentionActions)
