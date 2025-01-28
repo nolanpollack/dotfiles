@@ -24,3 +24,5 @@
 	root = rev-parse --show-toplevel
 [rerere]
 	enabled = true
+[log]
+	date = format:%Y-%m-%d %I:%M:%S %p
