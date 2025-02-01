@@ -1,12 +1,6 @@
 return {
 	"stevearc/conform.nvim",
 	event = { "BufReadPre", "BufNewFile" },
-	init = function()
-		vim.api.nvim_create_autocmd("FileType", {
-			pattern = "java",
-			command = "setlocal tabstop=2 shiftwidth=2",
-		})
-	end,
 	keys = {
 		{
 			"<leader>mp",
@@ -39,5 +33,10 @@ return {
 			typescriptreact = { "prettier" },
 			yaml = { "prettier" },
 		},
+        formatters = {
+            ["google-java-format"] = {
+                prepend_args = { "--aosp" },
+            }
+        }
 	},
 }
