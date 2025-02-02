@@ -11,6 +11,14 @@ return {
 		behavior = {
 			auto_suggestions = false,
 		},
+		windows = {
+			input = {
+				height = 2,
+			},
+			ask = {
+				floating = true,
+			},
+		},
 	},
 	-- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
 	build = "make",
