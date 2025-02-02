@@ -12,6 +12,7 @@ return {
 			auto_suggestions = false,
 		},
 		windows = {
+            width = 40,
 			input = {
 				height = 2,
 			},
@@ -19,6 +20,15 @@ return {
 				floating = true,
 			},
 		},
+        mappings = {
+            diff = {
+                ours = "<leader>co",
+                theirs = "<leader>ct",
+                all_theirs = "<leader>ca",
+                both = "<leader>cb", -- What does this do?
+                cursor = "<leader>cc",
+            }
+        }
 	},
 	-- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
 	build = "make",
