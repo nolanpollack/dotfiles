@@ -26,7 +26,6 @@ export HOMEBREW_NO_ENV_HINTS=TRUE
 #             ;;
 #     esac
 # }
-
-eval $(brew shellenv zsh)
+eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)
 # Required for brew completions to work
 export FPATH="$HOMEBREW_PREFIX/share/zsh/site-functions:${FPATH:-}";
