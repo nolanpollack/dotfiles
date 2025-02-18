@@ -27,6 +27,13 @@ map <leader>g <Action>(Generate)
 map <Enter> <Action>(EditorSelectWord)
 map <backspace> <Action>(EditorUnSelectWord)
 
+// Splits
+map <leader>sv <Action>(SplitVertically)
+
+// Testing
+map <leader>tt <Action>(RunClass)
+map <leader>dd <Action>(DebugClass)
+
 map zat <Action>(ExpandCollapseToggleAction)
 map zrc <Action>(CollapseRegionRecursively)
 map zro <Action>(ExpandRegionRecursively)
