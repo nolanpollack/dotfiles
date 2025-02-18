@@ -39,3 +39,9 @@ source "$ZSH_DIRECTORY/fast-syntax-highlighting.zsh"
 source "$ZSH_DIRECTORY/aliases.zsh"
 
 export XDG_RUNTIME_DIR=/tmp
+
+# Android
+source "$ZSH_DIRECTORY/cdrepo.zsh"
+export PATH="$HOME/Android/Sdk/platform-tools:$PATH"
+export PATH="$HOME/Android/Sdk/tools:$PATH"
+export PATH="$HOME/Android/Sdk/build-tools:$PATH"
