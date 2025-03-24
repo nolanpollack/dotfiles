@@ -25,6 +25,7 @@ opt.autoindent = true
 opt.breakindent = true
 opt.breakindentopt = "sbr"
 opt.showbreak = "↳"
+opt.linebreak = true
 
 opt.foldmethod = "expr"
 opt.foldexpr = "nvim_treesitter#foldexpr()"
