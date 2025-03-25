@@ -38,3 +38,4 @@ yq
 zsh-autosuggestions
 zsh-fast-syntax-highlighting
 zsh-vi-mode
+zsh
