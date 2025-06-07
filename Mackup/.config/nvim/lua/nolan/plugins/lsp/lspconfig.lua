@@ -47,7 +47,7 @@ return {
 							local severity = diagnostic.severity
 							local name = vim.diagnostic.severity[severity]:lower()
 							name = name:sub(1, 1):upper() .. name:sub(2)
-							local sign = "temp" -- You can customize this
+							local sign = vim.diagnostic.config().signs.text[diagnostic.severity] or "?"
 							table.insert(hover_text, string.format(" %s %s", sign, diagnostic.message))
 						end
 						table.insert(hover_text, "---")
