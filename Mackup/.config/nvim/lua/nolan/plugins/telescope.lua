@@ -8,7 +8,6 @@ return {
 		"folke/todo-comments.nvim",
 		"kkharji/sqlite.lua",
 		"danielfalk/smart-open.nvim",
-		"olacin/telescope-gitmoji.nvim",
 	},
     event = {"BufReadPre", "BufNewFile"},
 	keys = {
@@ -16,7 +15,6 @@ return {
 		{ "<leader>fc", "<cmd>Telescope grep_string<cr>", desc = "Find string under Cursor in cwd" },
 		{ "<leader>ft", "<cmd>TodoTelescope<cr>", desc = "Find Todos" },
 		{ "<leader>fb", "<cmd>Telescope buffers<cr>", desc = "Find Buffers" },
-		{ "<leader>fg", "<cmd>Telescope gitmoji<cr>", desc = "Find Gitmoji for commits" },
 		{ "<leader>ff", "<cmd>Telescope builtin<cr>", desc = "Find telescope Pickers" },
 		{ "<leader>fh", "<cmd>Telescope help_tags<cr>", desc = "Help" },
 		{ "<leader><leader>", "<cmd>Telescope smart_open<cr>", desc = "Smart open files" },
