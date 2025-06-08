@@ -23,6 +23,20 @@ return {
 			end,
             desc = "Unstage hunk",
 		},
+        {
+            "]g",
+            function()
+                require("gitsigns").nav_hunk('next')
+            end,
+            desc = "Next hunk",
+        },
+        {
+            "[g",
+            function()
+                require("gitsigns").nav_hunk('prev')
+            end,
+            desc = "Previous hunk",
+        },
 	},
 	opts = {},
 }
