@@ -5,30 +5,30 @@ return {
 			view = {
 				["<leader>gd"] = "<cmd>DiffviewClose<CR>",
 			},
-            diff1 = {
-                ["<leader>gd"] = "<cmd>DiffviewClose<CR>",
-            },
-            diff2 = {
-                ["<leader>gd"] = "<cmd>DiffviewClose<CR>",
-            },
-            diff3 = {
-                ["<leader>gd"] = "<cmd>DiffviewClose<CR>",
-            },
-            diff4 = {
-                ["<leader>gd"] = "<cmd>DiffviewClose<CR>",
-            },
-            file_panel = {
-                ["<leader>gd"] = "<cmd>DiffviewClose<CR>",
-            },
-            file_history_panel = {
-                ["<leader>gd"] = "<cmd>DiffviewClose<CR>",
-            },
-            option_panel = {
-                ["<leader>gd"] = "<cmd>DiffviewClose<CR>",
-            },
-            help_panel = {
-                ["<leader>gd"] = "<cmd>DiffviewClose<CR>",
-            },
+			diff1 = {
+				["<leader>gd"] = "<cmd>DiffviewClose<CR>",
+			},
+			diff2 = {
+				["<leader>gd"] = "<cmd>DiffviewClose<CR>",
+			},
+			diff3 = {
+				["<leader>gd"] = "<cmd>DiffviewClose<CR>",
+			},
+			diff4 = {
+				["<leader>gd"] = "<cmd>DiffviewClose<CR>",
+			},
+			file_panel = {
+				["<leader>gd"] = "<cmd>DiffviewClose<CR>",
+			},
+			file_history_panel = {
+				["<leader>gd"] = "<cmd>DiffviewClose<CR>",
+			},
+			option_panel = {
+				["<leader>gd"] = "<cmd>DiffviewClose<CR>",
+			},
+			help_panel = {
+				["<leader>gd"] = "<cmd>DiffviewClose<CR>",
+			},
 		},
 	},
 	keys = {
@@ -41,7 +41,4 @@ return {
 			desc = "View changes made to this branch",
 		},
 	},
-    setup = function()
-        require("diffview").setup()
-    end,
 }
