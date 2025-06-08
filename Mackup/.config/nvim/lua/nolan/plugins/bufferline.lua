@@ -3,19 +3,6 @@ return {
 	"akinsho/bufferline.nvim",
 	dependencies = "nvim-tree/nvim-web-devicons",
 	lazy = false,
-	keys = {
-		{
-			"<leader>bb",
-			function()
-				require("bufferline").pick_buffer()
-			end,
-			desc = "Pick buffer",
-			mode = { "n", "v" },
-		},
-		{ "<leader>bd", ":bdelete<CR>", desc = "Delete buffer", mode = { "n", "v" } },
-		{ "<leader>bse", ":BufferLineSortByExtension<CR>", desc = "Sort by extension", mode = { "n", "v" } },
-		{ "<leader>bsn", ":BufferLineSortByDirectory<CR>", desc = "Sort by directory", mode = { "n", "v" } },
-	},
 	opts = {
 		options = {
 			always_show_bufferline = false,
