@@ -54,7 +54,7 @@ return {
 					end
 
 					-- Make the LSP request
-					local params = vim.lsp.util.make_position_params()
+					local params = vim.lsp.util.make_position_params(0, "utf-8")
 					vim.lsp.buf_request_all(0, "textDocument/hover", params, function(results)
 						local contents = {}
 						local client_name_shown = false
