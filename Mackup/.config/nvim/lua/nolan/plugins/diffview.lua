@@ -40,5 +40,20 @@ return {
 			"<cmd>DiffviewOpen origin/HEAD...HEAD --imply-local<CR>",
 			desc = "View changes made to this branch",
 		},
+		{
+			"<leader>gc",
+			function()
+				local line = vim.fn.line(".")
+				local file = vim.fn.expand("%")
+				vim.cmd("DiffviewFileHistory -L" .. line .. "," .. line .. ":" .. file)
+			end,
+			desc = "View changes made to the current selection",
+		},
+        {
+            "<leader>gc",
+            ":'<,'>DiffviewFileHistory<CR>",
+            desc = "View changes made to the current selection",
+            mode = "v",
+        }
 	},
 }
