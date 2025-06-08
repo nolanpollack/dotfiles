@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# TODO: I'm thinking mackup might be the wrong approach
 ln -s Mackup/.mackup.cfg "$HOME"/.mackup.cfg
 
 # Checks if homebrew is installed, and installs it if not. 
@@ -42,3 +43,13 @@ bat cache --build
 
 # Set up catppuccin theme for zsh syntax highlighting
 fast-theme ~/dotfiles/Mackup/.zsh/catppuccin-mocha.ini
+
+# Undercurl
+# https://dev.to/anurag_pramanik/how-to-enable-undercurl-in-neovim-terminal-and-tmux-setup-guide-2ld7
+if [ -z $(infocmp -l -x | rg Smulx) ]; then 
+    infocmp > /tmp/${TERM}.ti
+    sd -p '(smul=\\E\[4m,)' '${1} Smulx=\E[4:%p1%dm,' /tmp/${TERM}.ti
+    tic -x /tmp/${TERM}.ti
+fi
+
+
