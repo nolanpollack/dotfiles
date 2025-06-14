@@ -15,6 +15,9 @@ source "$ZSH_DIRECTORY/brew.zsh"
 
 eval $(thefuck --alias)
 
+# zsh-vi-mode
+source "$ZSH_DIRECTORY/zsh-vi-mode.zsh"
+
 # Oh-My-Zsh and Powerlevel10k. ANYTHING THAT ADDS COMPLETIONS MUST BE SOURCED BEFORE THIS
 source "$ZSH_DIRECTORY/oh-my-zsh.zsh"
 
@@ -28,9 +31,6 @@ source "$ZSH_DIRECTORY/fzf-tab.zsh"
 
 # fzf 
 source "$ZSH_DIRECTORY/fzf.zsh"
-
-# zsh-vi-mode
-source "$ZSH_DIRECTORY/zsh-vi-mode.zsh"
 
 # fast-syntax-highlighting - Must be sourced last
 source "$ZSH_DIRECTORY/fast-syntax-highlighting.zsh"
