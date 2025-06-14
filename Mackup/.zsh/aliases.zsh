@@ -15,4 +15,29 @@ alias batlog="bat --paging=never -l log"
 # Docker compose
 alias dc="docker compose"
 
-alias copy="xclip -sel clip"
+if [[ $OSTYPE == darwin* ]]; then
+  alias copy="pbcopy"
+else
+  alias copy="xclip -sel clip"
+fi
+
+fr() {
+    if [ "$#" -ne 2 ]; then
+        echo "Usage: fr <search_pattern> <replacement>"
+        return 1
+    fi
+
+    search_pattern=$1
+    replacement=$2
+
+    # TODO: Syntax highlighting
+    selected_files=$(rg -l "$search_pattern" | 
+        fzf --multi --preview "delta --width \$FZF_PREVIEW_COLUMNS {} <(sd -p '$search_pattern' '$replacement' {})" \
+    --preview-window 'down:60%')
+    if [ -z "$selected_files" ]; then
+        echo "No files selected."
+        return 1
+    fi
+
+    echo $selected_files | xargs sd "$search_pattern" "$replacement"
+}
