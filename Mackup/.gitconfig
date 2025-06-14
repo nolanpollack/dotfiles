@@ -22,7 +22,12 @@
 	ui = auto
 [alias]
 	root = rev-parse --show-toplevel
+    recent = !~/dotfiles/git-scripts/git_recent
+    branch-files = !~/dotfiles/git-scripts/git_branch_files
+
 [rerere]
 	enabled = true
 [log]
 	date = format:%Y-%m-%d %I:%M:%S %p
+[index]
+	skipHash = false
