@@ -1,38 +1,44 @@
 let mapleader=" "
 
 set clipboard+=unnamedplus
+set relativenumber
 
 inoremap jk  <Esc>
 noremap H ^
 noremap L $
 noremap M %
+nmap <leader>rl :set relativenumber!<CR>
 
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
 Plug 'michaeljsmith/vim-indent-object'
 set which-key
 set easymotion
+set mini-ai
 
 let g:EasyMotion_do_mapping = 0
 
-nmap gr <Action>(FindUsages)
-nmap gi <Action>(GotoImplementation)
 nmap <leader><leader> <Action>(SearchEverywhere)
 map <Leader>e <Action>(ActivateProjectToolWindow)
 map <tab> <Action>(ShowIntentionActions)
 map <leader>rn <Action>(RenameElement)
 map <leader>mp <Action>(ReformatCode)
 nmap K <Action>(ShowHoverInfo)
-map <leader>g <Action>(Generate)
+map <leader>gn <Action>(Generate)
 map <Enter> <Action>(EditorSelectWord)
 map <backspace> <Action>(EditorUnSelectWord)
 
 // Splits
 map <leader>sv <Action>(SplitVertically)
+map <leader>ss <Action>(MoveEditorToOppositeTabGroup)
+map <leader>sx <Action>(Unsplit)
+map <leader>se <Action>(MaximizeEditorInSplit)
 
-// Testing
+// Testing and Debugging
 map <leader>tt <Action>(RunClass)
 map <leader>dd <Action>(DebugClass)
+map <leader>db <Action>(ToggleLineBreakpoint)
+map <leader>da <Action>(AndroidConnectDebuggerAction)
 
 map zat <Action>(ExpandCollapseToggleAction)
 map zrc <Action>(CollapseRegionRecursively)
@@ -46,3 +52,33 @@ noremap <c-k> <c-w>k
 noremap <c-l> <c-w>l
 
 nmap s <Plug>(easymotion-s2)
+
+map ga <Action>(GotoTest)
+
+set ignorecase
+set smartcase
+
+// Go to
+nmap ]d <Action>(GotoNextError)
+nmap [d <Action>(GotoPreviousError)
+nmap ]g <Action>(VcsShowNextChangeMarker)
+nmap [g <Action>(VcsShowPrevChangeMarker)
+nmap gr <Action>(FindUsages)
+nmap gi <Action>(GotoImplementation)
+nmap gt <Action>(GotoTypeDeclaration)
+
+// Git
+map <leader>gb <Action>(Annotate)
+map <leader>gd <Action>(Compare.SameVersion)
+map <leader>gh <Action>(Vcs.ShowTabbedFileHistory)
+map <leader>gc <Action>(Vcs.ShowHistoryForBlock)
+map <leader>gu <Action>(Vcs.RollbackChangedLines)
+map <leader>ch <Action>(Diff.ApplyLeftSide)
+map <leader>cl <Action>(Diff.ApplyRightSide)
+
+map <leader>qt <Action>(HideAllWindows)
+map <leader>qo <Action>(CloseAllEditorsButActive)
+
+map <leader>oi <Action>(OptimizeImports)
+
+map <leader>b <Action>(AssembleRunConfiguration)
