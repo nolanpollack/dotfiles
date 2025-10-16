@@ -39,3 +39,5 @@ source "$ZSH_DIRECTORY/fast-syntax-highlighting.zsh"
 source "$ZSH_DIRECTORY/aliases.zsh"
 
 export XDG_RUNTIME_DIR=/tmp
+
+source "$HOME/.secrets.zsh"

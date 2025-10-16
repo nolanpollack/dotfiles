@@ -24,6 +24,8 @@
 	root = rev-parse --show-toplevel
     recent = !~/dotfiles/git-scripts/git_recent
     branch-files = !~/dotfiles/git-scripts/git_branch_files
+    superprune = !"git fetch --prune && git branch -vv | rg ': gone]' | awk '{print $1}' | xargs -r git branch -D"
+
 
 [rerere]
 	enabled = true

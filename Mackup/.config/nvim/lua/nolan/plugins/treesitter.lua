@@ -10,6 +10,11 @@ return {
 		vim.treesitter.language.register("bash", "zsh")
 		vim.treesitter.language.register("bash", "tmux")
 		vim.treesitter.language.register("java", "aidl")
+        vim.filetype.add({
+          filename = {
+            ['apple-app-site-association'] = 'json',
+          },
+        })
 	end,
 	keys = {
 		{ "<leader>ti", "<cmd>InspectTree<CR>", desc = "Inspect treesitter nodes" },

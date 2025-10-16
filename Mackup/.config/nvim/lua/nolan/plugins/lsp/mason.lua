@@ -20,15 +20,16 @@ return {
 
 		require("mason-tool-installer").setup({
 			ensure_installed = {
-				"prettier", -- prettier formatter
 				"eslint_d", -- eslint linter
-				"stylua", -- lua formatter
-                "lua_ls", -- lua language server
-				"shfmt", -- bash formatter
+				"java-debug-adapter", -- java debugger
+				"jdtls", -- java language server
+				"prettier", -- prettier formatter
 				"shellcheck", -- bash linter
-				"jdtls",
-				"java-debug-adapter",
+				"shfmt", -- bash formatter
+				"stylua", -- lua formatter
 				"typescript-language-server",
+                "lua_ls", -- lua language server
+                "sqls", -- sql language server
 			},
 		})
 	end,

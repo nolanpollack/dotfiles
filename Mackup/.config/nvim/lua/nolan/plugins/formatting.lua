@@ -15,28 +15,50 @@ return {
 			desc = "Make Pretty (Format file or range in visual mode)",
 		},
 	},
-	opts = {
-		formatters_by_ft = {
-			css = { "prettier" },
-			html = { "prettier" },
-			groovy = { "npm-groovy-lint" },
-			java = { "google-java-format" },
-			javascript = { "prettier" },
-			javascriptreact = { "prettier" },
-			json = { "prettier" },
-			lua = { "stylua" },
-			markdown = { "prettier" },
-			python = { "isort", "black" },
-			rust = { "rustfmt" },
-			sh = { "shellcheck" },
-			typescript = { "prettier" },
-			typescriptreact = { "prettier" },
-			yaml = { "prettier" },
-		},
-        formatters = {
-            ["google-java-format"] = {
-                prepend_args = { "--aosp" },
-            }
-        }
-	},
+	opts = function()
+		-- Use two spaces for indentation with prettier-managed files
+		vim.api.nvim_create_autocmd("FileType", {
+			pattern = {
+				"typescript",
+				"typescriptreact",
+				"javascript",
+				"javascriptreact",
+				"json",
+				"css",
+				"html",
+				"markdown",
+				"yaml",
+			},
+			callback = function()
+				vim.opt_local.shiftwidth = 2
+				vim.opt_local.tabstop = 2
+				vim.opt_local.softtabstop = 2
+			end,
+		})
+		return {
+			formatters_by_ft = {
+				css = { "prettier" },
+				html = { "prettier" },
+				groovy = { "npm-groovy-lint" },
+				java = { "google-java-format" },
+				javascript = { "prettier" },
+				javascriptreact = { "prettier" },
+				json = { "prettier" },
+				lua = { "stylua" },
+				markdown = { "prettier" },
+				python = { "isort", "black" },
+                r = { "styler" },
+				rust = { "rustfmt" },
+				sh = { "shellcheck" },
+				typescript = { "prettier" },
+				typescriptreact = { "prettier" },
+				yaml = { "prettier" },
+			},
+			formatters = {
+				["google-java-format"] = {
+					prepend_args = { "--aosp" },
+				},
+			},
+		}
+	end,
 }
