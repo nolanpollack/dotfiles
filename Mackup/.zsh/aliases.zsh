@@ -15,6 +15,10 @@ alias batlog="bat --paging=never -l log"
 # Docker compose
 alias dc="docker compose"
 
+# Git
+alias gdb="git diff master...head"
+alias gpv="gh pr view --web"
+
 if [[ $OSTYPE == darwin* ]]; then
   alias copy="pbcopy"
 else
