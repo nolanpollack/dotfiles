@@ -17,6 +17,12 @@ return {
             desc = "Stage hunk",
 		},
 		{
+			"<leader>gs",
+            ":'<,'>Gitsigns stage_hunk<CR>",
+            desc = "Stage selected hunks",
+            mode = "v",
+		},
+		{
 			"<leader>gu",
 			function()
 				require("gitsigns").reset_hunk()
