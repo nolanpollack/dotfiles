@@ -1,4 +1,5 @@
 return {
+	-- TODO: Convert to blank cmp or whatever it's called
 	"hrsh7th/nvim-cmp",
 	event = { "InsertEnter", "CmdlineEnter" },
 	dependencies = {
@@ -16,6 +17,7 @@ return {
 		"rafamadriz/friendly-snippets", -- useful snippets
 		"onsails/lspkind.nvim", -- vs-code like pictograms
 		"luckasRanarison/tailwind-tools.nvim", -- tailwind highlighting
+		"kdheepak/cmp-latex-symbols", -- latex symbols
 	},
 	opts = function()
 		local cmp = require("cmp")
@@ -47,7 +49,18 @@ return {
 							select = true,
 						})
 					elseif cmp.visible() then
-						cmp.close()
+						-- Check if cursor is at the end of the line
+						local cursor = vim.api.nvim_win_get_cursor(0)
+						local line = vim.api.nvim_get_current_line()
+						local col = cursor[2]
+
+						if col >= #line then
+							-- At end of line, close cmp and insert newline
+							cmp.close()
+							vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<CR>", true, false, true), "n", true)
+						else
+							cmp.close()
+						end
 					else
 						fallback()
 					end
@@ -60,7 +73,7 @@ return {
 				["<Tab>"] = cmp.mapping(function()
 					if copilot.is_visible() then
 						copilot.accept()
-                    elseif luasnip.locally_jumpable(1) then
+					elseif luasnip.locally_jumpable(1) then
 						luasnip.jump(1)
 					else
 						neotab.tabout()
@@ -82,6 +95,7 @@ return {
 				{ name = "luasnip" }, -- snippets
 				{ name = "buffer" }, -- text within current buffer
 				{ name = "path" }, -- file system paths
+				{ name = "latex_symbols", option = { strategy = 0 } }, -- latex symbols
 			}),
 
 			-- configure lspkind for vs-code like pictograms in completion menu
@@ -91,8 +105,8 @@ return {
 					local kind = lspkind.cmp_format({
 						before = require("tailwind-tools.cmp").lspkind_format,
 						maxwidth = 50,
-                        ellipsis_char = "...",
-                    })(entry, vim_item)
+						ellipsis_char = "...",
+					})(entry, vim_item)
 
 					local strings = vim.split(kind.kind, "%s", { trimempty = true })
 					kind.kind = (strings[1] or "") .. " " .. (strings[2] or "")
