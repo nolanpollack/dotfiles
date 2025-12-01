@@ -1,3 +1,4 @@
+-- TODO: learn this, honestly think it would be useful
 return {
 	"pwntester/octo.nvim",
     cmd = "Octo",

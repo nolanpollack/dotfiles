@@ -6,6 +6,7 @@ return {
 	},
 	opts = {
 		keymaps = {
+            -- TODO: Can we use shift-enter here?
 			["<leader>sv"] = {
 				"actions.select",
 				opts = { vertical = true },

@@ -1,3 +1,4 @@
+-- TODO: Getting the right split keybind still feels unintuitive to me
 return {
 	"kevinhwang91/nvim-ufo",
 	dependencies = "kevinhwang91/promise-async",

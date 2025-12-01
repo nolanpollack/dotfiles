@@ -1,3 +1,4 @@
+-- TODO: Replace with one of the other pickers. Remove bufferline if possible
 return {
 	"nvim-telescope/telescope.nvim",
 
@@ -31,6 +32,7 @@ return {
 						["<C-j>"] = actions.move_selection_next, -- move to next result
 						["<C-q>"] = actions.send_selected_to_qflist + actions.open_qflist,
 					},
+                    -- TODO: Shift enter to split vertical
 					n = {
 						["sv"] = actions.select_vertical,
 						["sh"] = actions.select_horizontal,
