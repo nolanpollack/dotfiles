@@ -1,0 +1,15 @@
+#!/bin/bash
+base_branch=$1
+merge_base=$(git merge-base $base_branch HEAD)
+
+# Reset to the parent of the merge base
+git reset --soft ${merge_base}^
+
+# Stage all changes
+git add -A
+
+# Commit with a squash message
+git commit
+
+# Rebase onto the base branch
+git rebase $base_branch

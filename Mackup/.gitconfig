@@ -7,7 +7,7 @@
 	defaultBranch = main
 [core]
 	pager = delta
-	excludesfile = /home/nolanpollack/.gitignore_global
+	excludesFile = ~/.gitignore
 [interactive]
 	diffFilter = delta --color-only
 [diff]
@@ -25,7 +25,7 @@
     recent = !~/dotfiles/git-scripts/git_recent
     branch-files = !~/dotfiles/git-scripts/git_branch_files
     superprune = !"git fetch --prune && git branch -vv | rg ': gone]' | awk '{print $1}' | xargs -r git branch -D"
-
+    squash = !~/dotfiles/git-scripts/git_squash
 
 [rerere]
 	enabled = true
