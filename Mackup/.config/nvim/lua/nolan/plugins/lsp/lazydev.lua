@@ -10,6 +10,7 @@ return {
 			},
 		},
 	},
+    -- TODO: Change to blank.cmp
 	{ -- optional cmp completion source for require statements and module annotations
 		"hrsh7th/nvim-cmp",
 		opts = function(_, opts)

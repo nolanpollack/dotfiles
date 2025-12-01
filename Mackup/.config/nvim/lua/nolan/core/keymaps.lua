@@ -6,7 +6,7 @@ local keymap = vim.keymap
 keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "Clear search highlights" })
 keymap.set("i", "jk", "<ESC>", { desc = "Exit insert mode with jk" })
 
--- window management
+-- Window management
 keymap.set("n", "s", "", { desc = "stop s from replacing letter" })
 keymap.set("n", "<leader>sv", "<C-w>v", { desc = "Split window vertically" }) -- split window vertically
 keymap.set("n", "<leader>sh", "<C-w>s", { desc = "Split window horizontally" }) -- split window horizontally
@@ -24,13 +24,16 @@ keymap.set({ "n", "v" }, "M", "%", { desc = "Jump to matching bracket" })
 keymap.set({ "n", "v" }, "Y", "y$", { desc = "Yank to end of line" })
 
 -- Move in insert mode, And Command-line mode
-keymap.set({ "i", "c" }, "<C-j>", "<Down>", { desc = "Move Down in insert mode" })
-keymap.set({ "i", "c" }, "<C-k>", "<Up>", { desc = "Move Up in insert mode" })
-keymap.set({ "i", "c" }, "<C-h>", "<Left>", { desc = "Move Left in insert mode" })
-keymap.set({ "i", "c" }, "<C-l>", "<Right>", { desc = "Move Right in insert mode" })
+-- keymap.set({ "i", "c" }, "<C-j>", "<Down>", { desc = "Move Down in insert mode" })
+-- keymap.set({ "i", "c" }, "<C-k>", "<Up>", { desc = "Move Up in insert mode" })
+-- keymap.set({ "i", "c" }, "<C-h>", "<Left>", { desc = "Move Left in insert mode" })
+-- keymap.set({ "i", "c" }, "<C-l>", "<Right>", { desc = "Move Right in insert mode" })
 
 keymap.set("n", "<leader>rl", ":set relativenumber!<CR>", { desc = "Toggle relative line numbers", silent = true })
 
+-- TODO: Go to top and bottom of scope (indent or treesitter) would be very nice
+
+-- TODO: Could this be a plugin?
 local function ansi_colorize()
 	local buf = vim.api.nvim_get_current_buf()
 

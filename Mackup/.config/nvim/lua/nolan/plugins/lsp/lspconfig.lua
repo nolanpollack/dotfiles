@@ -1,3 +1,4 @@
+-- TODO: Simplify and update (mason too) for neovim 11
 return {
 	"neovim/nvim-lspconfig",
 	event = { "BufReadPre", "BufNewFile" },
@@ -22,6 +23,7 @@ return {
 
 		vim.lsp.log.set_format_func(vim.inspect)
 
+        -- TODO: Can I make this a plugin?
 		vim.api.nvim_create_autocmd("LspAttach", {
 			group = vim.api.nvim_create_augroup("UserLspConfig", {}),
 			callback = function(ev)
@@ -165,6 +167,10 @@ return {
 				},
 			},
 			virtual_text = true,
+		})
+
+		vim.lsp.enable({
+			"r_language_server",
 		})
 
 		-- local function organize_imports()

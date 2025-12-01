@@ -18,6 +18,7 @@ return {
 
 		require("mason-lspconfig").setup()
 
+        -- TODO: Add things I use often
 		require("mason-tool-installer").setup({
 			ensure_installed = {
 				"eslint_d", -- eslint linter

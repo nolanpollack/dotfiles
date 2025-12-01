@@ -1,3 +1,4 @@
+-- TODO: Never really got this to work. Can I get a good flow going for at least react native?
 return {
 	{
 		"mfussenegger/nvim-dap",
