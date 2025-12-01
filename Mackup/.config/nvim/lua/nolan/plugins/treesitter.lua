@@ -1,3 +1,4 @@
+-- TODO: Ensure this is configured correctly for neovim 11. Is there any way to ensure it's async?
 return {
 	"nvim-treesitter/nvim-treesitter",
 	event = { "BufReadPre", "BufNewFile" },
@@ -15,10 +16,17 @@ return {
             ['apple-app-site-association'] = 'json',
           },
         })
+        vim.api.nvim_create_augroup("filetype_overrides", { clear = true })
+        vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+          group = "filetype_overrides",
+          pattern = "*.pac",
+          callback = function()
+            vim.bo.filetype = "pac"
+          end,
+        })
+        vim.treesitter.language.register("javascript", "pac")
 	end,
 	keys = {
-		{ "<leader>ti", "<cmd>InspectTree<CR>", desc = "Inspect treesitter nodes" },
-        {"<S-M-h>", "<cmd>TSTextobjectSwapPrevious @parameter.inner<CR>", desc = "Swap to next parameter"},
         {"<S-M-l>", "<cmd>TSTextobjectSwapNext @parameter.inner<CR>", desc = "Swap to previous parameter"},
 	},
 	main = "nvim-treesitter.configs",
