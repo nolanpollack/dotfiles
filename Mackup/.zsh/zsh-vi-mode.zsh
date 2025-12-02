@@ -33,7 +33,7 @@ function zvm_after_lazy_keybindings() {
 # Allow fzf to override the default key bindings
 zvm_after_init_commands+=('source <(fzf --zsh)')
 
-source /home/linuxbrew/.linuxbrew/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
+source $(brew --prefix)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
 
 zvm_bindkey vicmd 'H' beginning-of-line
 zvm_bindkey vicmd 'L' end-of-line
