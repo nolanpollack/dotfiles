@@ -21,7 +21,6 @@ lazydocker
 libgit2@1.7
 llvm
 lnav
-mackup
 mysql
 neovim
 node
@@ -34,6 +33,7 @@ rm-improved
 rustup
 sd
 speedtest-cli
+stow
 tealdeer
 thefuck
 tokei
