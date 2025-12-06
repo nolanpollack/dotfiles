@@ -40,4 +40,6 @@ source "$ZSH_DIRECTORY/aliases.zsh"
 
 export XDG_RUNTIME_DIR=/tmp
 
-source "$HOME/.env"
+if [ -f "$HOME/.env" ]; then
+    source "$HOME/.env"
+fi
