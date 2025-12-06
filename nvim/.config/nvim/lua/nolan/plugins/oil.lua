@@ -5,6 +5,9 @@ return {
 		{ "<leader>o", "<cmd>Oil --float<CR>", desc = "Open oil" },
 	},
 	opts = {
+        view_options = {
+            show_hidden = true,
+        },
 		keymaps = {
             -- TODO: Can we use shift-enter here?
 			["<leader>sv"] = {
