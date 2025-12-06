@@ -5,7 +5,7 @@ ZVM_VI_HIGHLIGHT_FOREGROUND=white
 # Use system clipboard
 ZVM_SYSTEM_CLIPBOARD_ENABLED=true
 
-if [[ -v $WSL_DISTRO_NAME ]]; then
+if [[ -v WSL_DISTRO_NAME ]]; then
     ZVM_CLIPBOARD_COPY_CMD='clip.exe'
     ZVM_CLIPBOARD_PASTE_CMD='powershell.exe -NoProfile -Command Get-Clipboard'
 fi

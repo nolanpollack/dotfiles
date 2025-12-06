@@ -17,10 +17,11 @@ packages=(
 )
 
 # WSL
-# if [[ -v $WSL_DISTRO_NAME ]]; then
-#   packages+=()
-# fi
-#
+if [[ -v WSL_DISTRO_NAME ]]; then
+  packages+=(
+      wsl
+  )
+fi
 
 # Mac 
 if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -37,5 +38,10 @@ red_stderr() {
 # Stow all packages
 for pkg in "${packages[@]}"; do
   echo "Stowing $pkg"
-  red_stderr stow "$@" -R "$pkg"
+  if [[ $pkg == "wsl" ]]; then
+      # wsl package needs to be stowed to /etc
+      red_stderr stow "$@" -R --target="/etc" "$pkg"
+  else
+      red_stderr stow "$@" -R "$pkg"
+  fi
 done

@@ -31,14 +31,10 @@ bash ~/.tmux/plugins/tpm/scripts/install_plugins.sh
 rustup default stable
 rustup component add rust-analyzer
 
-if [[ -v $WSL_DISTRO_NAME ]]; then
+if [[ -v WSL_DISTRO_NAME ]]; then
     sudo add-apt-repository ppa:wslutilities/wslu
     sudo apt update
     sudo apt install wslu
-
-    # Set up wsl.conf so PATH doesn't include /mnt/c/Program Files/... etc
-    # This stops lag in zsh syntax highlighting
-    sudo ln -s "${HOME}/dotfiles/wsl.conf" /etc/wsl.conf
 fi
 
 # Rebuild bat's cache so it recognizes catpuccin theme
