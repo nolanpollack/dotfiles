@@ -9,6 +9,7 @@ packages=(
   git
   nvim
   omz
+  p10k
   tldr
   tmux
 )
