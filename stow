@@ -5,6 +5,7 @@ cd "$(dirname "$0")"
 
 packages=(
   bat
+  brew
   btop
   git
   intellij
