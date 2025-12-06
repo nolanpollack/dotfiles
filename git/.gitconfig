@@ -26,7 +26,6 @@
     branch-files = !~/bin/git_branch_files
     superprune = !"git fetch --prune && git branch -vv | rg ': gone]' | awk '{print $1}' | xargs -r git branch -D"
     squash = !~/bin/git_squash
-
 [rerere]
 	enabled = true
 [log]
