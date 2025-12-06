@@ -31,6 +31,7 @@ pv
 repo
 ripgrep
 rm-improved
+rustup
 sd
 speedtest-cli
 tealdeer

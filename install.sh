@@ -26,8 +26,8 @@ brew completions link
 # Install tmux packages
 bash ~/.tmux/plugins/tpm/scripts/install_plugins.sh
 
-# Install rust
-curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh
+# Initialize rust
+rustup default stable
 rustup component add rust-analyzer
 
 if [[ -v $WSL_DISTRO_NAME ]]; then
