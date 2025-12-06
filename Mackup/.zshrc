@@ -13,12 +13,15 @@ source "$ZSH_DIRECTORY/env.zsh"
 # Homebrew
 source "$ZSH_DIRECTORY/brew.zsh"
 
+# Powerlevel10k theme
+source $(brew --prefix)/share/powerlevel10k/powerlevel10k.zsh-theme
+
 eval $(thefuck --alias)
 
 # zsh-vi-mode
 source "$ZSH_DIRECTORY/zsh-vi-mode.zsh"
 
-# Oh-My-Zsh and Powerlevel10k. ANYTHING THAT ADDS COMPLETIONS MUST BE SOURCED BEFORE THIS
+# Oh-My-Zsh. ANYTHING THAT ADDS COMPLETIONS MUST BE SOURCED BEFORE THIS
 source "$ZSH_DIRECTORY/oh-my-zsh.zsh"
 
 # zsh-autosuggestions

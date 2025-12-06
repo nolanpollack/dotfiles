@@ -26,6 +26,7 @@ mysql
 neovim
 node
 openjdk@17
+powerlevel10k
 pv
 repo
 ripgrep
@@ -35,7 +36,7 @@ speedtest-cli
 tealdeer
 thefuck
 tokei
-treesitter
+treesitter-cli
 xclip
 yq
 zsh
