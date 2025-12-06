@@ -22,6 +22,7 @@ libgit2@1.7
 llvm
 lnav
 mackup
+mysql
 neovim
 node
 openjdk@17
@@ -34,6 +35,7 @@ speedtest-cli
 tealdeer
 thefuck
 tokei
+treesitter
 xclip
 yq
 zsh
