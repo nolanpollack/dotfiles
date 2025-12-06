@@ -19,7 +19,17 @@ xargs brew install < ./brew/requirements.txt
 # Symlink dotfiles using stow script
 ./stow
 
-chsh -s $(which zsh)
+if [[ $SHELL != $(which zsh) ]]; then
+    if ! grep -qxF "$(which zsh)" /etc/shells; then
+        echo "Adding $(which zsh) to /etc/shells (requires sudo)"
+        echo "$(which zsh)" | sudo tee -a /etc/shells >/dev/null
+        echo "✓ Added $(which zsh) to /etc/shells"
+    else
+        echo "✓ $ZSH_PATH already in /etc/shells"
+    fi
+    echo "Changing default shell to zsh"
+    chsh -s $(which zsh)
+fi
 
 # Allow commands installed with brew to use completions
 brew completions link
@@ -41,6 +51,7 @@ fi
 bat cache --build
 
 # Set up catppuccin theme for zsh syntax highlighting
+source ~/.zsh/fast-syntax-highlighting.zsh
 fast-theme ~/.zsh/catppuccin-mocha.ini
 
 # Undercurl
