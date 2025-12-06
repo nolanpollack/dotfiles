@@ -22,10 +22,10 @@
 	ui = auto
 [alias]
 	root = rev-parse --show-toplevel
-    recent = !~/bin/git_recent
-    branch-files = !~/bin/git_branch_files
+    recent = !~/bin/git-recent
+    branch-files = !~/bin/git-branch-files
     superprune = !"git fetch --prune && git branch -vv | rg ': gone]' | awk '{print $1}' | xargs -r git branch -D"
-    squash = !~/bin/git_squash
+    squash = !~/bin/git-squash
 [rerere]
 	enabled = true
 [log]
