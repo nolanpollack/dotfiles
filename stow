@@ -10,9 +10,18 @@ packages=(
   tmux
 )
 
+# WSL
 # if [[ -v $WSL_DISTRO_NAME ]]; then
 #   packages+=()
 # fi
+#
+
+# Mac 
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  packages+=(
+    ghostty
+  )
+fi
 
 # Stow all packages
 for pkg in "${packages[@]}"; do
