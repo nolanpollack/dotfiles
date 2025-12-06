@@ -14,7 +14,7 @@ if ! command -v brew >/dev/null 2>&1; then
 fi
 
 # install any required brew formulae which isn't installed
-xargs brew install < ./brew_requirements.txt
+xargs brew install < ./brew/requirements.txt
 
 # Symlink dotfiles using stow script
 ./stow
