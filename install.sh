@@ -13,6 +13,8 @@ fi
 # install any required brew formulae which isn't installed
 xargs brew install < ./brew_requirements.txt
 
+stow nvim
+
 chsh -s $(which zsh)
 
 # Allow commands installed with brew to use completions
