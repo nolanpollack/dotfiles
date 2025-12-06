@@ -41,7 +41,7 @@ fi
 bat cache --build
 
 # Set up catppuccin theme for zsh syntax highlighting
-fast-theme ~/dotfiles/Mackup/.zsh/catppuccin-mocha.ini
+fast-theme ~/.zsh/catppuccin-mocha.ini
 
 # Undercurl
 # https://dev.to/anurag_pramanik/how-to-enable-undercurl-in-neovim-terminal-and-tmux-setup-guide-2ld7
