@@ -1,6 +1,6 @@
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
-export ZSH_CUSTOM="$HOME/dotfiles/omz"
+export ZSH_CUSTOM="$HOME/.config/omz"
 
 # Plugins
 plugins=(

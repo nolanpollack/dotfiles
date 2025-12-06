@@ -1,8 +1,8 @@
 [submodule "Mackup/.oh-my-zsh"]
-	path = Mackup/.oh-my-zsh
+	path = omz/.oh-my-zsh
 	url = git@github.com:ohmyzsh/ohmyzsh.git
 [submodule "omz/plugins/fzf-tab"]
-	path = omz/plugins/fzf-tab
+	path = omz/.config/omz/plugins/fzf-tab
 	url = git@github.com:Aloxaf/fzf-tab.git
 [submodule "tmux/.tmux/plugins/tpm"]
 	path = tmux/.tmux/plugins/tpm

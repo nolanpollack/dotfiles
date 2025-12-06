@@ -8,6 +8,7 @@ packages=(
   btop
   git
   nvim
+  omz
   tldr
   tmux
 )
