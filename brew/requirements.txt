@@ -13,7 +13,6 @@ gcc
 gh
 git-delta
 gradle
-gradle-completion
 grc
 joshmedeski/sesh/sesh
 jq
