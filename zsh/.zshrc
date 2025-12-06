@@ -5,13 +5,11 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-ZSH_DIRECTORY=~/dotfiles/Mackup/.zsh
-
 # Environment variables
-source "$ZSH_DIRECTORY/env.zsh"
+source ~/.zsh/env.zsh
 
 # Homebrew
-source "$ZSH_DIRECTORY/brew.zsh"
+source ~/.zsh/brew.zsh
 
 # Powerlevel10k theme
 source ~/.zsh/p10k.zsh
@@ -19,10 +17,10 @@ source ~/.zsh/p10k.zsh
 eval $(thefuck --alias)
 
 # zsh-vi-mode
-source "$ZSH_DIRECTORY/zsh-vi-mode.zsh"
+source ~/.zsh/zsh-vi-mode.zsh
 
 # Oh-My-Zsh. ANYTHING THAT ADDS COMPLETIONS MUST BE SOURCED BEFORE THIS
-source "$ZSH_DIRECTORY/oh-my-zsh.zsh"
+source ~/.zsh/oh-my-zsh.zsh
 
 # zsh-autosuggestions
 source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
@@ -30,16 +28,16 @@ source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 eval "$(zoxide init zsh)"
 
 # fzf-tab
-source "$ZSH_DIRECTORY/fzf-tab.zsh"
+source ~/.zsh/fzf-tab.zsh
 
 # fzf
-source "$ZSH_DIRECTORY/fzf.zsh"
+source ~/.zsh/fzf.zsh
 
 # fast-syntax-highlighting - Must be sourced last
-# source "$ZSH_DIRECTORY/fast-syntax-highlighting.zsh"
+# source ~/.zsh/fast-syntax-highlighting.zsh
 
 # Aliases
-source "$ZSH_DIRECTORY/aliases.zsh"
+source ~/.zsh/aliases.zsh
 
 export XDG_RUNTIME_DIR=/tmp
 
