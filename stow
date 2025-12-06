@@ -25,9 +25,13 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   )
 fi
 
+# Function to run command with red stderr
+red_stderr() {
+  "$@" 2> >(while read -r line; do printf '\e[31m%s\e[0m\n' "$line" >&2; done)
+}
+
 # Stow all packages
 for pkg in "${packages[@]}"; do
   echo "Stowing $pkg"
-  stow "$@" -R "$pkg" || echo "Warning: Failed to stow $pkg"
-  echo
+  red_stderr stow "$@" -R "$pkg"
 done
