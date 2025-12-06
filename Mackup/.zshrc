@@ -33,11 +33,11 @@ source "$ZSH_DIRECTORY/fzf-tab.zsh"
 source "$ZSH_DIRECTORY/fzf.zsh"
 
 # fast-syntax-highlighting - Must be sourced last
-source "$ZSH_DIRECTORY/fast-syntax-highlighting.zsh"
+# source "$ZSH_DIRECTORY/fast-syntax-highlighting.zsh"
 
 # Aliases
 source "$ZSH_DIRECTORY/aliases.zsh"
 
 export XDG_RUNTIME_DIR=/tmp
 
-source "$HOME/.secrets.zsh"
+source "$HOME/.env"
