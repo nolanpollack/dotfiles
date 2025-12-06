@@ -27,10 +27,7 @@ export HOMEBREW_NO_ENV_HINTS=TRUE
 #     esac
 # }
 #
-if [[ $OSTYPE == darwin* ]]; then
-    eval $(/opt/homebrew/bin/brew shellenv zsh)
-else
-    eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)
-fi
+eval $(brew shellenv)
+
 # Required for brew completions to work
 export FPATH="$HOMEBREW_PREFIX/share/zsh/site-functions:${FPATH:-}";
