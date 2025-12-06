@@ -1,6 +1,3 @@
-[submodule "Mackup/.zsh/plugins/zsh-system-clipboard"]
-	path = Mackup/.zsh/plugins/zsh-system-clipboard
-	url = git@github.com:kutsan/zsh-system-clipboard.git
 [submodule "Mackup/.tmux/plugins/tpm"]
 	path = Mackup/.tmux/plugins/tpm
 	url = https://github.com/tmux-plugins/tpm

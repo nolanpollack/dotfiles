@@ -3,31 +3,19 @@ ZVM_VI_HIGHLIGHT_BACKGROUND=#313244
 ZVM_VI_HIGHLIGHT_FOREGROUND=white
 
 # Use system clipboard
+ZVM_SYSTEM_CLIPBOARD_ENABLED=true
+
+if [[ -v $WSL_DISTRO_NAME ]]; then
+    ZVM_CLIPBOARD_COPY_CMD='clip.exe'
+    ZVM_CLIPBOARD_PASTE_CMD='powershell.exe -NoProfile -Command Get-Clipboard'
+fi
+
 function zvm_after_lazy_keybindings() {
-    source "$HOME/dotfiles/Mackup/.zsh/plugins/zsh-system-clipboard/zsh-system-clipboard.zsh"
-
-    functions -c zvm_yank zvm_yank_orig
-    function zvm_yank() {
-        zvm_yank_orig "$@"
-        printf '%s\n' "$CUTBUFFER" | zsh-system-clipboard-set
-    }
-
-    functions -c zvm_replace_selection zvm_replace_selection_orig
-    function zvm_replace_selection() {
-        zvm_replace_selection_orig "$@"
-        printf '%s\n' "$CUTBUFFER" | zsh-system-clipboard-set
-    }
-    
-    functions -c zvm_vi_put_after zvm_vi_put_after_orig
-    function zvm_vi_put_after() {
-        CUTBUFFER=$(zsh-system-clipboard-get)
-        zvm_vi_put_after_orig "$@"
-    }
-    functions -c zvm_vi_put_before zvm_vi_put_before_orig
-    function zvm_vi_put_before() {
-        CUTBUFFER=$(zsh-system-clipboard-get)
-        zvm_vi_put_before_orig "$@"
-    }
+  # Rebind p to paste from system clipboard after cursor
+  zvm_bindkey vicmd 'p' zvm_paste_clipboard_after
+  
+  # Rebind P to paste from system clipboard before cursor
+  zvm_bindkey vicmd 'P' zvm_paste_clipboard_before
 }
 
 # Allow fzf to override the default key bindings
