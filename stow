@@ -5,6 +5,7 @@ cd "$(dirname "$0")"
 
 packages=(
   bat
+  btop
   nvim
   tmux
 )
