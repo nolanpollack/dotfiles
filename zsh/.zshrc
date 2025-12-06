@@ -34,7 +34,7 @@ source ~/.zsh/fzf-tab.zsh
 source ~/.zsh/fzf.zsh
 
 # fast-syntax-highlighting - Must be sourced last
-# source ~/.zsh/fast-syntax-highlighting.zsh
+source ~/.zsh/fast-syntax-highlighting.zsh
 
 # Aliases
 source ~/.zsh/aliases.zsh
