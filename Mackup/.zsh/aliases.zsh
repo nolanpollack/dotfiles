@@ -49,3 +49,5 @@ fr() {
 if [[ -z $WSL_DISTR_NAME ]]; then
   alias open="explorer.exe"
 fi
+
+alias cat=bat
