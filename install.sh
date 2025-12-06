@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Clone submodules
+git submodule update --init --recursive
+
 # TODO: I'm thinking mackup might be the wrong approach
 ln -s Mackup/.mackup.cfg "$HOME"/.mackup.cfg
 
@@ -57,4 +60,5 @@ if [ -z $(infocmp -l -x | rg Smulx) ]; then
     tic -x /tmp/${TERM}.ti
 fi
 
-
+# Update tldr cache
+tldr --update
