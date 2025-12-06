@@ -25,10 +25,6 @@ chsh -s $(which zsh)
 # Allow commands installed with brew to use completions
 brew completions link
 
-# Install tmux package manager
-# TODO: Use submodules instead
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-
 # Install tmux packages
 bash ~/.tmux/plugins/tpm/scripts/install_plugins.sh
 
