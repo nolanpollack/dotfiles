@@ -46,7 +46,7 @@ fr() {
     echo $selected_files | xargs sd "$search_pattern" "$replacement"
 }
 
-if [[ -z $WSL_DISTR_NAME ]]; then
+if [[ -v $WSL_DISTR_NAME ]]; then
   alias open="explorer.exe"
 fi
 
