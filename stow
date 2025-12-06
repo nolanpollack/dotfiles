@@ -4,8 +4,9 @@
 cd "$(dirname "$0")"
 
 packages=(
-  nvim
   bat
+  nvim
+  tmux
 )
 
 # if [[ -v $WSL_DISTRO_NAME ]]; then
