@@ -3,11 +3,6 @@
 # Clone submodules
 git submodule update --init --recursive
 
-# TODO: I'm thinking mackup might be the wrong approach
-ln -s Mackup/.mackup.cfg "$HOME"/.mackup.cfg
-
-mackup restore
-
 # Checks if homebrew is installed, and installs it if not.
 if ! command -v brew >/dev/null 2>&1; then
     echo "Installing brew"
