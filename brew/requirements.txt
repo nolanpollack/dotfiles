@@ -1,5 +1,6 @@
 aws/tap/copilot-cli
 awscli
+bash
 bat
 btop
 checkstyle
