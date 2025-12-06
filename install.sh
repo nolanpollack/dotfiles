@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Change to the script's directory
+cd "$(dirname "$0")"
+
 # Clone submodules
 git submodule update --init --recursive
 
@@ -13,7 +16,8 @@ fi
 # install any required brew formulae which isn't installed
 xargs brew install < ./brew_requirements.txt
 
-stow nvim
+# Symlink dotfiles using stow script
+./stow
 
 chsh -s $(which zsh)
 

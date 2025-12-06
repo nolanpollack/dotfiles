@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Change to the script's directory
+cd "$(dirname "$0")"
+
+packages=(
+  nvim
+  bat
+)
+
+# if [[ -v $WSL_DISTRO_NAME ]]; then
+#   packages+=()
+# fi
+
+# Stow all packages
+for pkg in "${packages[@]}"; do
+  echo "Stowing $pkg"
+  stow "$@" -R "$pkg" || echo "Warning: Failed to stow $pkg"
+  echo
+done
