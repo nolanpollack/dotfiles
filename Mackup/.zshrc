@@ -29,7 +29,7 @@ eval "$(zoxide init zsh)"
 # fzf-tab
 source "$ZSH_DIRECTORY/fzf-tab.zsh"
 
-# fzf 
+# fzf
 source "$ZSH_DIRECTORY/fzf.zsh"
 
 # fast-syntax-highlighting - Must be sourced last
