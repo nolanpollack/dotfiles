@@ -1,3 +1,3 @@
-require("nolan.core")
-require("nolan.lazy")
+require("core")
+require("lazy")
 
