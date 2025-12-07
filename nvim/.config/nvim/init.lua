@@ -1,3 +1,3 @@
 require("core")
-require("lazy")
+require("lazy-init")
 
