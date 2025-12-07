@@ -7,6 +7,9 @@ return {
 		"hrsh7th/cmp-nvim-lsp",
 		{ "antosha417/nvim-lsp-file-operations", config = true },
 	},
+	keys = {
+		{ "<leader>lr", "<cmd>LspRestart<CR>", desc = "Restart LSP" },
+	},
 	config = function()
 		-- import lspconfig plugin
 		local lspconfig = require("lspconfig")
@@ -50,7 +53,10 @@ return {
 							local name = vim.diagnostic.severity[severity]:lower()
 							name = name:sub(1, 1):upper() .. name:sub(2)
 							local sign = vim.diagnostic.config().signs.text[diagnostic.severity] or "?"
-							table.insert(hover_text, string.format(" %s %s", sign, diagnostic.message))
+							table.insert(
+								hover_text,
+								string.format(" %s `%s` %s", sign, diagnostic.source, diagnostic.message)
+							)
 						end
 						table.insert(hover_text, "---")
 					end
