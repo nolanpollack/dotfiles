@@ -41,7 +41,7 @@ for pkg in "${packages[@]}"; do
   echo "Stowing $pkg"
   if [[ $pkg == "wsl" ]]; then
       # wsl package needs to be stowed to /etc
-      red_stderr stow "$@" -R --target="/etc" "$pkg"
+      red_stderr sudo "$(which stow)" "$@" -R --target="/etc" "$pkg"
   else
       red_stderr stow "$@" -R "$pkg"
   fi
