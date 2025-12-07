@@ -6,7 +6,17 @@ return {
 	}, -- @type blink.cmp.Config
 	opts = {
 		completion = {
-			menu = { border = "rounded" },
+			menu = {
+				border = "rounded",
+
+				draw = {
+					columns = {
+						{ "kind_icon" },
+						{ "label", "label_description", gap = 1 },
+						{ "kind" }, -- Add this to show the completion type name
+					},
+				},
+			},
 			list = {
 				selection = {
 					preselect = false,
