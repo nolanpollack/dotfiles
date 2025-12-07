@@ -9,24 +9,16 @@ return {
 	},
 	keys = {
 		{ "<leader>lr", "<cmd>LspRestart<CR>", desc = "Restart LSP" },
+		{ "<tab>", vim.lsp.buf.code_action, desc = "Code Action", mode = { "n", "v" } },
+		{ "gd", "<cmd>Telescope lsp_definitions<CR>", desc = "LSP Definitions" },
+		{ "<leader>rn", vim.lsp.buf.rename, desc = "LSP Rename", mode = { "n", "v" } },
 	},
 	config = function()
-		-- import lspconfig plugin
-		local lspconfig = require("lspconfig")
-
-		-- import mason_lspconfig plugin
-		local mason_lspconfig = require("mason-lspconfig")
-
-		-- import cmp-nvim-lsp plugin
-		local cmp_nvim_lsp = require("cmp_nvim_lsp")
-
-		local keymap = vim.keymap -- for conciseness
-
 		vim.lsp.inlay_hint.enable()
 
 		vim.lsp.log.set_format_func(vim.inspect)
 
-        -- TODO: Can I make this a plugin?
+		-- TODO: Can I make this a plugin?
 		vim.api.nvim_create_autocmd("LspAttach", {
 			group = vim.api.nvim_create_augroup("UserLspConfig", {}),
 			callback = function(ev)
@@ -150,15 +142,6 @@ return {
 				end
 
 				vim.keymap.set("n", "K", hover_with_diagnostics, { noremap = true, silent = true })
-
-				opts.desc = "Show LSP definitions"
-				keymap.set("n", "gd", "<cmd>Telescope lsp_definitions<CR>", opts) -- show lsp definitions
-
-				opts.desc = "See available code actions"
-				keymap.set({ "n", "v" }, "<tab>", vim.lsp.buf.code_action, opts) -- see available code actions, in visual mode will apply to selection
-
-				opts.desc = "Smart rename"
-				keymap.set({ "n", "v" }, "<leader>rn", vim.lsp.buf.rename, opts) -- smart rename
 			end,
 		})
 
