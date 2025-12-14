@@ -6,8 +6,8 @@ ZVM_VI_HIGHLIGHT_FOREGROUND=white
 ZVM_SYSTEM_CLIPBOARD_ENABLED=true
 
 if [[ -v WSL_DISTRO_NAME ]]; then
-    ZVM_CLIPBOARD_COPY_CMD='clip.exe'
-    ZVM_CLIPBOARD_PASTE_CMD='powershell.exe -NoProfile -Command Get-Clipboard'
+    ZVM_CLIPBOARD_COPY_CMD='/mnt/c/Windows/System32/clip.exe'
+    ZVM_CLIPBOARD_PASTE_CMD='/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -Command Get-Clipboard'
 fi
 
 function zvm_after_lazy_keybindings() {
