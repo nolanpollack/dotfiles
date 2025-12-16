@@ -1,3 +1,8 @@
 /target
 
 .DS_STORE
+
+# Ignore tmux plugins
+tmux/.tmux/plugins/
+
+!tmux/.tmux/plugins/tpm
