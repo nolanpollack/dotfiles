@@ -51,3 +51,5 @@ if [[ -v $WSL_DISTR_NAME ]]; then
 fi
 
 alias cat=bat
+
+alias brew-diff="delta ~/dotfiles/brew/requirements.txt <(brew leaves)"

@@ -14,6 +14,7 @@ gh
 git-delta
 gradle
 grc
+harlequin
 joshmedeski/sesh/sesh
 jq
 lazydocker
@@ -23,6 +24,7 @@ lnav
 mysql
 neovim
 node
+nushell
 openjdk@17
 powerlevel10k
 pv
@@ -36,6 +38,7 @@ stow
 tealdeer
 thefuck
 tokei
+tree-sitter
 tree-sitter-cli
 xclip
 yq
