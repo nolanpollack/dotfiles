@@ -25,7 +25,7 @@ local function hover_with_diagnostics()
 			local sign = vim.diagnostic.config().signs.text[diagnostic.severity] or "?"
 			table.insert(hover_text, string.format(" %s `%s` %s", sign, diagnostic.source, diagnostic.message))
 		end
-		table.insert(hover_text, "---")
+		table.insert(hover_text, "\n---")
 	end
 
 	-- Make the LSP request
@@ -104,6 +104,14 @@ local function hover_with_diagnostics()
 			package.loaded["markview"].render(bufnr, {
 				enable = true,
 				hybrid_mode = false,
+			})
+		end
+
+		-- Conceal the separator line vertically (requires Neovim 0.11+)
+		if #diagnostics > 0 then
+			local sep_line = #diagnostics
+			vim.api.nvim_buf_set_extmark(bufnr, hover_ns, sep_line, 0, {
+				conceal_lines = "",
 			})
 		end
 
