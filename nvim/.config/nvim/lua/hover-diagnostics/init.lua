@@ -91,7 +91,7 @@ local function hover_with_diagnostics()
 		local bufnr, winnr = vim.lsp.util.open_floating_preview(hover_text, "", {
 			border = "rounded",
 			focus_id = "textDocument/hover",
-			max_width = math.floor(vim.o.columns * 0.6),
+			-- max_width = math.floor(vim.o.columns * 0.6),
 		})
 
 		vim.bo[bufnr].filetype = "markdown"
