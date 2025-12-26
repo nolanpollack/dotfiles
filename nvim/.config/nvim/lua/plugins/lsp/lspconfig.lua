@@ -13,6 +13,8 @@ return {
 
 					opts.desc = "Rename"
 					vim.keymap.set({ "n", "v" }, "<leader>rn", vim.lsp.buf.rename, opts)
+
+					vim.keymap.set({ "n", "v" }, "<leader>lr", "<cmd>LspRestart<CR><cmd>Copilot enable<CR>")
 				end,
 			})
 
