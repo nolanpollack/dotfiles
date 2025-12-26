@@ -87,11 +87,25 @@ local function hover_with_diagnostics()
 			return
 		end
 
-		-- Show the floating window
-		local bufnr = vim.lsp.util.open_floating_preview(hover_text, "markdown", {
+		-- Show the floating window (pass empty filetype, set markdown after to avoid race condition)
+		local bufnr, winnr = vim.lsp.util.open_floating_preview(hover_text, "", {
 			border = "rounded",
 			focus_id = "textDocument/hover",
 		})
+
+		vim.bo[bufnr].filetype = "markdown"
+
+		if winnr then
+			vim.wo[winnr].conceallevel = 3
+			vim.wo[winnr].concealcursor = "ncv"
+		end
+
+		if package.loaded["markview"] then
+			package.loaded["markview"].render(bufnr, {
+				enable = true,
+				hybrid_mode = false,
+			})
+		end
 
 		-- Add highlights for diagnostics
 		if #diagnostics > 0 then
