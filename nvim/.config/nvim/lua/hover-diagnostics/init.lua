@@ -101,10 +101,13 @@ local function hover_with_diagnostics()
 		end
 
 		if package.loaded["markview"] then
-			package.loaded["markview"].render(bufnr, {
-				enable = true,
-				hybrid_mode = false,
-			})
+			-- Use strict_render for external plugins (handles conceal setup automatically)
+			local strict_render = require("markview").strict_render
+			strict_render:render(bufnr)
+
+			-- Restart treesitter to apply conceal_lines for code fences
+			vim.treesitter.stop(bufnr)
+			vim.treesitter.start(bufnr)
 		end
 
 		-- Conceal the separator line vertically (requires Neovim 0.11+)
