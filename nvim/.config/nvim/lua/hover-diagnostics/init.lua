@@ -91,6 +91,7 @@ local function hover_with_diagnostics()
 		local bufnr, winnr = vim.lsp.util.open_floating_preview(hover_text, "", {
 			border = "rounded",
 			focus_id = "textDocument/hover",
+			max_width = math.floor(vim.o.columns * 0.6),
 		})
 
 		vim.bo[bufnr].filetype = "markdown"
@@ -98,6 +99,7 @@ local function hover_with_diagnostics()
 		if winnr then
 			vim.wo[winnr].conceallevel = 3
 			vim.wo[winnr].concealcursor = "ncv"
+			vim.wo[winnr].signcolumn = "no"
 		end
 
 		if package.loaded["markview"] then
@@ -116,6 +118,14 @@ local function hover_with_diagnostics()
 			vim.api.nvim_buf_set_extmark(bufnr, hover_ns, sep_line, 0, {
 				conceal_lines = "",
 			})
+		end
+
+		-- Resize window to account for concealed lines
+		if winnr then
+			local new_height = vim.api.nvim_win_text_height(winnr, { start_row = 0, end_row = -1 }).all
+			local config = vim.api.nvim_win_get_config(winnr)
+			config.height = new_height
+			vim.api.nvim_win_set_config(winnr, config)
 		end
 
 		-- Add highlights for diagnostics
