@@ -50,8 +50,8 @@ return {
                 r = { "styler" },
 				rust = { "rustfmt" },
 				sh = { "shellcheck" },
-				typescript = { "prettier" },
-				typescriptreact = { "prettier" },
+				typescript = { "prettier", "eslint_d" },
+				typescriptreact = { "prettier", "eslint_d" },
 				yaml = { "prettier" },
 			},
 			formatters = {
