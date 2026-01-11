@@ -47,7 +47,7 @@ return {
 		opts = function()
 			return {
 				ensure_installed = {
-					"eslint_d", -- eslint linter
+					"eslint-lsp", -- eslint lsp
 					"jdtls", -- java language server
 					"prettier", -- prettier formatter
 					"shellcheck", -- bash linter
