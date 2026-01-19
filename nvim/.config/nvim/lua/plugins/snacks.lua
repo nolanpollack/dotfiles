@@ -32,6 +32,13 @@ return {
 			end,
 			desc = "Smart find files",
 		},
+        {
+            "<leader>fs",
+            function()
+                Snacks.picker.grep()
+            end,
+            desc = "Find files",
+        },
 	},
 	lazy = false,
 	opts = {
@@ -47,6 +54,11 @@ return {
 					keys = {
 						["sv"] = { "edit_vsplit", mode = { "n" } },
 					},
+				},
+			},
+			sources = {
+				files = {
+					hidden = true,
 				},
 			},
 		},
