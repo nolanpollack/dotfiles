@@ -8,7 +8,6 @@ return {
 		"nvim-tree/nvim-web-devicons",
 		"folke/todo-comments.nvim",
 		"kkharji/sqlite.lua",
-		"danielfalk/smart-open.nvim",
 	},
     event = {"BufReadPre", "BufNewFile"},
 	keys = {
@@ -18,7 +17,6 @@ return {
 		{ "<leader>fb", "<cmd>Telescope buffers<cr>", desc = "Find Buffers" },
 		{ "<leader>ff", "<cmd>Telescope builtin<cr>", desc = "Find telescope Pickers" },
 		{ "<leader>fh", "<cmd>Telescope help_tags<cr>", desc = "Help" },
-		{ "<leader><leader>", "<cmd>Telescope smart_open<cr>", desc = "Smart open files" },
 	},
 	opts = function()
 		local actions = require("telescope.actions")

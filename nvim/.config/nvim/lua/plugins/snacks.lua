@@ -25,11 +25,30 @@ return {
 			end,
 			desc = "Open current file in browser",
 		},
+		{
+			"<leader><leader>",
+			function()
+				Snacks.picker.smart()
+			end,
+			desc = "Smart find files",
+		},
 	},
 	lazy = false,
 	opts = {
 		picker = {
 			ui_select = true,
+			formatters = {
+				file = {
+					filename_first = true,
+				},
+			},
+			win = {
+				input = {
+					keys = {
+						["sv"] = { "edit_vsplit", mode = { "n" } },
+					},
+				},
+			},
 		},
 	},
 }
