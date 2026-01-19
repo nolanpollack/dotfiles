@@ -27,5 +27,9 @@ return {
 		},
 	},
 	lazy = false,
-	opts = {},
+	opts = {
+		picker = {
+			ui_select = true,
+		},
+	},
 }
