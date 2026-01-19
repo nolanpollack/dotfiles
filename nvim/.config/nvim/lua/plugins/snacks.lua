@@ -39,20 +39,41 @@ return {
 			end,
 			desc = "Find pickers",
 		},
-        {
-            "<leader>fs",
-            function()
-                Snacks.picker.grep()
-            end,
-            desc = "Find files",
-        },
-        {
-            "<leader>fh",
-            function()
-                Snacks.picker.help()
-            end,
-            desc = "Find help",
-        }
+		{
+			"<leader>fs",
+			function()
+				Snacks.picker.grep()
+			end,
+			desc = "Find files",
+		},
+		{
+			"<leader>fh",
+			function()
+				Snacks.picker.help()
+			end,
+			desc = "Find help",
+		},
+		{
+			"<leader>fd",
+			function()
+				Snacks.picker.diagnostics()
+			end,
+			desc = "Find diagnostics",
+		},
+		{
+			"gr",
+			function()
+				Snacks.picker.lsp_references()
+			end,
+			desc = "Go to references",
+		},
+		{
+			"gi",
+			function()
+				Snacks.picker.lsp_implementations()
+			end,
+			desc = "Go to implementations",
+		},
 	},
 	lazy = false,
 	opts = {
