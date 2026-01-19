@@ -6,7 +6,7 @@ return {
 			"<leader>mp",
 			function()
 				require("conform").format({
-					lsp_fallback = true,
+                    lsp_format = "first",
 					async = true,
 					timeout_ms = 1000,
 				})
@@ -47,11 +47,11 @@ return {
 				lua = { "stylua" },
 				markdown = { "prettier" },
 				python = { "isort", "black" },
-                r = { "styler" },
+				r = { "styler" },
 				rust = { "rustfmt" },
 				sh = { "shellcheck" },
-				typescript = { "prettier", "eslint_d" },
-				typescriptreact = { "prettier", "eslint_d" },
+				typescript = { "prettier" },
+				typescriptreact = { "prettier" },
 				yaml = { "prettier" },
 			},
 			formatters = {
