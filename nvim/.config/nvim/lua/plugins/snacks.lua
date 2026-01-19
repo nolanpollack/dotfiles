@@ -74,6 +74,49 @@ return {
 			end,
 			desc = "Go to implementations",
 		},
+		{
+			"gt",
+			function()
+				Snacks.picker.lsp_type_definitions()
+			end,
+			desc = "Go to type definitions",
+		},
+		{
+			-- TODO: Use tab for this menu if possible
+			"z=",
+			function()
+				Snacks.picker.spelling()
+			end,
+			desc = "Fix spelling",
+		},
+		{
+			"<leader>/",
+			function()
+				Snacks.picker.lsp_symbols()
+			end,
+			desc = "Search treesitter",
+		},
+		{
+			"<leader>u",
+			function()
+				Snacks.picker.undo()
+			end,
+			desc = "Undo",
+		},
+		{
+			"<leader>p",
+			function()
+				Snacks.picker.cliphist()
+			end,
+			desc = "Paste",
+		},
+		{
+			"<leader>gp",
+			function()
+				Snacks.picker.gh_pr()
+			end,
+			desc = "GitHub Pull Requests",
+		},
 	},
 	lazy = false,
 	opts = {
@@ -88,12 +131,33 @@ return {
 				input = {
 					keys = {
 						["sv"] = { "edit_vsplit", mode = { "n" } },
+						["<c-l>"] = { "focus_preview", mode = { "i", "n" } },
+					},
+				},
+				list = {
+					keys = {
+						["<c-l>"] = { "focus_preview", mode = { "i", "n" } },
+					},
+				},
+				preview = {
+					keys = {
+						["<c-h>"] = { "focus_list", mode = { "i", "n" } },
 					},
 				},
 			},
 			sources = {
 				files = {
 					hidden = true,
+				},
+				all = {
+					multi = { "buffers", "recent", "files", "lsp_workspace_symbols" },
+					format = "lsp_symbol",
+					matcher = {
+						cwd_bonus = true, -- boost cwd matches
+						frecency = true, -- use frecency boosting
+						sort_empty = true, -- sort even when the filter is empty
+					},
+					transform = "unique_file",
 				},
 			},
 		},
