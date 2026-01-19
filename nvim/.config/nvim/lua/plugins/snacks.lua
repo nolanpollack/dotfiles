@@ -32,6 +32,13 @@ return {
 			end,
 			desc = "Smart find files",
 		},
+		{
+			"<leader>ff",
+			function()
+				Snacks.picker()
+			end,
+			desc = "Find pickers",
+		},
         {
             "<leader>fs",
             function()
@@ -39,6 +46,13 @@ return {
             end,
             desc = "Find files",
         },
+        {
+            "<leader>fh",
+            function()
+                Snacks.picker.help()
+            end,
+            desc = "Find help",
+        }
 	},
 	lazy = false,
 	opts = {
