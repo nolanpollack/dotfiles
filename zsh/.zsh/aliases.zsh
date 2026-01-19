@@ -16,7 +16,7 @@ alias batlog="bat --paging=never -l log"
 alias dc="docker compose"
 
 # Git
-alias gdb="git diff master...head"
+alias gdm="git diff $(git_main_branch)...head"
 alias gpv="gh pr view --web"
 
 if [[ $OSTYPE == darwin* ]]; then
