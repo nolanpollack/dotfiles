@@ -11,7 +11,7 @@ keymap.set("n", "s", "", { desc = "stop s from replacing letter" })
 keymap.set("n", "<leader>sv", "<C-w>v", { desc = "Split window vertically" }) -- split window vertically
 keymap.set("n", "<leader>sh", "<C-w>s", { desc = "Split window horizontally" }) -- split window horizontally
 keymap.set("n", "<leader>se", "<C-w>=", { desc = "Make splits equal size" }) -- make split windows equal width & height
-keymap.set("n", "<leader>sx", "<cmd>close<CR>", { desc = "Close current split" }) -- close current split window
+keymap.set("n", "<leader>sx", "<cmd>only<CR>", { desc = "Close all other splits" })
 keymap.set("n", "<leader>ss", "<C-w>x", { desc = "Swap windows" }) -- swap windows
 
 keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move line down in visual mode" })
@@ -43,7 +43,7 @@ end
 
 vim.api.nvim_create_autocmd("BufReadPost", {
 	pattern = "*.ansi",
-	callback = function() 
+	callback = function()
         ansi_colorize()
         vim.cmd('normal! G') -- Move cursor to the last line
         vim.cmd('setlocal nonumber norelativenumber') -- Disable line numbers for ansi files
