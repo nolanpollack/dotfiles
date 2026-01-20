@@ -3,6 +3,9 @@
 # Change to the script's directory
 cd "$(dirname "$0")"
 
+# Make tmux plugin directory so other plugins don't get linked
+mkdir -p ~/.tmux/plugins
+
 packages=(
   bat
   brew
