@@ -58,6 +58,9 @@ return {
 				["google-java-format"] = {
 					prepend_args = { "--aosp" },
 				},
+                prettier = {
+                    require_cwd = true,
+                }
 			},
 		}
 	end,
