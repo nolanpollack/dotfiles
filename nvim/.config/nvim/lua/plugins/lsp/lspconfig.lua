@@ -52,6 +52,8 @@ return {
 					"stylua", -- lua formatter
 					"tsgo", -- typescript language server
 					"lua_ls", -- lua language server
+					"tailwindcss", -- tailwindcss formatter
+					"clangd", -- c/c++ language server
 				},
 			}
 		end,
