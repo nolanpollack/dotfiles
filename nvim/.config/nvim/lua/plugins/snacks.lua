@@ -124,6 +124,13 @@ return {
             end,
             desc = "GitHub Pull Requests",
         },
+        {
+            "<leader>lf",
+            function()
+                Snacks.picker.lsp_workspace_symbols()
+            end,
+            desc = "LSP Find Workspace Symbols",
+        }
     },
     lazy = false,
     opts = {
