@@ -137,7 +137,7 @@ return {
             win = {
                 input = {
                     keys = {
-                        ["sv"] = { "edit_vsplit", mode = { "n" } },
+                        ["v"] = { "edit_vsplit", mode = { "n" } },
                         ["<c-l>"] = { "focus_preview", mode = { "i", "n" } },
                     },
                 },
