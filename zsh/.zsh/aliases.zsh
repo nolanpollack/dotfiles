@@ -55,3 +55,5 @@ alias cat=bat
 alias brew-diff="delta ~/dotfiles/brew/requirements.txt <(brew leaves)"
 
 alias glogm="git log --oneline --decorate --graph $(git_main_branch) HEAD"
+
+alias python="python3"
