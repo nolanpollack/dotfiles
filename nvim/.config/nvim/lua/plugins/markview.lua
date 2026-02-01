@@ -1,20 +1,17 @@
 return {
-    -- TODO: Disable by default with keybind to preview in split mode
 	"OXY2DEV/markview.nvim",
 	dependencies = {
 		"echasnovski/mini.icons",
 	},
 	ft = { "markdown" },
-    keys = {
-        { "<leader>mv", "<cmd>Markview splitToggle<cr>", desc = "Toggle Markview Preview" },
-    },
+	keys = {
+		{ "<leader>sm", "<cmd>Markview splitToggle<cr>", desc = "Toggle Markdown Preview Split" },
+	},
 	opts = {
 		preview = {
-			filetypes = { "markdown", "Avante" },
-            ignore_buftypes = {},
+			filetypes = { "markdown" },
+			ignore_buftypes = {},
+			enable = false,
 		},
-        markdown = {
-            enable = false,
-        }
 	},
 }
