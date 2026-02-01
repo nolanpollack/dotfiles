@@ -1,0 +1,26 @@
+{
+  "Heading 1": {
+    "prefix": "h1",
+    "body": ["# $0"]
+  },
+  "Heading 2": {
+    "prefix": "h2",
+    "body": ["## $0"]
+  },
+  "Heading 3": {
+    "prefix": "h3",
+    "body": ["### $0"]
+  },
+  "Heading 4": {
+    "prefix": "h4",
+    "body": ["#### $0"]
+  },
+  "Heading 5": {
+    "prefix": "h5",
+    "body": ["##### $0"]
+  },
+  "Heading 6": {
+    "prefix": "h6",
+    "body": ["###### $0"]
+  }
+}
