@@ -1,7 +1,9 @@
 return {
 	{
 		"supermaven-inc/supermaven-nvim",
-		opts = {},
+		opts = {
+			ignore_filetypes = { markdown = true },
+		},
 	},
 	{
 		"saghen/blink.cmp",
@@ -23,7 +25,7 @@ return {
 				},
 				list = {
 					selection = {
-						preselect = false,
+						preselect = true,
 						auto_insert = false,
 					},
 				},
@@ -37,7 +39,7 @@ return {
 				preset = "default",
 				["<C-k>"] = { "select_prev", "fallback" },
 				["<C-j>"] = { "select_next", "fallback" },
-				["<CR>"] = { "accept", "fallback" },
+				["<C-l>"] = { "accept", "fallback" },
 			},
 			cmdline = {
 				keymap = { preset = "inherit" },
