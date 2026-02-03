@@ -6,7 +6,7 @@ return {
 		{
 			"ih",
 			mode = { "o", "x" },
-            ":<C-U>Gitsigns select_hunk<CR>",
+			":<C-U>Gitsigns select_hunk<CR>",
 			desc = "inner hunk",
 		},
 		{
@@ -14,35 +14,35 @@ return {
 			function()
 				require("gitsigns").stage_hunk()
 			end,
-            desc = "Stage hunk",
+			desc = "Stage hunk",
 		},
 		{
 			"<leader>gs",
-            ":'<,'>Gitsigns stage_hunk<CR>",
-            desc = "Stage selected hunks",
-            mode = "v",
+			":'<,'>Gitsigns stage_hunk<CR>",
+			desc = "Stage selected hunks",
+			mode = "v",
 		},
 		{
 			"<leader>gu",
 			function()
 				require("gitsigns").reset_hunk()
 			end,
-            desc = "Unstage hunk",
+			desc = "Unstage hunk",
 		},
-        {
-            "]g",
-            function()
-                require("gitsigns").nav_hunk('next')
-            end,
-            desc = "Next hunk",
-        },
-        {
-            "[g",
-            function()
-                require("gitsigns").nav_hunk('prev')
-            end,
-            desc = "Previous hunk",
-        },
+		{
+			"]g",
+			function()
+				require("gitsigns").nav_hunk("next")
+			end,
+			desc = "Next hunk",
+		},
+		{
+			"[g",
+			function()
+				require("gitsigns").nav_hunk("prev")
+			end,
+			desc = "Previous hunk",
+		},
 	},
 	opts = {},
 }

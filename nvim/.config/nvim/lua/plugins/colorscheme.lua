@@ -17,7 +17,7 @@ return {
 				mocha = function(colors)
 					return {
 						CmpItemMenu = { fg = colors.subtext0 },
-                        Pmenu = { bg = "NONE" },
+						Pmenu = { bg = "NONE" },
 					}
 				end,
 			},

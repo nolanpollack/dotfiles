@@ -1,7 +1,7 @@
 return {
 	"sindrets/diffview.nvim",
 	opts = {
-        -- TODO: Better keymaps while in editor (next file, previous file, stage, etc, go to panel)
+		-- TODO: Better keymaps while in editor (next file, previous file, stage, etc, go to panel)
 		keymaps = {
 			view = {
 				["<leader>gd"] = "<cmd>DiffviewClose<CR>",
@@ -33,7 +33,7 @@ return {
 		},
 	},
 	keys = {
-        -- TODO: Command to open prompt to type in what I want to diffview. Even better if it autofills refs
+		-- TODO: Command to open prompt to type in what I want to diffview. Even better if it autofills refs
 		{ "<leader>gd", "<cmd>DiffviewOpen<CR>", desc = "Open diffview" },
 		{ "<leader>gl", "<cmd>DiffviewFileHistory<CR>", desc = "Git log" },
 		{ "<leader>gh", "<cmd>DiffviewFileHistory %<CR>", desc = "View history for this file" },
@@ -51,11 +51,11 @@ return {
 			end,
 			desc = "View changes made under the cursor",
 		},
-        {
-            "<leader>gc",
-            ":'<,'>DiffviewFileHistory<CR>",
-            desc = "View changes made to the current selection",
-            mode = "v",
-        }
+		{
+			"<leader>gc",
+			":'<,'>DiffviewFileHistory<CR>",
+			desc = "View changes made to the current selection",
+			mode = "v",
+		},
 	},
 }

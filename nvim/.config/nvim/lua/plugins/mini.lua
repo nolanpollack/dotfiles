@@ -1,6 +1,6 @@
 return {
 	{
-        -- TODO: I have indent-blankline already. Does both do anything?
+		-- TODO: I have indent-blankline already. Does both do anything?
 		"echasnovski/mini.indentscope",
 		version = false,
 		event = { "BufReadPre", "BufNewFile" },

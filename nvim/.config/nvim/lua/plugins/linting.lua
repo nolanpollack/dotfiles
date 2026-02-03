@@ -5,7 +5,7 @@ return {
 		local lint = require("lint")
 
 		lint.linters_by_ft = {
-            bash = { "shellcheck" },
+			bash = { "shellcheck" },
 			python = { "pylint" },
 		}
 

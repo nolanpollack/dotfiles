@@ -11,23 +11,23 @@ return {
 		vim.treesitter.language.register("bash", "zsh")
 		vim.treesitter.language.register("bash", "tmux")
 		vim.treesitter.language.register("java", "aidl")
-        vim.filetype.add({
-          filename = {
-            ['apple-app-site-association'] = 'json',
-          },
-        })
-        vim.api.nvim_create_augroup("filetype_overrides", { clear = true })
-        vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
-          group = "filetype_overrides",
-          pattern = "*.pac",
-          callback = function()
-            vim.bo.filetype = "pac"
-          end,
-        })
-        vim.treesitter.language.register("javascript", "pac")
+		vim.filetype.add({
+			filename = {
+				["apple-app-site-association"] = "json",
+			},
+		})
+		vim.api.nvim_create_augroup("filetype_overrides", { clear = true })
+		vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+			group = "filetype_overrides",
+			pattern = "*.pac",
+			callback = function()
+				vim.bo.filetype = "pac"
+			end,
+		})
+		vim.treesitter.language.register("javascript", "pac")
 	end,
 	keys = {
-        {"<S-M-l>", "<cmd>TSTextobjectSwapNext @parameter.inner<CR>", desc = "Swap to previous parameter"},
+		{ "<S-M-l>", "<cmd>TSTextobjectSwapNext @parameter.inner<CR>", desc = "Swap to previous parameter" },
 	},
 	main = "nvim-treesitter.configs",
 	opts = {
@@ -36,10 +36,10 @@ return {
 		highlight = {
 			enable = true,
 		},
-        ensure_installed = {
-            "latex",
-            "regex"
-        },
+		ensure_installed = {
+			"latex",
+			"regex",
+		},
 		-- enable indentation
 		indent = { enable = true },
 		incremental_selection = {

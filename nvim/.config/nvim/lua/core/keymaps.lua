@@ -50,8 +50,8 @@ end
 vim.api.nvim_create_autocmd("BufReadPost", {
 	pattern = "*.ansi",
 	callback = function()
-        ansi_colorize()
-        vim.cmd('normal! G') -- Move cursor to the last line
-        vim.cmd('setlocal nonumber norelativenumber') -- Disable line numbers for ansi files
-    end,
+		ansi_colorize()
+		vim.cmd("normal! G") -- Move cursor to the last line
+		vim.cmd("setlocal nonumber norelativenumber") -- Disable line numbers for ansi files
+	end,
 })

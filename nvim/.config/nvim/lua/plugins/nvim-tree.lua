@@ -59,7 +59,7 @@ return {
 
 			-- custom mappings
 			vim.keymap.set("n", "?", api.tree.toggle_help, opts("Help"))
-            -- TODO: is it possible to use shift-tab for this? 
+			-- TODO: is it possible to use shift-tab for this?
 			vim.keymap.set("n", "sv", api.node.open.vertical, opts("Open: Vertical Split"))
 			vim.keymap.set("n", "sh", api.node.open.horizontal, opts("Open: Horizontal Split"))
 		end,
