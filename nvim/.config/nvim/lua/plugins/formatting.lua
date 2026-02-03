@@ -6,7 +6,7 @@ return {
 			"<leader>mp",
 			function()
 				require("conform").format({
-					lsp_format = "fallback",
+					lsp_format = "first",
 					async = true,
 					timeout_ms = 1000,
 				})
@@ -44,7 +44,7 @@ return {
 				javascript = { "prettier" },
 				javascriptreact = { "prettier" },
 				json = { "prettier" },
-				lua = { "stylua" },
+				lua = { "stylua", lsp_format = "fallback" },
 				markdown = { "prettier_no_cwd" },
 				python = { "isort", "black" },
 				r = { "styler" },
