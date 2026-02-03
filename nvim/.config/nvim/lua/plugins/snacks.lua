@@ -24,6 +24,7 @@ return {
                 require("snacks").gitbrowse()
             end,
             desc = "Open current file in browser",
+            mode = { "n", "v" }
         },
         {
             "<leader><leader>",
@@ -118,11 +119,11 @@ return {
             desc = "Paste",
         },
         {
-            "<leader>gp",
+            "<leader>gpl",
             function()
                 Snacks.picker.gh_pr()
             end,
-            desc = "GitHub Pull Requests",
+            desc = "List Pull Requests",
         },
         {
             "<leader>lf",
