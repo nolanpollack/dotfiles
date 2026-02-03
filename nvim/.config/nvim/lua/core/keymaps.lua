@@ -34,6 +34,9 @@ keymap.set("n", "<leader>rl", ":set relativenumber!<CR>", { desc = "Toggle relat
 -- go to marks with gm
 keymap.set("n", "gm", "`", { desc = "Go to mark" })
 
+vim.keymap.set("n", "]q", ":cnext<CR>zz", { desc = "Next quickfix" })
+vim.keymap.set("n", "[q", ":cprev<CR>zz", { desc = "Previous quickfix" })
+
 -- TODO: Go to top and bottom of scope (indent or treesitter) would be very nice
 
 -- TODO: Could this be a plugin?
