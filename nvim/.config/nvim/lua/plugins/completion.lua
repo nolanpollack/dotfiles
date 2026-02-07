@@ -39,7 +39,7 @@ return {
 				preset = "default",
 				["<C-k>"] = { "select_prev", "fallback" },
 				["<C-j>"] = { "select_next", "fallback" },
-				["<C-l>"] = { "accept", "fallback" },
+				["<CR>"] = { "accept", "fallback" },
 			},
 			cmdline = {
 				keymap = { preset = "inherit" },
