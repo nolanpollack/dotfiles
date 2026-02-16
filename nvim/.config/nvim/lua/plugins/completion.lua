@@ -7,6 +7,7 @@ return {
 	},
 	{
 		"saghen/blink.cmp",
+		dependencies = { "rafamadriz/friendly-snippets" },
 		version = "1.8.0",
 		-- @type blink.cmp.Config
 		opts = {
@@ -52,6 +53,9 @@ return {
 						},
 					},
 				},
+			},
+			sources = {
+				default = { "lsp", "path", "snippets" },
 			},
 		},
 	},
