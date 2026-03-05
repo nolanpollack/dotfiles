@@ -1,3 +1,5 @@
+vim.g.scrollback_mode = vim.env.NVIM_SCROLLBACK == "1"
+
 local opt = vim.opt
 
 -- undercurl

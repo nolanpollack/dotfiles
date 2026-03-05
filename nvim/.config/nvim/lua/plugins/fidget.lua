@@ -1,5 +1,6 @@
 return {
 	"j-hui/fidget.nvim",
+	cond = not vim.g.scrollback_mode,
 	opts = {
 		progress = {
 			display = {

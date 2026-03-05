@@ -1,5 +1,6 @@
 return {
 	"lewis6991/gitsigns.nvim",
+	cond = not vim.g.scrollback_mode,
 	event = "BufRead",
 	keys = {
 		{ "<leader>gb", "<cmd>Gitsigns toggle_current_line_blame<CR>", desc = "Git blame" },

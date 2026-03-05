@@ -1,6 +1,7 @@
 -- TODO: Getting the right split keybind still feels unintuitive to me
 return {
 	"kevinhwang91/nvim-ufo",
+	cond = not vim.g.scrollback_mode,
 	dependencies = "kevinhwang91/promise-async",
 	event = "BufEnter",
 	init = function()

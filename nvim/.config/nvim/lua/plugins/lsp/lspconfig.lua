@@ -33,6 +33,7 @@ return {
 	{ "williamboman/mason.nvim", opts = {} },
 	{
 		"mason-org/mason-lspconfig.nvim",
+		cond = not vim.g.scrollback_mode,
 		dependencies = {
 			"neovim/nvim-lspconfig",
 			"mason-org/mason.nvim",
@@ -41,6 +42,7 @@ return {
 	},
 	{
 		"WhoIsSethDaniel/mason-tool-installer.nvim",
+		cond = not vim.g.scrollback_mode,
 		opts = function()
 			return {
 				ensure_installed = {
