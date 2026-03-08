@@ -47,7 +47,7 @@ fr() {
 }
 
 if [[ -v WSL_DISTRO_NAME ]]; then
-  alias open="explorer.exe"
+  alias open="/mnt/c/Windows/explorer.exe"
 fi
 
 alias cat=bat

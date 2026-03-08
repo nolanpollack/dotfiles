@@ -10,3 +10,5 @@ KMP
 Kotlin
 protobuf
 gRPC
+allocator
+deallocation
