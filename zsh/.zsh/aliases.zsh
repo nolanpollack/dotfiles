@@ -16,7 +16,51 @@ alias batlog="bat --paging=never -l log"
 alias dc="docker compose"
 
 # Git
-alias gdm="git diff $(git_main_branch)...head"
+git_main_branch () {
+	command git rev-parse --git-dir &> /dev/null || return
+	local remote ref
+	for ref in refs/{heads,remotes/{origin,upstream}}/{main,trunk,mainline,default,stable,master}
+	do
+		if command git show-ref -q --verify $ref
+		then
+			echo ${ref:t}
+			return 0
+		fi
+	done
+	for remote in origin upstream
+	do
+		ref=$(command git rev-parse --abbrev-ref $remote/HEAD 2>/dev/null)
+		if [[ $ref == $remote/* ]]
+		then
+			echo ${ref#"$remote/"}
+			return 0
+		fi
+	done
+	echo master
+	return 1
+}
+
+alias gaa="git add --all"
+
+alias gbc="git branch --show-current"
+
+alias gc="git commit"
+alias gcn!="git commit --amend --no-edit"
+
+alias gd="git diff"
+alias gdm='git diff $(git_main_branch)...HEAD'
+alias gds="git diff --staged"
+
+alias glog="git log --oneline --decorate"
+alias gloga='git log --oneline --decorate --graph --all'
+alias glogm='git log --oneline --decorate --graph $(git_main_branch) origin/$(git_main_branch) HEAD'
+
+alias gp="git push"
+
+alias gsw="git switch"
+alias gswc="git switch -c"
+alias gswm='git switch $(git_main_branch)'
+
 alias gpv="gh pr view --web"
 
 if [[ $OSTYPE == darwin* ]]; then
@@ -54,8 +98,4 @@ alias cat=bat
 
 alias brew-diff="delta ~/dotfiles/brew/requirements.txt <(brew leaves)"
 
-alias glogm="git log --oneline --decorate --graph $(git_main_branch) HEAD"
-
 alias python="python3"
-
-alias gbc="git branch --show-current"

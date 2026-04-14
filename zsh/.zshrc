@@ -31,9 +31,6 @@ eval $(thefuck --alias)
 # zsh-vi-mode
 source ~/.zsh/zsh-vi-mode.zsh
 
-# Oh-My-Zsh. ANYTHING THAT ADDS COMPLETIONS MUST BE SOURCED BEFORE THIS
-source ~/.zsh/oh-my-zsh.zsh
-
 # zsh-autosuggestions
 source "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 
