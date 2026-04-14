@@ -56,6 +56,7 @@ return {
 					"lua_ls", -- lua language server
 					"tailwindcss", -- tailwindcss formatter
 					"clangd", -- c/c++ language server
+					"kotlin-lsp", -- Kotlin language server
 				},
 			}
 		end,
