@@ -1,3 +1,5 @@
+source ~/.zsh/zsh-defer/zsh-defer.plugin.zsh
+
 if [[ -v WSL_DISTRO_NAME ]]; then
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi

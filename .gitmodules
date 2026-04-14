@@ -7,3 +7,6 @@
 [submodule "tmux/.tmux/plugins/tpm"]
 	path = tmux/.tmux/plugins/tpm
 	url = git@github.com:tmux-plugins/tpm.git
+[submodule "zsh/.zsh/zsh-defer"]
+	path = zsh/.zsh/zsh-defer
+	url = https://github.com/romkatv/zsh-defer.git
