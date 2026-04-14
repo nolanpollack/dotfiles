@@ -7,7 +7,10 @@ return {
 	},
 	{
 		"saghen/blink.cmp",
-		dependencies = { "rafamadriz/friendly-snippets" },
+		dependencies = {
+			"rafamadriz/friendly-snippets",
+			"Kaiser-Yang/blink-cmp-git",
+		},
 		version = "1.8.0",
 		-- @type blink.cmp.Config
 		opts = {
@@ -55,7 +58,21 @@ return {
 				},
 			},
 			sources = {
-				default = { "lsp", "path", "snippets" },
+				default = { "git", "lsp", "path", "snippets" },
+				providers = {
+					git = {
+						module = "blink-cmp-git",
+						enabled = function()
+							return vim.tbl_contains({ "octo", "gitcommit", "markdown" }, vim.bo.filetype)
+						end,
+						name = "Git",
+						opts = {
+							commit = {
+								enable = false,
+							},
+						},
+					},
+				},
 			},
 		},
 	},
