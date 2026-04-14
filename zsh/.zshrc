@@ -29,7 +29,7 @@ source ~/.zsh/zsh-vi-mode.zsh
 source ~/.zsh/oh-my-zsh.zsh
 
 # zsh-autosuggestions
-source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 
 eval "$(zoxide init zsh)"
 
