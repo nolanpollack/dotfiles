@@ -26,8 +26,6 @@ source ~/.zsh/brew.zsh
 # Powerlevel10k theme
 source ~/.zsh/p10k.zsh
 
-eval $(thefuck --alias)
-
 # zsh-vi-mode
 source ~/.zsh/zsh-vi-mode.zsh
 
@@ -48,6 +46,9 @@ source ~/.zsh/fzf-tab.zsh
 
 # fast-syntax-highlighting - Must be sourced last
 source ~/.zsh/fast-syntax-highlighting.zsh
+
+# Deferred init (slow, not needed immediately)
+zsh-defer -c 'eval "$(thefuck --alias)"'
 
 export XDG_RUNTIME_DIR=/tmp
 
