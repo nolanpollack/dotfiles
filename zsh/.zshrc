@@ -11,6 +11,12 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+# Add completion functions and setup deferral of compdef calls
+source ~/.zsh/completions.zsh
+
+# Aliases
+source ~/.zsh/aliases.zsh
+
 # Environment variables
 source ~/.zsh/env.zsh
 
@@ -31,19 +37,20 @@ source ~/.zsh/oh-my-zsh.zsh
 # zsh-autosuggestions
 source "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 
+# Zoxide
 eval "$(zoxide init zsh)"
-
-# fzf-tab
-source ~/.zsh/fzf-tab.zsh
 
 # fzf
 source ~/.zsh/fzf.zsh
 
+# Load completions. Should be called _after_ all plugins that add completions
+_run_compinit
+
+# fzf-tab (must be after compinit to override _complete function)
+source ~/.zsh/fzf-tab.zsh
+
 # fast-syntax-highlighting - Must be sourced last
 source ~/.zsh/fast-syntax-highlighting.zsh
-
-# Aliases
-source ~/.zsh/aliases.zsh
 
 export XDG_RUNTIME_DIR=/tmp
 
