@@ -35,14 +35,14 @@ source "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 # Zoxide
 eval "$(zoxide init zsh)"
 
-# fzf
-source ~/.zsh/fzf.zsh
-
 # Load completions. Should be called _after_ all plugins that add completions
 _run_compinit
 
 # fzf-tab (must be after compinit to override _complete function)
 source ~/.zsh/fzf-tab.zsh
+
+# fzf (must be after fzf-tab)
+source ~/.zsh/fzf.zsh
 
 # fast-syntax-highlighting - Must be sourced last
 source ~/.zsh/fast-syntax-highlighting.zsh
