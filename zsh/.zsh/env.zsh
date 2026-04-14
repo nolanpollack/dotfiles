@@ -5,6 +5,7 @@ export MANPAGER='nvim +Man!'
 export EDITOR=nvim
 export COLORTERM='truecolor' 
 export SUDO_EDITOR="$HOMEBREW_PREFIX/bin/nvim"
+export XDG_RUNTIME_DIR=/tmp
 
 # Path
 path+=("$HOME/.local/bin")

@@ -50,8 +50,6 @@ source ~/.zsh/fast-syntax-highlighting.zsh
 # Deferred init (slow, not needed immediately)
 zsh-defer -c 'eval "$(thefuck --alias)"'
 
-export XDG_RUNTIME_DIR=/tmp
-
 if [ -f "$HOME/.env" ]; then
     source "$HOME/.env"
 fi
