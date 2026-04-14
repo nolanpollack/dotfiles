@@ -13,7 +13,6 @@ packages=(
   git
   intellij
   nvim
-  omz
   p10k
   tldr
   tmux
