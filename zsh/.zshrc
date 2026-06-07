@@ -20,6 +20,9 @@ source ~/.zsh/aliases.zsh
 # Environment variables
 source ~/.zsh/env.zsh
 
+# History
+source ~/.zsh/history.zsh
+
 # Homebrew
 source ~/.zsh/brew.zsh
 
