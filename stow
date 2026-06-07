@@ -9,7 +9,6 @@ mkdir -p ~/.tmux/plugins
 packages=(
   bat
   brew
-  btop
   git
   intellij
   nvim
