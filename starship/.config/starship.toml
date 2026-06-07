@@ -293,6 +293,7 @@ symbol = " "
 symbol = " "
 
 [status]
+disabled = false
 symbol = " "
 
 [sudo]
