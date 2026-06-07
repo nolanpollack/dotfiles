@@ -16,6 +16,7 @@ packages=(
   nvim
   p10k
   postgresql
+  starship
   tldr
   tmux
   zellij

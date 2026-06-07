@@ -2,6 +2,11 @@
 # all plugins have added their completions to fpath. So to allow plugins to call
 # compdef to register completions, while also allowing plugins to add to fpath to
 # register completions, we defer the compdef calls until we actually call compinit.
+
+# Autoload compinit early so plugins that check `command -v compinit`
+# don't fall back to calling compinit themselves without -C (which triggers compaudit).
+autoload -Uz compinit
+
 typeset -ga _deferred_compdefs=()
 
 compdef() {

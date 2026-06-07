@@ -26,7 +26,6 @@ neovim
 node
 nushell
 openjdk@17
-powerlevel10k
 pv
 repo
 ripgrep
@@ -34,6 +33,7 @@ rm-improved
 rustup
 sd
 speedtest-cli
+starship
 stow
 tealdeer
 thefuck
@@ -42,6 +42,7 @@ tree-sitter
 tree-sitter-cli
 xclip
 yq
+zellij
 zsh
 zsh-autosuggestions
 zsh-fast-syntax-highlighting
