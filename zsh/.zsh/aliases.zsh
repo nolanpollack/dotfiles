@@ -99,3 +99,11 @@ alias cat=bat
 alias brew-diff="delta ~/dotfiles/brew/requirements.txt <(brew leaves)"
 
 alias python="python3"
+
+mdtopdf() {
+    # strip md extension
+    filename=$(basename "$1" .md)
+
+    # convert to pdf
+    pandoc --pdf-engine=weasyprint -o "$filename.pdf" "$1"
+}
