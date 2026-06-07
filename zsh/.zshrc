@@ -57,7 +57,4 @@ if [ -f "$HOME/.env" ]; then
     source "$HOME/.env"
 fi
 
-# Tmux autostart
-# if command -v tmux &>/dev/null && [[ -z "$TMUX" ]]; then
-#   tmux attach -t default 2>/dev/null || tmux new-session -s default
-# fi
+eval "$(zellij setup --generate-auto-start zsh)"
