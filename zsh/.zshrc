@@ -35,6 +35,9 @@ source ~/.zsh/postgresql.zsh
 # Powerlevel10k theme
 source ~/.zsh/p10k.zsh
 
+# Terminal/pane title
+source ~/.zsh/title.zsh
+
 # zsh-vi-mode
 source ~/.zsh/zsh-vi-mode.zsh
 
