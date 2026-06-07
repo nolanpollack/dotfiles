@@ -26,6 +26,9 @@ source ~/.zsh/history.zsh
 # Homebrew
 source ~/.zsh/brew.zsh
 
+# Bun
+source ~/.zsh/bun.zsh
+
 # Powerlevel10k theme
 source ~/.zsh/p10k.zsh
 
