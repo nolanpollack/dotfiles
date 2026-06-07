@@ -89,16 +89,17 @@ symbol = " "
 tag_symbol = '  '
 
 [git_status]
-modified   = '${count}'
-staged     = '${count}'
-deleted    = '${count}'
-untracked  = '${count}'
-renamed    = '${count}'
-conflicted = '${count}'
-stashed    = '${count}'
-ahead      = '${count}'
-behind     = '${count}'
-diverged   = '${ahead_count}${behind_count}'
+format     = '([$all_status$ahead_behind]($style) )'
+modified   = '${count} '
+staged     = '${count} '
+deleted    = '${count} '
+untracked  = '${count} '
+renamed    = '${count} '
+conflicted = '${count} '
+stashed    = '${count} '
+ahead      = '${count} '
+behind     = '${count} '
+diverged   = '${ahead_count} ${behind_count} '
 
 [golang]
 symbol = " "
