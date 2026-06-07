@@ -55,6 +55,6 @@ if [ -f "$HOME/.env" ]; then
 fi
 
 # Tmux autostart
-if command -v tmux &>/dev/null && [[ -z "$TMUX" ]]; then
-  tmux attach -t default 2>/dev/null || tmux new-session -s default
-fi
+# if command -v tmux &>/dev/null && [[ -z "$TMUX" ]]; then
+#   tmux attach -t default 2>/dev/null || tmux new-session -s default
+# fi
