@@ -15,6 +15,7 @@ packages=(
   intellij
   nvim
   p10k
+  postgresql
   tldr
   tmux
   zellij
