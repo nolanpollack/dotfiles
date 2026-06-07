@@ -45,4 +45,6 @@ vim.filetype.add({
 
 opt.termguicolors = true
 
+opt.title = true
+
 opt.splitright = true
