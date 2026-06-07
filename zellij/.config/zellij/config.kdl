@@ -191,6 +191,13 @@ keybinds clear-defaults=true {
         bind "Alt ]" { NextSwapLayout; }
         bind "Alt f" { ToggleFloatingPanes; }
         bind "Alt h" { GoToPreviousTab; }
+        bind "Alt s" {
+            LaunchOrFocusPlugin "session-manager" {
+                floating true
+                move_to_focused_tab true
+            }
+            SwitchToMode "locked"
+        }
         bind "Alt i" { MoveTab "left"; }
         bind "Alt l" { GoToNextTab; }
         bind "Alt n" { NewPane; }
