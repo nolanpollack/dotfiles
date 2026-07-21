@@ -1,0 +1,13 @@
+[package]
+name = "session-picker"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+zellij-tile = "0.44.3"
+fuzzy-matcher = "0.3"
+ratatui = { version = "0.30", default-features = false }
+
+[profile.release]
+opt-level = "z"
+lto = true
