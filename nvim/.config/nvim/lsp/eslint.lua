@@ -1,4 +1,4 @@
-vim.lsp.config("eslint", {
+return {
 	root_dir = function(bufnr, on_dir)
 		local root = vim.fs.root(bufnr, { "eslint.config.ts", "eslint.config.js", ".git" })
 		if root then
@@ -12,4 +12,4 @@ vim.lsp.config("eslint", {
 		format = true,
 		workingDirectory = { mode = "location" },
 	},
-})
+}

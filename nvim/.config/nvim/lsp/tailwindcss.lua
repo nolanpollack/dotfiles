@@ -1,4 +1,4 @@
-vim.lsp.config("tailwindcss", {
+return {
 	settings = {
 		classAttributes = {
 			"class",
@@ -32,4 +32,4 @@ vim.lsp.config("tailwindcss", {
 		},
 		classFunctions = { "useResolveClassNames" },
 	},
-})
+}
