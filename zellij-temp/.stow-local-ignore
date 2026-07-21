@@ -1,0 +1,3 @@
+# Rust plugin source — compiled to session-picker.wasm (which IS stowed).
+# The crate itself should not be symlinked into the live ~/.config/zellij.
+^session-picker$
