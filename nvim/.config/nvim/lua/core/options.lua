@@ -48,3 +48,14 @@ opt.termguicolors = true
 opt.title = true
 
 opt.splitright = true
+
+-- Enable the display of listchars
+vim.opt.list = true
+
+-- Define what characters to use for different whitespaces
+vim.opt.listchars = {
+  -- space = '·',      -- Regular spaces
+  lead = '·',       -- Leading spaces
+  trail = '·',      -- Trailing spaces
+  tab = '» ',       -- Tabs (shows » followed by a space)
+}
