@@ -21,7 +21,7 @@ return {
 		{
 			"<leader>go",
 			function()
-				require("snacks").gitbrowse()
+				require("snacks").gitbrowse({ what = "permalink" })
 			end,
 			desc = "Open current file in browser",
 			mode = { "n", "v" },
