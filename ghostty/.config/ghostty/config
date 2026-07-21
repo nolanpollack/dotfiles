@@ -3,3 +3,9 @@ theme = Catppuccin Mocha
 adjust-cell-width = "-5%"
 adjust-cell-height = "5%"
 font-thicken = true
+
+keybind = super+n=esc:n
+keybind = super+h=esc:h
+keybind = super+l=esc:l
+keybind = super+s=esc:s
+keybind = super+f=esc:f
