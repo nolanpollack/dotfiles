@@ -1,5 +1,7 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
+command_timeout = 30
+
 [aws]
 symbol = " "
 
@@ -106,6 +108,7 @@ symbol = " "
 
 [gradle]
 symbol = " "
+disabled = true
 
 [guix_shell]
 symbol = " "
@@ -127,12 +130,14 @@ ssh_symbol = " "
 
 [java]
 symbol = " "
+disabled = true
 
 [julia]
 symbol = " "
 
 [kotlin]
 symbol = " "
+disabled = true
 
 [kubernetes]
 symbol = "󱃾 "
@@ -261,6 +266,7 @@ symbol = " "
 symbol = " "
 
 [python]
+disabled = true
 symbol = " "
 
 [raku]
