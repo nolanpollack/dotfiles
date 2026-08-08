@@ -9,3 +9,4 @@ keybind = super+h=esc:h
 keybind = super+l=esc:l
 keybind = super+s=esc:s
 keybind = super+f=esc:f
+keybind = super+a=esc:a
