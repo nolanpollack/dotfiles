@@ -10,3 +10,5 @@ keybind = super+l=esc:l
 keybind = super+s=esc:s
 keybind = super+f=esc:f
 keybind = super+a=esc:a
+keybind = super+[=esc:[
+keybind = super+]=esc:]
