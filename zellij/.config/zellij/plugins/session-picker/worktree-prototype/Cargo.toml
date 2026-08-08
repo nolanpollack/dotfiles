@@ -1,0 +1,10 @@
+[package]
+name = "session-picker-worktree-prototype"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+crossterm = "0.28"
+ratatui = "0.30"
+
+[workspace]

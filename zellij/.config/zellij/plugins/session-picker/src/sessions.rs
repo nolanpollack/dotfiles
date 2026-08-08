@@ -1,14 +1,20 @@
 use std::collections::{BTreeMap, HashSet};
 
-use zellij_tile::prelude::*;
-use zellij_tile::prelude::SessionInfo as ZellijSessionInfo;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Default, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub enum SessionLifecycle {
+    Active {
+        current: bool,
+    },
+    #[default]
+    Resurrectable,
+}
+
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SessionInfo {
     pub name: String,
-    pub is_current: bool,
-    /// false for resurrectable sessions that aren't currently running.
-    pub is_active: bool,
+    pub lifecycle: SessionLifecycle,
     /// Git branch checked out in the session's cwd, if resolved. `None` until a lookup
     /// completes (or if the session has no cwd/branch to report).
     pub branch: Option<String>,
@@ -22,35 +28,14 @@ pub struct SessionInfo {
     pub nested_worktree: bool,
 }
 
-pub fn fetch_sessions() -> Option<Vec<SessionInfo>> {
-    let snapshot = get_session_list().ok()?;
-    Some(sessions_from_snapshot(snapshot.live_sessions, snapshot.resurrectable_sessions))
-}
+impl SessionInfo {
+    pub fn is_active(&self) -> bool {
+        matches!(self.lifecycle, SessionLifecycle::Active { .. })
+    }
 
-/// Builds the picker's session list from the same (live, resurrectable) pair the host sends both
-/// in `get_session_list`'s snapshot and in `Event::SessionUpdate` pushes.
-pub fn sessions_from_snapshot(
-    live_sessions: Vec<ZellijSessionInfo>,
-    resurrectable_sessions: Vec<(String, std::time::Duration)>,
-) -> Vec<SessionInfo> {
-    let mut sessions: Vec<SessionInfo> = live_sessions
-        .into_iter()
-        .map(|s| SessionInfo {
-            name: s.name,
-            is_current: s.is_current_session,
-            is_active: true,
-            ..Default::default()
-        })
-        .collect();
-
-    let mut resurrectable: Vec<SessionInfo> = resurrectable_sessions
-        .into_iter()
-        .map(|(name, _)| SessionInfo { name, is_active: false, ..Default::default() })
-        .collect();
-    resurrectable.sort_by(|a, b| a.name.cmp(&b.name));
-    sessions.extend(resurrectable);
-
-    sessions
+    pub fn is_current(&self) -> bool {
+        matches!(self.lifecycle, SessionLifecycle::Active { current: true })
+    }
 }
 
 /// Reorders `sessions` so each repo's worktrees sit directly after its main-checkout session
@@ -70,7 +55,10 @@ pub fn group_by_repo(sessions: Vec<SessionInfo>) -> Vec<SessionInfo> {
         match &session.repo_root {
             Some(root) if !session.is_main_checkout && repos_with_main_checkout.contains(root) => {
                 session.nested_worktree = true;
-                worktrees_by_repo.entry(root.clone()).or_default().push(session);
+                worktrees_by_repo
+                    .entry(root.clone())
+                    .or_default()
+                    .push(session);
             }
             _ => remaining.push(session),
         }
@@ -94,4 +82,42 @@ pub fn group_by_repo(sessions: Vec<SessionInfo>) -> Vec<SessionInfo> {
         }
     }
     result
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn session(name: &str, root: &str, main: bool) -> SessionInfo {
+        SessionInfo {
+            name: name.into(),
+            lifecycle: SessionLifecycle::Active { current: false },
+            repo_root: Some(root.into()),
+            is_main_checkout: main,
+            ..Default::default()
+        }
+    }
+
+    #[test]
+    fn lifecycle_cannot_represent_current_resurrectable_session() {
+        let dead = SessionInfo::default();
+        assert!(!dead.is_active());
+        assert!(!dead.is_current());
+    }
+
+    #[test]
+    fn worktrees_follow_their_main_checkout() {
+        let grouped = group_by_repo(vec![
+            session("feature", "/repo", false),
+            session("main", "/repo", true),
+        ]);
+        assert_eq!(
+            grouped
+                .iter()
+                .map(|session| session.name.as_str())
+                .collect::<Vec<_>>(),
+            vec!["main", "feature"]
+        );
+        assert!(grouped[1].nested_worktree);
+    }
 }

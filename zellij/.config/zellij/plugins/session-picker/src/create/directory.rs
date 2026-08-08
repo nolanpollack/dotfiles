@@ -1,15 +1,8 @@
-use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
-use zellij_tile::prelude::{switch_session_with_cwd, KeyWithModifier};
-
-use super::discovery;
-use super::form::{Combobox, Field, Form, TextField};
-use crate::input::{key_to_action, Action};
+use super::form::{Combobox, TextField};
+use crate::input::{directory_action, DirectoryAction, Key};
 use crate::sessions::SessionInfo;
-
-const DIRECTORY_FIELD: usize = 0;
-const NAME_FIELD: usize = 1;
 
 /// A zoxide-known directory, offered as a combobox candidate.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -25,140 +18,215 @@ impl Candidate {
     }
 }
 
-fn candidate_key(c: &Candidate) -> &str {
-    &c.display
+fn candidate_key(candidate: &Candidate) -> &str {
+    &candidate.display
 }
 
-/// What happened as a result of a keypress; the caller (`create::mod`) interprets this into a
-/// `CreateFlow` transition.
+#[derive(Copy, Clone, PartialEq, Eq)]
+pub enum Focus {
+    Directory,
+    Name,
+}
+
+impl Focus {
+    fn next(self) -> Self {
+        match self {
+            Self::Directory => Self::Name,
+            Self::Name => Self::Directory,
+        }
+    }
+
+    fn previous(self) -> Self {
+        self.next()
+    }
+}
+
+/// What happened as a result of a keypress; the plugin adapter performs the actual session
+/// switch for `Create`.
 pub enum Outcome {
-    /// Stay on this form.
     Continue,
-    /// Step back to the type chooser.
     Back,
-    /// A session was created and switched to; the caller should exit create-mode entirely.
-    Done,
+    Create { name: String, cwd: PathBuf },
 }
 
 pub struct DirectoryForm {
-    form: Form<Candidate>,
+    directory: Combobox<Candidate>,
+    name: TextField,
+    focus: Focus,
     error: Option<String>,
-    /// Cached separately from the combobox itself: `Combobox::set_candidates` only takes effect
-    /// while expanded, but the zoxide fetch usually resolves *before* the user ever opens it —
-    /// this is what lets a freshly-opened combobox show real results immediately instead of
-    /// starting empty.
-    candidates: Vec<Candidate>,
+}
+
+impl Default for DirectoryForm {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl DirectoryForm {
     pub fn new() -> Self {
-        // Fired eagerly (rather than waiting for the combobox to be opened) so the candidate
-        // list has a head start on the async round-trip before the user gets there.
-        discovery::fetch_zoxide_list();
-        let fields = vec![
-            Field::Combobox(Combobox::new(candidate_key)),
-            Field::Text(TextField::default()),
-        ];
-        Self { form: Form::new(fields), error: None, candidates: Vec::new() }
+        Self {
+            directory: Combobox::new(candidate_key),
+            name: TextField::default(),
+            focus: Focus::Directory,
+            error: None,
+        }
     }
 
-    pub fn form(&self) -> &Form<Candidate> {
-        &self.form
+    pub fn directory(&self) -> &Combobox<Candidate> {
+        &self.directory
+    }
+
+    pub fn name(&self) -> &TextField {
+        &self.name
+    }
+
+    pub fn focus(&self) -> Focus {
+        self.focus
     }
 
     pub fn error(&self) -> Option<&str> {
         self.error.as_deref()
     }
 
-    pub fn apply_key(&mut self, key: &KeyWithModifier, existing_names: &[SessionInfo]) -> Outcome {
+    pub fn apply_key(&mut self, key: Key, existing_names: &[SessionInfo]) -> Outcome {
         self.error = None;
-
-        let Some(action) = key_to_action(key) else {
+        let Some(action) = directory_action(key) else {
             return Outcome::Continue;
         };
 
-        let consumed = self.form.handle_action(action);
-        self.sync_directory_candidates();
-        self.sync_default_name();
-
-        if consumed {
-            return Outcome::Continue;
+        if self.directory.is_expanded() {
+            return self.apply_directory_picker_action(action);
         }
 
         match action {
-            Action::Cancel => Outcome::Back,
-            Action::Confirm => self.submit(existing_names),
+            DirectoryAction::NextField | DirectoryAction::MoveDown => {
+                self.focus = self.focus.next();
+                Outcome::Continue
+            }
+            DirectoryAction::MoveUp => {
+                self.focus = self.focus.previous();
+                Outcome::Continue
+            }
+            DirectoryAction::Cancel => Outcome::Back,
+            DirectoryAction::Confirm if self.focus == Focus::Directory => {
+                self.directory.expand();
+                Outcome::Continue
+            }
+            DirectoryAction::Confirm => self.submit(existing_names),
+            DirectoryAction::PopChar if self.focus == Focus::Name => {
+                self.name.pop_char();
+                Outcome::Continue
+            }
+            DirectoryAction::PushChar(c) if self.focus == Focus::Directory => {
+                self.directory.expand_with_char(c);
+                Outcome::Continue
+            }
+            DirectoryAction::PushChar(c) => {
+                self.name.push_char(c);
+                Outcome::Continue
+            }
             _ => Outcome::Continue,
         }
     }
 
-    pub fn apply_discovery_result(&mut self, context: &BTreeMap<String, String>, stdout: &[u8]) -> bool {
-        let Some(paths) = discovery::parse_zoxide_result(context, stdout) else {
-            return false;
-        };
-        self.candidates = paths.into_iter().map(Candidate::from_path).collect();
-        self.sync_directory_candidates();
-        true
+    pub fn set_candidates(&mut self, paths: Vec<PathBuf>) {
+        self.directory
+            .set_candidates(paths.into_iter().map(Candidate::from_path).collect());
     }
 
-    /// Pushes the cached candidate list into the directory combobox if it's expanded — a no-op
-    /// otherwise. Called after every keypress (cheap: `Picker::set_items` just re-filters) so a
-    /// combobox that just opened, or a fetch that just resolved, is never left showing stale or
-    /// empty results.
-    fn sync_directory_candidates(&mut self) {
-        if let Field::Combobox(cb) = self.form.field_mut(DIRECTORY_FIELD) {
-            if cb.is_expanded() {
-                cb.set_candidates(self.candidates.clone());
+    fn apply_directory_picker_action(&mut self, action: DirectoryAction) -> Outcome {
+        match action {
+            DirectoryAction::Confirm => {
+                if self.directory.commit() {
+                    self.sync_default_name();
+                    self.focus = Focus::Name;
+                }
             }
+            DirectoryAction::Cancel => self.directory.collapse(),
+            DirectoryAction::MoveDown => self.directory.move_down(),
+            DirectoryAction::MoveUp => self.directory.move_up(),
+            DirectoryAction::PopChar => self.directory.pop_char(),
+            DirectoryAction::PushChar(c) => self.directory.push_char(c),
+            _ => {}
         }
+        Outcome::Continue
     }
 
-    /// Fills the name field with the chosen directory's basename as soon as a directory is
-    /// committed, as long as the user hasn't typed their own name already — same "reactive
-    /// default until you override it" pattern `gw`'s own form uses for its branch field.
     fn sync_default_name(&mut self) {
-        let default_name = match self.form.fields().get(DIRECTORY_FIELD) {
-            Some(Field::Combobox(dir)) => dir.committed().map(|c| default_session_name(&c.path)),
-            _ => None,
-        };
-        let Some(default_name) = default_name else {
-            return;
-        };
-        if let Field::Text(name_field) = self.form.field_mut(NAME_FIELD) {
-            if name_field.value.is_empty() {
-                name_field.value = default_name;
-            }
+        if let Some(candidate) = self.directory.committed() {
+            self.name
+                .set_if_empty(default_session_name(&candidate.path));
         }
     }
 
     fn submit(&mut self, existing_names: &[SessionInfo]) -> Outcome {
-        let Some(Field::Combobox(directory_field)) = self.form.fields().get(DIRECTORY_FIELD) else {
-            return Outcome::Continue;
-        };
-        let Some(candidate) = directory_field.committed().cloned() else {
+        let Some(candidate) = self.directory.committed() else {
             self.error = Some("choose a directory".to_string());
             return Outcome::Continue;
         };
 
-        let typed_name = match self.form.fields().get(NAME_FIELD) {
-            Some(Field::Text(t)) => t.value.trim().to_string(),
-            _ => String::new(),
+        let name = if self.name.is_empty() {
+            default_session_name(&candidate.path)
+        } else {
+            self.name.value().trim().to_string()
         };
-        let name = if typed_name.is_empty() { default_session_name(&candidate.path) } else { typed_name };
         if name.is_empty() {
             self.error = Some("session name is required".to_string());
             return Outcome::Continue;
         }
-        if existing_names.iter().any(|s| s.name == name) {
+        if existing_names.iter().any(|session| session.name == name) {
             self.error = Some(format!("session '{name}' already exists"));
             return Outcome::Continue;
         }
 
-        switch_session_with_cwd(Some(&name), Some(candidate.path));
-        Outcome::Done
+        Outcome::Create {
+            name,
+            cwd: candidate.path.clone(),
+        }
     }
 }
 
 fn default_session_name(path: &Path) -> String {
-    path.file_name().map(|n| n.to_string_lossy().to_string()).unwrap_or_default()
+    path.file_name()
+        .map(|name| name.to_string_lossy().to_string())
+        .unwrap_or_default()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::input::Key;
+
+    #[test]
+    fn chosen_directory_supplies_a_default_session_name() {
+        let mut form = DirectoryForm::new();
+        form.set_candidates(vec![PathBuf::from("/tmp/project")]);
+        form.apply_key(Key::Enter, &[]);
+        form.apply_key(Key::Enter, &[]);
+        assert_eq!(form.name().value(), "project");
+        assert!(matches!(
+            form.apply_key(Key::Enter, &[]),
+            Outcome::Create { name, cwd }
+                if name == "project" && cwd == PathBuf::from("/tmp/project")
+        ));
+    }
+
+    #[test]
+    fn duplicate_name_stays_in_the_form_with_an_error() {
+        let mut form = DirectoryForm::new();
+        form.set_candidates(vec![PathBuf::from("/tmp/project")]);
+        form.apply_key(Key::Enter, &[]);
+        form.apply_key(Key::Enter, &[]);
+        let existing = [SessionInfo {
+            name: "project".into(),
+            ..Default::default()
+        }];
+        assert!(matches!(
+            form.apply_key(Key::Enter, &existing),
+            Outcome::Continue
+        ));
+        assert!(form
+            .error()
+            .is_some_and(|error| error.contains("already exists")));
+    }
 }

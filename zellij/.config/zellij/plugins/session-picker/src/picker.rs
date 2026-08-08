@@ -1,17 +1,70 @@
 use fuzzy_matcher::skim::SkimMatcherV2;
 use fuzzy_matcher::FuzzyMatcher;
 
-/// Generic fuzzy-filterable, navigable list. Holds query/selection state and scoring logic;
-/// knows nothing about how it's displayed.
+/// Cached items and fuzzy-matching logic for a navigable list. Query and selection live in a
+/// separate [`PickerState`] so presentation state can be replaced independently.
 pub struct Picker<T> {
     items: Vec<T>,
     key_fn: Box<dyn for<'a> Fn(&'a T) -> &'a str>,
-    /// Indices into `items` that match `query`, ordered by match score.
-    filtered: Vec<usize>,
-    /// Index into `filtered`, not `items` — resolve via `items[filtered[selected]]`.
+    matcher: SkimMatcherV2,
+}
+
+/// Interaction state for a [`Picker`]. Keeping this separate from the items lets callers reset
+/// the visible picker without throwing away cached data.
+#[derive(Default)]
+pub struct PickerState {
+    /// Index into the filtered items, not the picker's full item list.
     selected: usize,
     query: String,
-    matcher: SkimMatcherV2,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn picker() -> Picker<String> {
+        let mut picker = Picker::new(String::as_str);
+        picker.set_items(vec!["alpha".into(), "beta".into(), "alpine".into()]);
+        picker
+    }
+
+    #[test]
+    fn filtering_clamps_selection() {
+        let picker = picker();
+        let mut state = PickerState::default();
+        picker.move_down(&mut state);
+        picker.move_down(&mut state);
+        picker.push_char(&mut state, 'b');
+        assert_eq!(
+            picker.selected_item(&state).map(String::as_str),
+            Some("beta")
+        );
+        assert_eq!(picker.selected_index(&state), Some(0));
+    }
+
+    #[test]
+    fn view_contains_highlight_indices_without_exposing_mutation() {
+        let picker = picker();
+        let mut state = PickerState::default();
+        picker.push_char(&mut state, 'a');
+        picker.push_char(&mut state, 'l');
+        let view = picker.view(&state);
+        assert_eq!(view.filtered_count, 2);
+        assert!(view.items.iter().all(|(_, indices)| !indices.is_empty()));
+    }
+
+    #[test]
+    fn default_state_resets_interaction_without_clearing_items() {
+        let picker = picker();
+        let mut state = PickerState::default();
+        picker.push_char(&mut state, 'b');
+        state = PickerState::default();
+
+        let view = picker.view(&state);
+        assert_eq!(view.query, "");
+        assert_eq!(view.filtered_count, 3);
+        assert_eq!(view.selected, Some(0));
+    }
 }
 
 /// Immutable snapshot of picker state for rendering — exposes no mutation, so the render
@@ -31,33 +84,29 @@ impl<T> Picker<T> {
         Self {
             items: Vec::new(),
             key_fn: Box::new(key_fn),
-            filtered: Vec::new(),
-            selected: 0,
-            query: String::new(),
             matcher: SkimMatcherV2::default(),
         }
     }
 
     pub fn set_items(&mut self, items: Vec<T>) {
         self.items = items;
-        self.refilter();
     }
 
-    pub fn push_char(&mut self, c: char) {
-        self.query.push(c);
-        self.refilter();
+    pub fn push_char(&self, state: &mut PickerState, c: char) {
+        state.query.push(c);
+        self.clamp_selection(state);
     }
 
-    pub fn pop_char(&mut self) {
-        self.query.pop();
-        self.refilter();
+    pub fn pop_char(&self, state: &mut PickerState) {
+        state.query.pop();
+        self.clamp_selection(state);
     }
 
     /// Resets the filter so every item is visible again.
-    pub fn clear_query(&mut self) {
-        if !self.query.is_empty() {
-            self.query.clear();
-            self.refilter();
+    pub fn clear_query(&self, state: &mut PickerState) {
+        if !state.query.is_empty() {
+            state.query.clear();
+            self.clamp_selection(state);
         }
     }
 
@@ -65,44 +114,51 @@ impl<T> Picker<T> {
         &self.items
     }
 
-    pub fn move_up(&mut self) {
-        self.selected = self.selected.saturating_sub(1);
+    pub fn move_up(&self, state: &mut PickerState) {
+        state.selected = state.selected.saturating_sub(1);
     }
 
-    pub fn move_down(&mut self) {
-        if !self.filtered.is_empty() && self.selected + 1 < self.filtered.len() {
-            self.selected += 1;
+    pub fn move_down(&self, state: &mut PickerState) {
+        let filtered_count = self.filtered_indices(&state.query).len();
+        if filtered_count > 0 && state.selected + 1 < filtered_count {
+            state.selected += 1;
         }
     }
 
-    pub fn selected_item(&self) -> Option<&T> {
-        self.filtered.get(self.selected).map(|&i| &self.items[i])
+    pub fn selected_item(&self, state: &PickerState) -> Option<&T> {
+        self.filtered_indices(&state.query)
+            .get(state.selected)
+            .map(|&i| &self.items[i])
     }
 
-    pub fn filtered_count(&self) -> usize {
-        self.filtered.len()
+    pub fn filtered_count(&self, state: &PickerState) -> usize {
+        self.filtered_indices(&state.query).len()
     }
 
-    pub fn selected_index(&self) -> Option<usize> {
-        (!self.filtered.is_empty()).then_some(self.selected)
+    pub fn selected_index(&self, state: &PickerState) -> Option<usize> {
+        (self.filtered_count(state) > 0).then_some(state.selected)
     }
 
-    pub fn view(&self) -> View<'_, T> {
+    pub fn view<'a>(&'a self, state: &'a PickerState) -> View<'a, T> {
+        let items = self.visible_with_highlights(&state.query);
         View {
-            query: &self.query,
-            items: self.visible_with_highlights(),
-            selected: self.selected_index(),
-            filtered_count: self.filtered_count(),
+            query: &state.query,
+            selected: (!items.is_empty()).then_some(state.selected),
+            filtered_count: items.len(),
+            items,
             total_count: self.items.len(),
         }
     }
 
-    fn visible_with_highlights(&self) -> Vec<(&T, Vec<usize>)> {
-        let query = &self.query;
+    pub fn clamp(&self, state: &mut PickerState) {
+        self.clamp_selection(state);
+    }
+
+    fn visible_with_highlights(&self, query: &str) -> Vec<(&T, Vec<usize>)> {
         let items = &self.items;
         let key_fn = &*self.key_fn;
         let matcher = &self.matcher;
-        self.filtered
+        self.filtered_indices(query)
             .iter()
             .map(|&i| {
                 let item = &items[i];
@@ -119,9 +175,9 @@ impl<T> Picker<T> {
             .collect()
     }
 
-    fn refilter(&mut self) {
-        if self.query.is_empty() {
-            self.filtered = (0..self.items.len()).collect();
+    fn filtered_indices(&self, query: &str) -> Vec<usize> {
+        if query.is_empty() {
+            (0..self.items.len()).collect()
         } else {
             let mut scored: Vec<(i64, usize)> = self
                 .items
@@ -129,20 +185,20 @@ impl<T> Picker<T> {
                 .enumerate()
                 .filter_map(|(i, item)| {
                     let key = (self.key_fn)(item);
-                    self.matcher.fuzzy_match(key, &self.query).map(|score| (score, i))
+                    self.matcher.fuzzy_match(key, query).map(|score| (score, i))
                 })
                 .collect();
-            scored.sort_by(|a, b| b.0.cmp(&a.0));
-            self.filtered = scored.into_iter().map(|(_, i)| i).collect();
+            scored.sort_by_key(|item| std::cmp::Reverse(item.0));
+            scored.into_iter().map(|(_, i)| i).collect()
         }
-        self.clamp_selection();
     }
 
-    fn clamp_selection(&mut self) {
-        if self.filtered.is_empty() {
-            self.selected = 0;
-        } else if self.selected >= self.filtered.len() {
-            self.selected = self.filtered.len() - 1;
+    fn clamp_selection(&self, state: &mut PickerState) {
+        let filtered_count = self.filtered_indices(&state.query).len();
+        if filtered_count == 0 {
+            state.selected = 0;
+        } else if state.selected >= filtered_count {
+            state.selected = filtered_count - 1;
         }
     }
 }

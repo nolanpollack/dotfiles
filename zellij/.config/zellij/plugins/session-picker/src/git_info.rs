@@ -1,14 +1,7 @@
-use std::collections::BTreeMap;
-use std::path::PathBuf;
-
-use zellij_tile::prelude::run_command_with_env_variables_and_cwd;
-
-/// Context key tagging a git-info `run_command` call, so its `RunCommandResult` can be matched
-/// back to the session it was requested for.
-pub const CONTEXT_KEY: &str = "session_git_info";
-
 /// Git branch and worktree-grouping info resolved for a session's cwd.
-#[derive(Debug, Clone, Default, PartialEq, Eq)]
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct GitInfo {
     pub branch: Option<String>,
     /// Absolute path to the repo's main checkout — the same value for every worktree of the
@@ -21,14 +14,18 @@ pub struct GitInfo {
 
 impl GitInfo {
     /// Parses the `branch\nrepo_root\nis_main` stdout our lookup scripts emit.
-    fn parse(stdout: &[u8]) -> Self {
+    pub fn parse(stdout: &[u8]) -> Self {
         let text = String::from_utf8_lossy(stdout);
         let mut lines = text.lines();
         let non_empty = |s: &str| (!s.is_empty()).then(|| s.to_string());
         let branch = lines.next().map(str::trim).and_then(non_empty);
         let repo_root = lines.next().map(str::trim).and_then(non_empty);
         let is_main_checkout = lines.next().map(str::trim) == Some("1");
-        Self { branch, repo_root, is_main_checkout }
+        Self {
+            branch,
+            repo_root,
+            is_main_checkout,
+        }
     }
 }
 
@@ -73,32 +70,42 @@ fn lookup_at_dir_script() -> String {
 }
 
 /// Fires a git-info lookup for `name`, resolving its cwd from Zellij's own session cache.
-pub fn spawn_lookup_by_name(name: &str) {
-    spawn(&lookup_by_session_name_script(), name, name);
+pub fn lookup_by_name_args(name: &str) -> Vec<String> {
+    command_args(lookup_by_session_name_script(), name)
 }
 
 /// Fires a git-info lookup directly against `dir`, tagging the result for `name`.
-pub fn spawn_lookup_at_dir(name: &str, dir: PathBuf) {
+pub fn lookup_at_dir_args(dir: &std::path::Path) -> Vec<String> {
     let dir_arg = dir.to_string_lossy().to_string();
-    spawn(&lookup_at_dir_script(), &dir_arg, name);
+    command_args(lookup_at_dir_script(), &dir_arg)
 }
 
 /// Runs `script` with `arg` as its `$1`, tagging the eventual `RunCommandResult`'s context with
 /// `session_name` so the result can be matched back to the session it was requested for.
-fn spawn(script: &str, arg: &str, session_name: &str) {
-    let mut context = BTreeMap::new();
-    context.insert(CONTEXT_KEY.to_string(), session_name.to_string());
-    run_command_with_env_variables_and_cwd(
-        &["sh", "-c", script, "sh", arg],
-        BTreeMap::new(),
-        PathBuf::from("."),
-        context,
-    );
+fn command_args(script: String, arg: &str) -> Vec<String> {
+    vec![
+        "sh".to_string(),
+        "-c".to_string(),
+        script,
+        "sh".to_string(),
+        arg.to_string(),
+    ]
 }
 
-/// Parses a `RunCommandResult`'s context + stdout, returning the session name it was resolved
-/// for alongside the parsed git info.
-pub fn parse_result(context: &BTreeMap<String, String>, stdout: &[u8]) -> Option<(String, GitInfo)> {
-    let name = context.get(CONTEXT_KEY)?;
-    Some((name.clone(), GitInfo::parse(stdout)))
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parses_the_command_protocol() {
+        let info = GitInfo::parse(b"feature/test\n/repo\n1\n");
+        assert_eq!(info.branch.as_deref(), Some("feature/test"));
+        assert_eq!(info.repo_root.as_deref(), Some("/repo"));
+        assert!(info.is_main_checkout);
+    }
+
+    #[test]
+    fn empty_output_is_a_valid_empty_result() {
+        assert_eq!(GitInfo::parse(b""), GitInfo::default());
+    }
 }

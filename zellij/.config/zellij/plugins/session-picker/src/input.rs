@@ -1,7 +1,20 @@
-use zellij_tile::prelude::{BareKey, KeyModifier, KeyWithModifier};
+//! Host-independent keyboard input and screen-specific key maps.
 
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
-pub enum Action {
+pub enum Key {
+    Up,
+    Down,
+    Enter,
+    Escape,
+    Backspace,
+    Tab,
+    Char(char),
+    Ctrl(char),
+    Other,
+}
+
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+pub enum ListAction {
     MoveDown,
     MoveUp,
     PushChar(char),
@@ -10,43 +23,104 @@ pub enum Action {
     Delete,
     Rename,
     CreateNew,
+    CreateWorktree,
+    NextSurface,
+    FocusAgents,
+    FocusSessions,
+    Cancel,
+}
+
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+pub enum RenameAction {
+    PushChar(char),
+    PopChar,
+    Confirm,
+    Cancel,
+}
+
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+pub enum DirectoryAction {
+    MoveDown,
+    MoveUp,
+    PushChar(char),
+    PopChar,
+    Confirm,
     NextField,
     Cancel,
 }
 
-pub struct Binding {
-    pub key: BareKey,
-    pub ctrl: bool,
-    pub action: Action,
-    /// (key_display, description) shown in the hint bar; None = don't show
-    pub hint: Option<(&'static str, &'static str)>,
+pub fn list_action(key: Key) -> Option<ListAction> {
+    Some(match key {
+        Key::Down | Key::Ctrl('j') => ListAction::MoveDown,
+        Key::Up | Key::Ctrl('k') => ListAction::MoveUp,
+        Key::Backspace => ListAction::PopChar,
+        Key::Ctrl('d') => ListAction::Delete,
+        Key::Ctrl('r') => ListAction::Rename,
+        Key::Ctrl('n') => ListAction::CreateNew,
+        Key::Ctrl('w') => ListAction::CreateWorktree,
+        Key::Tab => ListAction::NextSurface,
+        Key::Ctrl('l') => ListAction::FocusAgents,
+        Key::Ctrl('h') => ListAction::FocusSessions,
+        Key::Enter => ListAction::Confirm,
+        Key::Escape => ListAction::Cancel,
+        Key::Char(c) => ListAction::PushChar(c),
+        _ => return None,
+    })
 }
 
-pub static BINDINGS: &[Binding] = &[
-    Binding { key: BareKey::Down,      ctrl: false, action: Action::MoveDown, hint: None },
-    Binding { key: BareKey::Up,        ctrl: false, action: Action::MoveUp,   hint: None },
-    Binding { key: BareKey::Char('j'), ctrl: true,  action: Action::MoveDown, hint: None },
-    Binding { key: BareKey::Char('k'), ctrl: true,  action: Action::MoveUp,   hint: None },
-    Binding { key: BareKey::Backspace, ctrl: false, action: Action::PopChar,  hint: None },
-    Binding { key: BareKey::Char('d'), ctrl: true,  action: Action::Delete,   hint: Some(("ctrl+d", "delete")) },
-    Binding { key: BareKey::Char('r'), ctrl: true,  action: Action::Rename,  hint: Some(("ctrl+r", "rename current")) },
-    Binding { key: BareKey::Char('n'), ctrl: true,  action: Action::CreateNew, hint: Some(("ctrl+n", "new session")) },
-    Binding { key: BareKey::Tab,       ctrl: false, action: Action::NextField, hint: None },
-    Binding { key: BareKey::Enter,     ctrl: false, action: Action::Confirm,  hint: Some(("enter",  "switch")) },
-    Binding { key: BareKey::Esc,       ctrl: false, action: Action::Cancel,   hint: Some(("esc",    "close"))  },
+pub fn rename_action(key: Key) -> Option<RenameAction> {
+    Some(match key {
+        Key::Escape => RenameAction::Cancel,
+        Key::Enter => RenameAction::Confirm,
+        Key::Backspace => RenameAction::PopChar,
+        Key::Char(c) => RenameAction::PushChar(c),
+        _ => return None,
+    })
+}
+
+pub fn directory_action(key: Key) -> Option<DirectoryAction> {
+    Some(match key {
+        Key::Down | Key::Ctrl('j') => DirectoryAction::MoveDown,
+        Key::Up | Key::Ctrl('k') => DirectoryAction::MoveUp,
+        Key::Backspace => DirectoryAction::PopChar,
+        Key::Enter => DirectoryAction::Confirm,
+        Key::Tab => DirectoryAction::NextField,
+        Key::Escape => DirectoryAction::Cancel,
+        Key::Char(c) => DirectoryAction::PushChar(c),
+        _ => return None,
+    })
+}
+
+pub const LIST_HINTS: &[(&str, &str)] = &[
+    ("enter", "switch"),
+    ("ctrl+d", "delete"),
+    ("ctrl+r", "rename current"),
+    ("ctrl+n", "new session"),
+    ("ctrl+w", "new worktree"),
+    ("esc", "close"),
 ];
 
-pub fn key_to_action(key: &KeyWithModifier) -> Option<Action> {
-    let ctrl = key.key_modifiers.contains(&KeyModifier::Ctrl);
-    if let Some(b) = BINDINGS.iter().find(|b| b.key == key.bare_key && b.ctrl == ctrl) {
-        return Some(b.action);
-    }
-    if let (BareKey::Char(c), false) = (key.bare_key, ctrl) {
-        return Some(Action::PushChar(c));
-    }
-    None
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-pub fn hints() -> impl Iterator<Item = (&'static str, &'static str)> {
-    BINDINGS.iter().filter_map(|b| b.hint)
+    #[test]
+    fn keymaps_are_screen_specific() {
+        assert_eq!(list_action(Key::Ctrl('d')), Some(ListAction::Delete));
+        assert_eq!(rename_action(Key::Ctrl('d')), None);
+        assert_eq!(directory_action(Key::Ctrl('d')), None);
+        assert_eq!(
+            list_action(Key::Ctrl('w')),
+            Some(ListAction::CreateWorktree)
+        );
+    }
+
+    #[test]
+    fn text_is_only_accepted_without_control() {
+        assert_eq!(
+            rename_action(Key::Char('x')),
+            Some(RenameAction::PushChar('x'))
+        );
+        assert_eq!(rename_action(Key::Ctrl('x')), None);
+    }
 }

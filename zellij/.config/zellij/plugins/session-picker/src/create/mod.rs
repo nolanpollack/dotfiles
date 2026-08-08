@@ -1,11 +1,11 @@
 pub mod directory;
 pub mod discovery;
 pub mod form;
+pub mod worktree;
 
-use std::collections::BTreeMap;
+use std::path::PathBuf;
 
-use zellij_tile::prelude::KeyWithModifier;
-
+use crate::input::Key;
 use crate::sessions::SessionInfo;
 
 /// The screen create-mode is currently showing. Dispatch only — no field definitions, discovery
@@ -18,6 +18,13 @@ use crate::sessions::SessionInfo;
 /// screen.
 pub enum CreateFlow {
     Directory(directory::DirectoryForm),
+    Worktree(worktree::Form),
+}
+
+impl Default for CreateFlow {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl CreateFlow {
@@ -32,25 +39,35 @@ pub enum CreateOutcome {
     Continue,
     /// The user backed all the way out; exit create-mode back to the session list.
     Cancelled,
-    /// A session was created and switched to; exit create-mode back to the session list.
-    Created,
+    /// The adapter should create and switch to this session, then exit create-mode.
+    CreateSession {
+        name: String,
+        cwd: PathBuf,
+    },
+    StartWorktree(worktree::Request),
 }
 
-pub fn apply_key(flow: &mut CreateFlow, key: &KeyWithModifier, existing_names: &[SessionInfo]) -> CreateOutcome {
+pub fn apply_key(flow: &mut CreateFlow, key: Key, existing_names: &[SessionInfo]) -> CreateOutcome {
     match flow {
         CreateFlow::Directory(form) => match form.apply_key(key, existing_names) {
             directory::Outcome::Continue => CreateOutcome::Continue,
             // No chooser to step back to anymore — stepping back all the way out just cancels.
             directory::Outcome::Back => CreateOutcome::Cancelled,
-            directory::Outcome::Done => CreateOutcome::Created,
+            directory::Outcome::Create { name, cwd } => CreateOutcome::CreateSession { name, cwd },
+        },
+        CreateFlow::Worktree(form) => match form.apply_key(key, existing_names) {
+            worktree::Outcome::Continue => CreateOutcome::Continue,
+            worktree::Outcome::Back => CreateOutcome::Cancelled,
+            worktree::Outcome::Start(request) => CreateOutcome::StartWorktree(request),
         },
     }
 }
 
 /// Routes a `RunCommandResult` to whichever flow is waiting on it. Returns `true` if it was
 /// consumed (and the picker should re-render).
-pub fn apply_discovery_result(flow: &mut CreateFlow, context: &BTreeMap<String, String>, stdout: &[u8]) -> bool {
+pub fn set_directory_candidates(flow: &mut CreateFlow, paths: Vec<PathBuf>) {
     match flow {
-        CreateFlow::Directory(form) => form.apply_discovery_result(context, stdout),
+        CreateFlow::Directory(form) => form.set_candidates(paths),
+        CreateFlow::Worktree(_) => {}
     }
 }

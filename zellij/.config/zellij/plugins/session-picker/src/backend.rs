@@ -13,7 +13,11 @@ pub struct StdoutBackend {
 
 impl StdoutBackend {
     pub fn new(rows: u16, cols: u16) -> Self {
-        Self { rows, cols, buf: Vec::with_capacity(8192) }
+        Self {
+            rows,
+            cols,
+            buf: Vec::with_capacity(8192),
+        }
     }
 
     fn write_style(&mut self, style: &Style) {
@@ -105,12 +109,18 @@ impl Backend for StdoutBackend {
     }
 
     fn size(&self) -> io::Result<Size> {
-        Ok(Size { width: self.cols, height: self.rows })
+        Ok(Size {
+            width: self.cols,
+            height: self.rows,
+        })
     }
 
     fn window_size(&mut self) -> io::Result<WindowSize> {
         Ok(WindowSize {
-            columns_rows: Size { width: self.cols, height: self.rows },
+            columns_rows: Size {
+                width: self.cols,
+                height: self.rows,
+            },
             pixels: Size::default(),
         })
     }

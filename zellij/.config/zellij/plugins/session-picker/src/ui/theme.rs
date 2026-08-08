@@ -1,8 +1,155 @@
 use std::collections::BTreeMap;
 
 use ratatui::style::Color;
-use zellij_tile::prelude::{PaletteColor, Style as ZellijStyle};
+use serde::{Deserialize, Serialize};
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(default)]
+pub struct ThemePalette {
+    #[serde(with = "color_serde")]
+    pub separator_fg: Color,
+    #[serde(with = "color_serde")]
+    pub query_fg: Color,
+    #[serde(with = "color_serde")]
+    pub list_match_fg: Color,
+    #[serde(with = "color_serde")]
+    pub list_normal_fg: Color,
+    #[serde(with = "color_serde")]
+    pub list_inactive_fg: Color,
+    #[serde(with = "color_serde")]
+    pub list_current_marker_fg: Color,
+    #[serde(with = "color_serde")]
+    pub list_selected_bg: Color,
+    #[serde(with = "color_serde")]
+    pub hint_key_fg: Color,
+    #[serde(with = "color_serde")]
+    pub hint_desc_fg: Color,
+    #[serde(with = "color_serde")]
+    pub status_count_fg: Color,
+    #[serde(with = "color_serde")]
+    pub error_fg: Color,
+    #[serde(with = "color_serde")]
+    pub agent_blocked_fg: Color,
+    #[serde(with = "color_serde")]
+    pub agent_working_fg: Color,
+    #[serde(with = "color_serde")]
+    pub agent_done_fg: Color,
+    #[serde(with = "color_serde")]
+    pub agent_idle_fg: Color,
+    #[serde(with = "color_serde")]
+    pub agent_unknown_fg: Color,
+    #[serde(with = "color_serde")]
+    pub panel_divider_fg: Color,
+}
+
+mod color_serde {
+    use ratatui::style::Color;
+    use serde::{Deserialize, Deserializer, Serialize, Serializer};
+
+    #[derive(Serialize, Deserialize)]
+    enum Repr {
+        Reset,
+        Black,
+        Red,
+        Green,
+        Yellow,
+        Blue,
+        Magenta,
+        Cyan,
+        Gray,
+        DarkGray,
+        LightRed,
+        LightGreen,
+        LightYellow,
+        LightBlue,
+        LightMagenta,
+        LightCyan,
+        White,
+        Rgb(u8, u8, u8),
+        Indexed(u8),
+    }
+
+    pub fn serialize<S>(color: &Color, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let repr = match color {
+            Color::Reset => Repr::Reset,
+            Color::Black => Repr::Black,
+            Color::Red => Repr::Red,
+            Color::Green => Repr::Green,
+            Color::Yellow => Repr::Yellow,
+            Color::Blue => Repr::Blue,
+            Color::Magenta => Repr::Magenta,
+            Color::Cyan => Repr::Cyan,
+            Color::Gray => Repr::Gray,
+            Color::DarkGray => Repr::DarkGray,
+            Color::LightRed => Repr::LightRed,
+            Color::LightGreen => Repr::LightGreen,
+            Color::LightYellow => Repr::LightYellow,
+            Color::LightBlue => Repr::LightBlue,
+            Color::LightMagenta => Repr::LightMagenta,
+            Color::LightCyan => Repr::LightCyan,
+            Color::White => Repr::White,
+            Color::Rgb(r, g, b) => Repr::Rgb(*r, *g, *b),
+            Color::Indexed(index) => Repr::Indexed(*index),
+        };
+        repr.serialize(serializer)
+    }
+
+    pub fn deserialize<'de, D>(deserializer: D) -> Result<Color, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        Ok(match Repr::deserialize(deserializer)? {
+            Repr::Reset => Color::Reset,
+            Repr::Black => Color::Black,
+            Repr::Red => Color::Red,
+            Repr::Green => Color::Green,
+            Repr::Yellow => Color::Yellow,
+            Repr::Blue => Color::Blue,
+            Repr::Magenta => Color::Magenta,
+            Repr::Cyan => Color::Cyan,
+            Repr::Gray => Color::Gray,
+            Repr::DarkGray => Color::DarkGray,
+            Repr::LightRed => Color::LightRed,
+            Repr::LightGreen => Color::LightGreen,
+            Repr::LightYellow => Color::LightYellow,
+            Repr::LightBlue => Color::LightBlue,
+            Repr::LightMagenta => Color::LightMagenta,
+            Repr::LightCyan => Color::LightCyan,
+            Repr::White => Color::White,
+            Repr::Rgb(r, g, b) => Color::Rgb(r, g, b),
+            Repr::Indexed(index) => Color::Indexed(index),
+        })
+    }
+}
+
+impl Default for ThemePalette {
+    fn default() -> Self {
+        Self {
+            separator_fg: Color::DarkGray,
+            query_fg: Color::White,
+            list_match_fg: Color::Cyan,
+            list_normal_fg: Color::White,
+            list_inactive_fg: Color::DarkGray,
+            list_current_marker_fg: Color::Green,
+            list_selected_bg: Color::DarkGray,
+            hint_key_fg: Color::Green,
+            hint_desc_fg: Color::White,
+            status_count_fg: Color::DarkGray,
+            error_fg: Color::Red,
+            agent_blocked_fg: Color::Red,
+            agent_working_fg: Color::Yellow,
+            agent_done_fg: Color::Green,
+            agent_idle_fg: Color::Cyan,
+            agent_unknown_fg: Color::DarkGray,
+            panel_divider_fg: Color::DarkGray,
+        }
+    }
+}
+
+#[derive(Clone)]
 pub struct Theme {
     pub(super) separator_fg: Color,
     pub(super) query_fg: Color,
@@ -15,56 +162,48 @@ pub struct Theme {
     pub(super) hint_desc_fg: Color,
     pub(super) status_count_fg: Color,
     pub(super) error_fg: Color,
+    pub(super) agent_blocked_fg: Color,
+    pub(super) agent_working_fg: Color,
+    pub(super) agent_done_fg: Color,
+    pub(super) agent_idle_fg: Color,
+    pub(super) agent_unknown_fg: Color,
+    pub(super) panel_divider_fg: Color,
 }
 
 impl Theme {
-    pub fn from_zellij(z: &ZellijStyle, overrides: &ThemeOverrides) -> Self {
-        let s = &z.colors;
+    pub fn from_palette(p: ThemePalette, overrides: &ThemeOverrides) -> Self {
+        macro_rules! color {
+            ($name:ident) => {
+                overrides.get(stringify!($name)).unwrap_or(p.$name)
+            };
+        }
         Self {
-            separator_fg: overrides.get("separator_fg").unwrap_or_else(|| {
-                palette(s.frame_unselected.map(|f| f.base).unwrap_or(s.frame_selected.base))
-            }),
-            query_fg: overrides
-                .get("query_fg")
-                .unwrap_or_else(|| palette(s.text_unselected.base)),
-            list_match_fg: overrides
-                .get("list_match_fg")
-                .unwrap_or_else(|| palette(s.list_unselected.emphasis_0)),
-            list_normal_fg: overrides
-                .get("list_normal_fg")
-                .unwrap_or_else(|| palette(s.list_unselected.base)),
-            list_inactive_fg: overrides
-                .get("list_inactive_fg")
-                .unwrap_or_else(|| palette(s.text_unselected.background)),
-            list_current_marker_fg: overrides
-                .get("list_current_marker_fg")
-                .unwrap_or_else(|| palette(s.list_unselected.emphasis_1)),
-            list_selected_bg: overrides
-                .get("list_selected_bg")
-                .unwrap_or_else(|| palette(s.list_selected.background)),
-            hint_key_fg: overrides
-                .get("hint_key_fg")
-                .unwrap_or_else(|| palette(s.list_unselected.emphasis_1)),
-            hint_desc_fg: overrides
-                .get("hint_desc_fg")
-                .unwrap_or_else(|| palette(s.list_unselected.base)),
-            status_count_fg: overrides
-                .get("status_count_fg")
-                .unwrap_or_else(|| palette(s.text_unselected.background)),
-            error_fg: overrides.get("error_fg").unwrap_or_else(|| palette(s.exit_code_error.base)),
+            separator_fg: color!(separator_fg),
+            query_fg: color!(query_fg),
+            list_match_fg: color!(list_match_fg),
+            list_normal_fg: color!(list_normal_fg),
+            list_inactive_fg: color!(list_inactive_fg),
+            list_current_marker_fg: color!(list_current_marker_fg),
+            list_selected_bg: color!(list_selected_bg),
+            hint_key_fg: color!(hint_key_fg),
+            hint_desc_fg: color!(hint_desc_fg),
+            status_count_fg: color!(status_count_fg),
+            error_fg: color!(error_fg),
+            agent_blocked_fg: color!(agent_blocked_fg),
+            agent_working_fg: color!(agent_working_fg),
+            agent_done_fg: color!(agent_done_fg),
+            agent_idle_fg: color!(agent_idle_fg),
+            agent_unknown_fg: color!(agent_unknown_fg),
+            panel_divider_fg: color!(panel_divider_fg),
         }
     }
-}
 
-fn palette(pc: PaletteColor) -> Color {
-    match pc {
-        PaletteColor::Rgb((r, g, b)) => Color::Rgb(r, g, b),
-        PaletteColor::EightBit(n) => Color::Indexed(n),
+    #[cfg(test)]
+    pub fn test_default() -> Self {
+        Self::from_palette(ThemePalette::default(), &ThemeOverrides::default())
     }
 }
 
-/// User-supplied colors from the plugin's `configuration` block, keyed by the same names as
-/// `Theme`'s fields. Falls back to the Zellij theme wherever a key is absent or unparseable.
 #[derive(Default)]
 pub struct ThemeOverrides(BTreeMap<String, Color>);
 
@@ -73,7 +212,7 @@ impl ThemeOverrides {
         Self(
             config
                 .iter()
-                .filter_map(|(key, value)| parse_color(value).map(|c| (key.clone(), c)))
+                .filter_map(|(key, value)| parse_color(value).map(|color| (key.clone(), color)))
                 .collect(),
         )
     }
@@ -83,11 +222,34 @@ impl ThemeOverrides {
     }
 }
 
-/// Parses a "r,g,b" config value, e.g. "49,50,68".
-fn parse_color(s: &str) -> Option<Color> {
-    let mut parts = s.split(',').map(|p| p.trim().parse::<u8>());
+fn parse_color(value: &str) -> Option<Color> {
+    let mut parts = value.split(',').map(|part| part.trim().parse::<u8>());
     let r = parts.next()?.ok()?;
     let g = parts.next()?.ok()?;
     let b = parts.next()?.ok()?;
-    (parts.next().is_none()).then(|| Color::Rgb(r, g, b))
+    (parts.next().is_none()).then_some(Color::Rgb(r, g, b))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn valid_override_replaces_palette_color() {
+        let config = BTreeMap::from([("query_fg".into(), "1, 2, 3".into())]);
+        let theme = Theme::from_palette(
+            ThemePalette::default(),
+            &ThemeOverrides::from_config(&config),
+        );
+        assert_eq!(theme.query_fg, Color::Rgb(1, 2, 3));
+    }
+
+    #[test]
+    fn invalid_override_uses_palette_color() {
+        let palette = ThemePalette::default();
+        let expected = palette.query_fg;
+        let config = BTreeMap::from([("query_fg".into(), "nope".into())]);
+        let theme = Theme::from_palette(palette, &ThemeOverrides::from_config(&config));
+        assert_eq!(theme.query_fg, expected);
+    }
 }
