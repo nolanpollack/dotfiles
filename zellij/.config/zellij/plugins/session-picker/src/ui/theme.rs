@@ -204,15 +204,15 @@ impl Theme {
     }
 }
 
-#[derive(Default)]
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct ThemeOverrides(BTreeMap<String, Color>);
 
 impl ThemeOverrides {
-    pub fn from_config(config: &BTreeMap<String, String>) -> Self {
+    pub fn from_entries(entries: impl IntoIterator<Item = (String, String)>) -> Self {
         Self(
-            config
-                .iter()
-                .filter_map(|(key, value)| parse_color(value).map(|color| (key.clone(), color)))
+            entries
+                .into_iter()
+                .filter_map(|(key, value)| parse_color(&value).map(|color| (key, color)))
                 .collect(),
         )
     }
@@ -236,11 +236,8 @@ mod tests {
 
     #[test]
     fn valid_override_replaces_palette_color() {
-        let config = BTreeMap::from([("query_fg".into(), "1, 2, 3".into())]);
-        let theme = Theme::from_palette(
-            ThemePalette::default(),
-            &ThemeOverrides::from_config(&config),
-        );
+        let overrides = ThemeOverrides::from_entries(vec![("query_fg".into(), "1, 2, 3".into())]);
+        let theme = Theme::from_palette(ThemePalette::default(), &overrides);
         assert_eq!(theme.query_fg, Color::Rgb(1, 2, 3));
     }
 
@@ -248,8 +245,8 @@ mod tests {
     fn invalid_override_uses_palette_color() {
         let palette = ThemePalette::default();
         let expected = palette.query_fg;
-        let config = BTreeMap::from([("query_fg".into(), "nope".into())]);
-        let theme = Theme::from_palette(palette, &ThemeOverrides::from_config(&config));
+        let overrides = ThemeOverrides::from_entries(vec![("query_fg".into(), "nope".into())]);
+        let theme = Theme::from_palette(palette, &overrides);
         assert_eq!(theme.query_fg, expected);
     }
 }

@@ -1,16 +1,19 @@
-mod components;
-mod create;
-mod list;
+pub mod create;
+pub mod list;
 
 use ratatui::Frame;
 
-use super::model::ScreenView;
 use super::Theme;
+
+pub enum ScreenView {
+    List(list::ListView),
+    Create(create::CreateView),
+}
 
 pub fn draw(frame: &mut Frame, view: &ScreenView, theme: &Theme) {
     match view {
-        ScreenView::List(view) => list::draw(frame, view, theme),
-        ScreenView::Create(view) => create::draw(frame, view, theme),
+        ScreenView::List(view) => list::render::draw(frame, view, theme),
+        ScreenView::Create(view) => create::render::draw(frame, view, theme),
     }
 }
 
@@ -19,7 +22,7 @@ mod tests {
     use super::*;
     use crate::agent_refresh::RefreshView;
     use crate::picker_refresh::RefreshView as PickerRefreshView;
-    use crate::ui::model::{AgentRow, AgentState, Focus, ListView, SessionRow};
+    use crate::ui::screens::list::{AgentRow, AgentState, Focus, ListView, SessionRow};
     use ratatui::backend::TestBackend;
     use ratatui::Terminal;
 

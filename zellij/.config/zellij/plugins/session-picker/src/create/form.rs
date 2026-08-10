@@ -1,4 +1,4 @@
-use crate::picker::{Picker, PickerState};
+use crate::ui::components::picker::{Picker, PickerState};
 
 /// A plain single-line editable string.
 #[derive(Default)]
@@ -137,7 +137,7 @@ impl<T: Clone + 'static> Combobox<T> {
         }
     }
 
-    pub fn picker(&self) -> Option<crate::picker::View<'_, T>> {
+    pub fn picker(&self) -> Option<crate::ui::components::picker::View<'_, T>> {
         self.picker
             .as_ref()
             .map(|expanded| expanded.picker.view(&expanded.state))

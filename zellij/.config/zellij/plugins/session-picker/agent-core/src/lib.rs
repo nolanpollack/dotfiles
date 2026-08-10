@@ -35,7 +35,7 @@ pub struct Activity {
 /// A snapshot of one running (or just-finished) agent, as written by
 /// `agent-bridge` in response to a hook event and read back by the plugin.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct AgentRecord {
+pub struct Agent {
     pub id: String,
     /// Name of the coding agent that produced this record, e.g. "codex" or "claude". Just a
     /// label set by whichever agent-bridge integration wrote the record.
@@ -68,11 +68,11 @@ pub struct AgentRecord {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct AgentList {
     pub schema_version: u32,
-    pub agents: Vec<AgentRecord>,
+    pub agents: Vec<Agent>,
 }
 
 impl AgentList {
-    pub fn new(agents: Vec<AgentRecord>) -> Self {
+    pub fn new(agents: Vec<Agent>) -> Self {
         Self {
             schema_version: SCHEMA_VERSION,
             agents,
@@ -83,7 +83,7 @@ impl AgentList {
 /// Derives the UI-facing status from raw state plus the `seen` flag,
 /// splitting `Idle` into `Done` (just finished, not yet acknowledged) vs
 /// `Idle` (finished and already seen).
-pub fn display_state(record: &AgentRecord) -> DisplayState {
+pub fn display_state(record: &Agent) -> DisplayState {
     match (record.state, record.seen) {
         (AgentState::Blocked, _) => DisplayState::Blocked,
         (AgentState::Working, _) => DisplayState::Working,
@@ -106,8 +106,8 @@ pub enum DisplayState {
 mod tests {
     use super::*;
 
-    fn record(state: AgentState, seen: bool) -> AgentRecord {
-        AgentRecord {
+    fn record(state: AgentState, seen: bool) -> Agent {
+        Agent {
             id: "id".into(),
             agent_label: "codex".into(),
             state,

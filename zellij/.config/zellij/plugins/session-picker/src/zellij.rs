@@ -9,8 +9,10 @@ use session_picker::app::Message;
 use session_picker::effects::{Effect, GitLookup};
 use session_picker::host_protocol::{self, ResultKind};
 use session_picker::input::Key;
-use session_picker::sessions::{SessionInfo, SessionLifecycle};
+use session_picker::sessions::{Session, SessionLifecycle};
 use session_picker::ui::{Theme, ThemeOverrides, ThemePalette};
+
+const ANIMATION_FRAME_INTERVAL: f64 = 0.1;
 
 fn default_style() -> Style {
     Style {
@@ -37,12 +39,9 @@ impl Default for ThemeAdapter {
 }
 
 impl ThemeAdapter {
-    pub fn from_config(
-        config: &BTreeMap<String, String>,
-        cached_theme: Option<ThemePalette>,
-    ) -> Self {
+    pub fn from_overrides(overrides: ThemeOverrides, cached_theme: Option<ThemePalette>) -> Self {
         Self {
-            overrides: ThemeOverrides::from_config(config),
+            overrides,
             fallback: cached_theme.unwrap_or_else(|| theme_palette(&default_style())),
             last_style: None,
         }
@@ -125,10 +124,10 @@ pub fn key(key: KeyWithModifier) -> Key {
 pub fn sessions(
     live: Vec<zellij_tile::prelude::SessionInfo>,
     resurrectable: Vec<(String, std::time::Duration)>,
-) -> Vec<SessionInfo> {
+) -> Vec<Session> {
     let mut result: Vec<_> = live
         .into_iter()
-        .map(|session| SessionInfo {
+        .map(|session| Session {
             name: session.name,
             lifecycle: SessionLifecycle::Active {
                 current: session.is_current_session,
@@ -138,7 +137,7 @@ pub fn sessions(
         .collect();
     let mut dead: Vec<_> = resurrectable
         .into_iter()
-        .map(|(name, _)| SessionInfo {
+        .map(|(name, _)| Session {
             name,
             lifecycle: SessionLifecycle::Resurrectable,
             ..Default::default()
@@ -257,11 +256,11 @@ pub fn execute(effect: Effect, plugin_id: u32) -> Option<Message> {
             hide_self();
             None
         }
-        Effect::ScheduleAnimationFrame => {
-            set_timeout(0.09);
-            None
-        }
     }
+}
+
+pub(crate) fn schedule_animation_frame() {
+    set_timeout(ANIMATION_FRAME_INTERVAL);
 }
 
 fn run_tagged(args: Vec<String>, kind: ResultKind, session: Option<String>) {

@@ -2,39 +2,29 @@
 
 use std::path::PathBuf;
 
-use agent_core::AgentRecord;
+use agent_core::Agent;
 use serde::{Deserialize, Serialize};
 
 use crate::agent_refresh::{AgentRefresh, RequestId};
+use crate::agents::Agents;
 use crate::create::{self, CreateFlow};
 use crate::effects::Effect;
 use crate::git_info::GitInfo;
 use crate::input::{self, Key, ListAction, RenameAction};
-use crate::list_screen::{
-    Destination, ListScreen, ListSnapshot, Transition, UiState as ListUiState,
-};
 use crate::picker_refresh::{PickerRefresh, RefreshId};
-use crate::sessions::SessionInfo;
-use crate::ui;
+use crate::sessions::{Session, Sessions, SessionsSnapshot, SessionsUpdate};
+use crate::ui::screens::list::{Destination, Transition};
+use crate::ui::{self, Screen, Ui};
 
 const LIST_PANE_TITLE: &str = "Session Picker";
 const CREATE_PANE_TITLE: &str = "New Session";
 
-#[derive(Default)]
-pub enum Screen {
-    #[default]
-    List,
-    Rename {
-        original: String,
-        draft: String,
-    },
-    Create(Box<CreateFlow>),
-}
-
-#[derive(Default)]
-struct UiState {
-    screen: Screen,
-    list: ListUiState,
+/// Runtime configuration is intentionally excluded from `AppSnapshot`, so current host
+/// configuration wins when restoring persisted state.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct AppConfig {
+    pub agent_bridge: String,
+    pub worktree: create::worktree::Config,
 }
 
 pub enum Message {
@@ -42,14 +32,14 @@ pub enum Message {
     ThemeChanged(ui::Theme),
     Key(Key),
     ListAction(ListAction),
-    SessionsLoaded(Vec<SessionInfo>),
+    SessionsLoaded(Vec<Session>),
     PickerSessionsFinished {
         refresh_id: RefreshId,
-        result: Result<Vec<SessionInfo>, ()>,
+        result: Result<Vec<Session>, ()>,
     },
     AgentsFetchFinished {
         request_id: RequestId,
-        result: Result<Vec<AgentRecord>, ()>,
+        result: Result<Vec<Agent>, ()>,
     },
     GitLoaded {
         session_name: String,
@@ -98,53 +88,52 @@ impl Update {
 }
 
 pub struct App {
-    list: ListScreen,
-    ui: UiState,
-    theme: ui::Theme,
-    agent_bridge: String,
-    visible: bool,
-    agent_refresh: AgentRefresh,
+    pub(crate) sessions: Sessions,
+    pub(crate) agents: Agents,
+    pub(crate) ui: Ui,
+    config: AppConfig,
+    pub(crate) visible: bool,
+    pub(crate) agent_refresh: AgentRefresh,
     agent_refresh_id: Option<RefreshId>,
-    picker_refresh: PickerRefresh,
-    animation_timer_armed: bool,
-    worktree_spinner_tick: usize,
-    worktree_config: create::worktree::Config,
+    pub(crate) picker_refresh: PickerRefresh,
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct AppSnapshot {
     #[serde(default)]
-    pub list: ListSnapshot,
+    pub sessions: SessionsSnapshot,
     #[serde(default)]
-    pub agents: Option<Vec<AgentRecord>>,
+    pub agents: Option<Vec<Agent>>,
 }
 
 impl App {
-    pub fn new(theme: ui::Theme, agent_bridge: String) -> Self {
+    pub fn new(theme: ui::Theme, config: AppConfig) -> Self {
         Self {
-            list: ListScreen::default(),
-            ui: UiState::default(),
-            theme,
-            agent_bridge,
+            sessions: Sessions::default(),
+            agents: Agents::default(),
+            ui: Ui::new(theme),
+            config,
             visible: false,
             agent_refresh: AgentRefresh::default(),
             agent_refresh_id: None,
             picker_refresh: PickerRefresh::default(),
-            animation_timer_armed: false,
-            worktree_spinner_tick: 0,
-            worktree_config: create::worktree::Config::default(),
         }
     }
 
-    pub fn set_worktree_config(&mut self, config: create::worktree::Config) {
-        self.worktree_config = config;
-    }
-
-    pub fn restore(theme: ui::Theme, agent_bridge: String, snapshot: AppSnapshot) -> Self {
-        let mut app = Self::new(theme, agent_bridge);
-        app.list = ListScreen::from_snapshot(snapshot.list);
-        if let Some(records) = snapshot.agents {
-            app.list.restore_agents(&mut app.ui.list, records);
+    pub fn restore(theme: ui::Theme, config: AppConfig, snapshot: AppSnapshot) -> Self {
+        let mut app = Self::new(theme, config);
+        app.sessions = Sessions::from_snapshot(snapshot.sessions);
+        app.ui.update_sessions(
+            app.sessions.items(),
+            SessionsUpdate {
+                changed: true,
+                lookups: Vec::new(),
+            },
+        );
+        if let Some(agents) = snapshot.agents {
+            app.agents
+                .replace(agents, &active_session_order(app.sessions.items()));
+            app.ui.sync_agent_state(app.agents.items().len());
             app.agent_refresh.restore_cached();
         }
         app
@@ -152,11 +141,11 @@ impl App {
 
     pub fn persistent_state(&self) -> AppSnapshot {
         AppSnapshot {
-            list: self.list.snapshot(),
+            sessions: self.sessions.snapshot(),
             agents: self
                 .agent_refresh
                 .has_cached_data()
-                .then(|| self.list.agent_records().to_vec()),
+                .then(|| self.agents.items().to_vec()),
         }
     }
 
@@ -177,16 +166,20 @@ impl App {
                 self.visibility_changed(true)
             }
             Message::ThemeChanged(theme) => {
-                self.theme = theme;
+                self.ui.set_theme(theme);
                 Update::redraw()
             }
             Message::Key(key) => self.apply_key(key),
-            Message::ListAction(action) if matches!(self.ui.screen, Screen::List) => {
+            Message::ListAction(action) if matches!(self.ui.state.screen, Screen::List) => {
                 self.apply_list_action(action)
             }
             Message::ListAction(_) => Update::default(),
             Message::SessionsLoaded(sessions) => {
-                let transition = self.list.replace_sessions(&mut self.ui.list, sessions);
+                let sessions_update = self.sessions.replace(sessions);
+                self.retain_agents();
+                let transition = self
+                    .ui
+                    .update_sessions(self.sessions.items(), sessions_update);
                 self.finish_list_transition(transition)
             }
             Message::PickerSessionsFinished { refresh_id, result } => {
@@ -196,11 +189,15 @@ impl App {
                 self.finish_agent_fetch(request_id, result)
             }
             Message::GitLoaded { session_name, info } => {
-                let transition = self.list.apply_git(&mut self.ui.list, session_name, info);
+                let sessions_update = self.sessions.apply_git(session_name, info);
+                self.retain_agents();
+                let transition = self
+                    .ui
+                    .update_sessions(self.sessions.items(), sessions_update);
                 self.finish_list_transition(transition)
             }
             Message::DirectoryCandidatesLoaded(paths) => {
-                if let Screen::Create(flow) = &mut self.ui.screen {
+                if let Screen::Create(flow) = &mut self.ui.state.screen {
                     create::set_directory_candidates(flow, paths);
                     Update::redraw()
                 } else {
@@ -212,7 +209,7 @@ impl App {
             }
             Message::WorktreeCreationFinished { result } => self.finish_worktree_creation(result),
             Message::HostFolderChanged(cwd) => self
-                .list
+                .sessions
                 .lookup_current(cwd)
                 .map(|lookup| Update::effects([Effect::LookupGit(lookup)]))
                 .unwrap_or_default(),
@@ -223,40 +220,18 @@ impl App {
     }
 
     pub fn theme(&self) -> &ui::Theme {
-        &self.theme
-    }
-
-    pub fn view(&self) -> ui::model::ScreenView {
-        match &self.ui.screen {
-            Screen::List => ui::model::ScreenView::List(self.list.view(
-                &self.ui.list,
-                self.list.hints(&self.ui.list),
-                None,
-                self.agent_refresh.view(),
-                self.picker_refresh.view(),
-            )),
-            Screen::Rename { draft, .. } => ui::model::ScreenView::List(self.list.view(
-                &self.ui.list,
-                vec![("enter", "confirm rename"), ("esc", "cancel")],
-                Some(draft),
-                self.agent_refresh.view(),
-                self.picker_refresh.view(),
-            )),
-            Screen::Create(flow) => {
-                ui::model::ScreenView::Create(create_view(flow, self.worktree_spinner_tick))
-            }
-        }
+        self.ui.theme()
     }
 
     fn apply_key(&mut self, key: Key) -> Update {
-        match &mut self.ui.screen {
+        match &mut self.ui.state.screen {
             Screen::List => input::list_action(key)
                 .map(|action| self.apply_list_action(action))
                 .unwrap_or_default(),
             Screen::Rename { .. } => input::rename_action(key)
                 .map(|action| self.apply_rename_action(action))
                 .unwrap_or_default(),
-            Screen::Create(flow) => match create::apply_key(flow, key, self.list.sessions()) {
+            Screen::Create(flow) => match create::apply_key(flow, key, self.sessions.items()) {
                 create::CreateOutcome::Continue => Update::redraw(),
                 create::CreateOutcome::Cancelled => {
                     self.reset_ui();
@@ -277,16 +252,20 @@ impl App {
                         Effect::CreateSession { name, cwd },
                     ])
                 }
-                create::CreateOutcome::StartWorktree(request) => self
-                    .ensure_animation(Update::redraw_with([Effect::ValidateWorktree { request }])),
+                create::CreateOutcome::StartWorktree(request) => {
+                    Update::redraw_with([Effect::ValidateWorktree { request }])
+                }
             },
         }
     }
 
     fn apply_list_action(&mut self, action: ListAction) -> Update {
-        let transition = self
-            .list
-            .apply_action(&mut self.ui.list, action, &self.agent_bridge);
+        let transition = self.ui.apply_list_action(
+            self.sessions.items(),
+            self.agents.items(),
+            action,
+            &self.config.agent_bridge,
+        );
         self.finish_list_transition(transition)
     }
 
@@ -297,14 +276,14 @@ impl App {
         if let Some(destination) = transition.destination {
             match destination {
                 Destination::Rename(name) => {
-                    self.ui.screen = Screen::Rename {
+                    self.ui.state.screen = Screen::Rename {
                         original: name.clone(),
                         draft: name,
                     };
                 }
                 Destination::Create => {
                     let flow = CreateFlow::new();
-                    self.ui.screen = Screen::Create(Box::new(flow));
+                    self.ui.state.screen = Screen::Create(Box::new(flow));
                     return Update {
                         redraw: true,
                         effects: transition
@@ -321,10 +300,10 @@ impl App {
                 }
                 Destination::CreateWorktree(selected) => {
                     let flow = CreateFlow::Worktree(create::worktree::Form::new(
-                        self.worktree_config.clone(),
+                        self.config.worktree.clone(),
                         selected.as_ref(),
                     ));
-                    self.ui.screen = Screen::Create(Box::new(flow));
+                    self.ui.state.screen = Screen::Create(Box::new(flow));
                     return Update::redraw_with([Effect::RenamePluginPane {
                         title: "New Worktree",
                     }]);
@@ -340,7 +319,7 @@ impl App {
     }
 
     fn finish_worktree_validation(&mut self, result: Result<(), String>) -> Update {
-        let Screen::Create(flow) = &mut self.ui.screen else {
+        let Screen::Create(flow) = &mut self.ui.state.screen else {
             return Update::default();
         };
         let CreateFlow::Worktree(form) = &mut **flow else {
@@ -352,7 +331,7 @@ impl App {
                 let Some(request) = form.pending_request().cloned() else {
                     return Update::default();
                 };
-                self.ensure_animation(Update::redraw_with([Effect::CreateWorktree { request }]))
+                Update::redraw_with([Effect::CreateWorktree { request }])
             }
             Err(error) => {
                 form.fail(error);
@@ -362,7 +341,7 @@ impl App {
     }
 
     fn finish_worktree_creation(&mut self, result: Result<(), String>) -> Update {
-        let Screen::Create(flow) = &mut self.ui.screen else {
+        let Screen::Create(flow) = &mut self.ui.state.screen else {
             return Update::default();
         };
         let CreateFlow::Worktree(form) = &mut **flow else {
@@ -395,34 +374,34 @@ impl App {
     fn apply_rename_action(&mut self, action: RenameAction) -> Update {
         match action {
             RenameAction::Cancel => {
-                self.ui.screen = Screen::List;
+                self.ui.state.screen = Screen::List;
                 Update::redraw()
             }
             RenameAction::PopChar => {
-                if let Screen::Rename { draft, .. } = &mut self.ui.screen {
+                if let Screen::Rename { draft, .. } = &mut self.ui.state.screen {
                     draft.pop();
                 }
                 Update::redraw()
             }
             RenameAction::PushChar(character) => {
-                if let Screen::Rename { draft, .. } = &mut self.ui.screen {
+                if let Screen::Rename { draft, .. } = &mut self.ui.state.screen {
                     draft.push(character);
                 }
                 Update::redraw()
             }
             RenameAction::Confirm => {
-                let Screen::Rename { original, draft } = &self.ui.screen else {
+                let Screen::Rename { original, draft } = &self.ui.state.screen else {
                     return Update::default();
                 };
                 let old = original.clone();
                 let new = draft.trim().to_string();
-                self.ui.screen = Screen::List;
+                self.ui.state.screen = Screen::List;
                 if new.is_empty() || new == old {
                     return Update::redraw();
                 }
                 Update::redraw_with([
                     Effect::RenameAgentSession {
-                        bridge: self.agent_bridge.clone(),
+                        bridge: self.config.agent_bridge.clone(),
                         old,
                         new: new.clone(),
                     },
@@ -433,13 +412,13 @@ impl App {
     }
 
     fn reset_ui(&mut self) {
-        self.ui = UiState::default();
+        self.ui.reset();
     }
 
     fn visibility_changed(&mut self, visible: bool) -> Update {
         let changed = self.visible != visible;
         self.visible = visible;
-        let was_non_list = !matches!(self.ui.screen, Screen::List);
+        let was_non_list = !matches!(self.ui.state.screen, Screen::List);
         if changed && !visible {
             self.reset_ui();
         }
@@ -452,11 +431,11 @@ impl App {
                 title: LIST_PANE_TITLE,
             });
         }
-        if visible && matches!(self.ui.screen, Screen::List) {
+        if visible && matches!(self.ui.state.screen, Screen::List) {
             update.redraw = true;
             update.effects.extend(self.request_picker_refresh());
         }
-        self.ensure_animation(update)
+        update
     }
 
     // Triggered by an external `agent-refresh` pipe message so the cache stays fresh even while
@@ -471,15 +450,15 @@ impl App {
         if !self.agent_refresh.permissions_granted() {
             return Update::default();
         }
-        let Some(effect) = self.agent_refresh.request(&self.agent_bridge) else {
+        let Some(effect) = self.agent_refresh.request(&self.config.agent_bridge) else {
             // Already mid-fetch (or not yet ready) — the in-flight fetch will pick up the
             // latest state once it completes, so there's nothing to do here.
             return Update::default();
         };
-        self.ensure_animation(Update {
+        Update {
             redraw: false,
             effects: vec![effect],
-        })
+        }
     }
 
     fn request_picker_refresh(&mut self) -> Vec<Effect> {
@@ -495,7 +474,7 @@ impl App {
         };
         let mut effects = vec![Effect::RefreshPickerSessions { refresh_id }];
         if include_agents {
-            if let Some(effect) = self.agent_refresh.request(&self.agent_bridge) {
+            if let Some(effect) = self.agent_refresh.request(&self.config.agent_bridge) {
                 self.agent_refresh_id = Some(refresh_id);
                 effects.push(effect);
             }
@@ -506,7 +485,7 @@ impl App {
     fn finish_picker_sessions(
         &mut self,
         refresh_id: RefreshId,
-        result: Result<Vec<SessionInfo>, ()>,
+        result: Result<Vec<Session>, ()>,
     ) -> Update {
         let mut update = Update {
             redraw: self.visible,
@@ -514,7 +493,11 @@ impl App {
         };
         let success = result.is_ok();
         if let Ok(sessions) = result {
-            let transition = self.list.replace_sessions(&mut self.ui.list, sessions);
+            let sessions_update = self.sessions.replace(sessions);
+            self.retain_agents();
+            let transition = self
+                .ui
+                .update_sessions(self.sessions.items(), sessions_update);
             update.redraw |= self.visible && transition.redraw;
             update.effects.extend(transition.effects);
         }
@@ -523,13 +506,13 @@ impl App {
                 .effects
                 .extend(self.start_queued_picker_refresh(next));
         }
-        self.ensure_animation(update)
+        update
     }
 
     fn finish_agent_fetch(
         &mut self,
         request_id: RequestId,
-        result: Result<Vec<AgentRecord>, ()>,
+        result: Result<Vec<Agent>, ()>,
     ) -> Update {
         let Some(result) = self.agent_refresh.finish(request_id, result) else {
             return Update::default();
@@ -540,10 +523,14 @@ impl App {
             effects: Vec::new(),
         };
         let success = result.is_ok();
-        if let Ok(records) = result {
-            let transition = self.list.set_agents(&mut self.ui.list, records);
-            update.redraw |= self.visible && transition.redraw;
-            update.effects.extend(transition.effects);
+        if let Ok(agents) = result {
+            let changed = self
+                .agents
+                .replace(agents, &active_session_order(self.sessions.items()));
+            if changed {
+                self.ui.sync_agent_state(self.agents.items().len());
+            }
+            update.redraw |= self.visible && changed;
         }
         // Agent request IDs and picker refresh IDs share the same monotonic ordering because
         // each picker refresh starts at most one agent fetch.
@@ -554,12 +541,12 @@ impl App {
                     .extend(self.start_queued_picker_refresh(next));
             }
         }
-        self.ensure_animation(update)
+        update
     }
 
     fn start_queued_picker_refresh(&mut self, refresh_id: RefreshId) -> Vec<Effect> {
         let mut effects = vec![Effect::RefreshPickerSessions { refresh_id }];
-        if let Some(effect) = self.agent_refresh.request(&self.agent_bridge) {
+        if let Some(effect) = self.agent_refresh.request(&self.config.agent_bridge) {
             self.agent_refresh_id = Some(refresh_id);
             effects.push(effect);
         }
@@ -567,82 +554,30 @@ impl App {
     }
 
     fn animation_frame(&mut self) -> Update {
-        self.animation_timer_armed = false;
-        if !self.animation_needed() {
+        if !ui::subscriptions(self).animation_frame {
             return Update::default();
         }
-        self.list.advance_animation(&mut self.ui.list);
-        self.worktree_spinner_tick = self.worktree_spinner_tick.wrapping_add(1);
-        self.ensure_animation(Update::redraw())
+        self.ui.advance_animation();
+        Update::redraw()
     }
 
-    fn ensure_animation(&mut self, mut update: Update) -> Update {
-        if self.animation_needed() && !self.animation_timer_armed {
-            self.animation_timer_armed = true;
-            update.effects.push(Effect::ScheduleAnimationFrame);
+    fn retain_agents(&mut self) {
+        let items = self.agents.items().to_vec();
+        if self
+            .agents
+            .replace(items, &active_session_order(self.sessions.items()))
+        {
+            self.ui.sync_agent_state(self.agents.items().len());
         }
-        update
-    }
-
-    fn animation_needed(&self) -> bool {
-        (self.visible && (self.picker_refresh.is_refreshing() || self.list.has_working_agents()))
-            || matches!(
-                &self.ui.screen,
-                Screen::Create(flow)
-                    if matches!(
-                        &**flow,
-                        CreateFlow::Worktree(form)
-                            if matches!(form.stage(), Some(create::worktree::Stage::Checking | create::worktree::Stage::Creating))
-                    )
-            )
     }
 }
 
-fn create_view(flow: &CreateFlow, worktree_spinner_tick: usize) -> ui::model::CreateView {
-    match flow {
-        CreateFlow::Directory(form) => {
-            if let Some(view) = form.directory().picker() {
-                return ui::model::CreateView::DirectoryChoices {
-                    query: view.query.into(),
-                    rows: view
-                        .items
-                        .iter()
-                        .map(|(candidate, matched)| ui::model::ChoiceRow {
-                            display: candidate.display.clone(),
-                            matched: matched.clone(),
-                        })
-                        .collect(),
-                    selected: view.selected,
-                    filtered_count: view.filtered_count,
-                    total_count: view.total_count,
-                };
-            }
-            ui::model::CreateView::Form {
-                directory: form.directory().display(),
-                name: form.name().value().into(),
-                directory_focused: form.focus() == create::directory::Focus::Directory,
-                error: form.error().map(str::to_string),
-            }
-        }
-        CreateFlow::Worktree(form) => {
-            if let Some(stage) = form.stage() {
-                ui::model::CreateView::WorktreeProgress {
-                    stage,
-                    error: form.error().map(str::to_string),
-                    spinner_tick: worktree_spinner_tick,
-                }
-            } else {
-                ui::model::CreateView::WorktreeForm {
-                    session_name: form.session_name().value().into(),
-                    repository: form.repository().value().into(),
-                    base_branch: form.base_branch().value().into(),
-                    branch_name: form.branch_name().value().into(),
-                    focused: form.focus_index(),
-                    error: form.error().map(str::to_string),
-                }
-            }
-        }
-    }
+fn active_session_order(sessions: &[Session]) -> Vec<String> {
+    sessions
+        .iter()
+        .filter(|session| session.is_active())
+        .map(|session| session.name.clone())
+        .collect()
 }
 
 #[cfg(test)]
@@ -651,20 +586,27 @@ mod tests {
     use crate::sessions::SessionLifecycle;
     use agent_core::{Activity, AgentState, AgentTarget};
 
-    fn app() -> App {
-        App::new(ui::Theme::test_default(), "bridge".into())
+    fn config(agent_bridge: &str) -> AppConfig {
+        AppConfig {
+            agent_bridge: agent_bridge.into(),
+            worktree: create::worktree::Config::default(),
+        }
     }
 
-    fn active(name: &str, current: bool) -> SessionInfo {
-        SessionInfo {
+    fn app() -> App {
+        App::new(ui::Theme::test_default(), config("bridge"))
+    }
+
+    fn active(name: &str, current: bool) -> Session {
+        Session {
             name: name.into(),
             lifecycle: SessionLifecycle::Active { current },
             ..Default::default()
         }
     }
 
-    fn agent(session: &str) -> AgentRecord {
-        AgentRecord {
+    fn agent(session: &str) -> Agent {
+        Agent {
             id: format!("{session}-agent"),
             agent_label: "codex".into(),
             state: AgentState::Idle,
@@ -694,16 +636,16 @@ mod tests {
     }
 
     fn agent_count(app: &App) -> usize {
-        match app.view() {
-            ui::model::ScreenView::List(view) => view.agents.len(),
-            ui::model::ScreenView::Create(_) => panic!("expected list view"),
+        match ui::view(&app) {
+            ui::screens::ScreenView::List(view) => view.agents.len(),
+            ui::screens::ScreenView::Create(_) => panic!("expected list view"),
         }
     }
 
-    fn list_view(app: &App) -> ui::model::ListView {
-        match app.view() {
-            ui::model::ScreenView::List(view) => view,
-            ui::model::ScreenView::Create(_) => panic!("expected list view"),
+    fn list_view(app: &App) -> ui::screens::list::ListView {
+        match ui::view(&app) {
+            ui::screens::ScreenView::List(view) => view,
+            ui::screens::ScreenView::Create(_) => panic!("expected list view"),
         }
     }
 
@@ -725,10 +667,7 @@ mod tests {
         let app = app();
         let update = app.initial_update();
         assert!(fetch_id(&update).is_none());
-        assert!(!update
-            .effects
-            .iter()
-            .any(|effect| matches!(effect, Effect::ScheduleAnimationFrame)));
+        assert!(!ui::subscriptions(&app).animation_frame);
     }
 
     #[test]
@@ -736,10 +675,7 @@ mod tests {
         let mut app = app();
         let update = app.update(Message::PermissionGranted);
         assert_eq!(fetch_id(&update), Some(RequestId(0)));
-        assert!(update
-            .effects
-            .iter()
-            .any(|effect| matches!(effect, Effect::ScheduleAnimationFrame)));
+        assert!(ui::subscriptions(&app).animation_frame);
     }
 
     #[test]
@@ -848,7 +784,7 @@ mod tests {
             info: GitInfo {
                 branch: Some("main".into()),
                 repo_root: Some("/repo".into()),
-                is_main_checkout: true,
+                is_main_worktree: true,
             },
         });
         app.update(Message::PermissionGranted);
@@ -862,7 +798,7 @@ mod tests {
         app.update(Message::ListAction(ListAction::FocusAgents));
         let before = list_view(&app);
         assert_eq!(before.query, "b");
-        assert_eq!(before.focus, ui::model::Focus::Agents);
+        assert_eq!(before.focus, ui::screens::list::Focus::Agents);
 
         app.update(Message::VisibilityChanged(false));
         app.update(Message::VisibilityChanged(true));
@@ -871,7 +807,7 @@ mod tests {
         assert_eq!(reopened.query, "");
         assert_eq!(reopened.selected_session, Some(0));
         assert_eq!(reopened.selected_agent, Some(0));
-        assert_eq!(reopened.focus, ui::model::Focus::Sessions);
+        assert_eq!(reopened.focus, ui::screens::list::Focus::Sessions);
         assert_eq!(reopened.filtered_count, reopened.total_count);
         assert_eq!(reopened.agents.len(), 1);
         assert_eq!(
@@ -905,7 +841,7 @@ mod tests {
         let view = list_view(&app);
         assert_eq!(view.query, "");
         assert_eq!(view.selected_session, Some(0));
-        assert_eq!(view.focus, ui::model::Focus::Sessions);
+        assert_eq!(view.focus, ui::screens::list::Focus::Sessions);
     }
 
     #[test]
@@ -917,7 +853,7 @@ mod tests {
 
         let update = app.update(Message::VisibilityChanged(false));
 
-        assert!(matches!(app.ui.screen, Screen::List));
+        assert!(matches!(app.ui.state.screen, Screen::List));
         assert!(update.effects.iter().any(|effect| matches!(
             effect,
             Effect::RenamePluginPane {
@@ -961,7 +897,7 @@ mod tests {
     }
 
     #[test]
-    fn failed_refresh_preserves_cached_records() {
+    fn failed_refresh_preserves_cached_agents() {
         let mut app = app();
         app.update(Message::SessionsLoaded(vec![active("one", true)]));
         app.update(Message::PermissionGranted);
@@ -1004,7 +940,7 @@ mod tests {
 
         let mut restored = App::restore(
             ui::Theme::test_default(),
-            "bridge".into(),
+            config("bridge"),
             original.persistent_state(),
         );
         let initial = list_view(&restored);
@@ -1017,6 +953,24 @@ mod tests {
             .effects
             .iter()
             .any(|effect| matches!(effect, Effect::LookupGit(_))));
+    }
+
+    #[test]
+    fn restore_uses_runtime_config_instead_of_snapshot() {
+        let runtime_config = AppConfig {
+            agent_bridge: "runtime-bridge".into(),
+            worktree: create::worktree::Config {
+                branch_prefix: "runtime".into(),
+                worktree_root: "/tmp/runtime-worktrees".into(),
+            },
+        };
+        let restored = App::restore(
+            ui::Theme::test_default(),
+            runtime_config.clone(),
+            app().persistent_state(),
+        );
+
+        assert_eq!(restored.config, runtime_config);
     }
 
     #[test]
@@ -1037,7 +991,7 @@ mod tests {
         let mut app = app();
         app.update(Message::SessionsLoaded(vec![active("one", true)]));
         let update = app.update(Message::Key(Key::Ctrl('n')));
-        assert!(matches!(app.ui.screen, Screen::Create(_)));
+        assert!(matches!(app.ui.state.screen, Screen::Create(_)));
         assert!(update
             .effects
             .iter()

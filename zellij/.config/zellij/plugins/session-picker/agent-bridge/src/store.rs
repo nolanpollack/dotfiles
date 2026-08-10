@@ -3,7 +3,7 @@ use std::fs::{self, OpenOptions};
 use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use agent_core::AgentRecord;
+use agent_core::Agent;
 use fs2::FileExt;
 
 pub(crate) fn now_ms() -> u64 {
@@ -71,17 +71,17 @@ pub(crate) fn record_paths() -> Result<Vec<PathBuf>, String> {
         })
 }
 
-pub(crate) fn read_record(path: &Path) -> Result<AgentRecord, String> {
+pub(crate) fn read_record(path: &Path) -> Result<Agent, String> {
     let content = fs::read_to_string(path).map_err(|e| e.to_string())?;
     serde_json::from_str(&content).map_err(|e| e.to_string())
 }
 
-pub(crate) fn write_record(path: &Path, record: &AgentRecord) -> Result<(), String> {
+pub(crate) fn write_record(path: &Path, record: &Agent) -> Result<(), String> {
     let bytes = serde_json::to_vec_pretty(record).map_err(|e| e.to_string())?;
     crate::fs::atomic_write(path, &bytes)
 }
 
-pub(crate) fn remove_matching(mut predicate: impl FnMut(&AgentRecord) -> bool) -> Result<(), String> {
+pub(crate) fn remove_matching(mut predicate: impl FnMut(&Agent) -> bool) -> Result<(), String> {
     for path in record_paths()? {
         if read_record(&path).is_ok_and(|record| predicate(&record)) {
             fs::remove_file(path).map_err(|e| e.to_string())?;

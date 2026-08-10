@@ -9,7 +9,8 @@ pub struct GitInfo {
     /// `.git`, worktree or not.
     pub repo_root: Option<String>,
     /// True if this session's cwd IS `repo_root` (the main checkout, not a linked worktree).
-    pub is_main_checkout: bool,
+    #[serde(alias = "is_main_checkout")]
+    pub is_main_worktree: bool,
 }
 
 impl GitInfo {
@@ -20,11 +21,11 @@ impl GitInfo {
         let non_empty = |s: &str| (!s.is_empty()).then(|| s.to_string());
         let branch = lines.next().map(str::trim).and_then(non_empty);
         let repo_root = lines.next().map(str::trim).and_then(non_empty);
-        let is_main_checkout = lines.next().map(str::trim) == Some("1");
+        let is_main_worktree = lines.next().map(str::trim) == Some("1");
         Self {
             branch,
             repo_root,
-            is_main_checkout,
+            is_main_worktree,
         }
     }
 }
@@ -101,7 +102,7 @@ mod tests {
         let info = GitInfo::parse(b"feature/test\n/repo\n1\n");
         assert_eq!(info.branch.as_deref(), Some("feature/test"));
         assert_eq!(info.repo_root.as_deref(), Some("/repo"));
-        assert!(info.is_main_checkout);
+        assert!(info.is_main_worktree);
     }
 
     #[test]

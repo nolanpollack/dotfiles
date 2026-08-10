@@ -2,7 +2,7 @@ use std::path::PathBuf;
 
 use super::form::TextField;
 use crate::input::Key;
-use crate::sessions::SessionInfo;
+use crate::sessions::Session;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Config {
@@ -109,7 +109,7 @@ pub struct Form {
 }
 
 impl Form {
-    pub fn new(config: Config, selected: Option<&SessionInfo>) -> Self {
+    pub fn new(config: Config, selected: Option<&Session>) -> Self {
         let mut repository = TextField::default();
         let mut base_branch = TextField::default();
         if let Some(session) = selected {
@@ -163,7 +163,7 @@ impl Form {
         self.error.as_deref()
     }
 
-    pub fn apply_key(&mut self, key: Key, existing: &[SessionInfo]) -> Outcome {
+    pub fn apply_key(&mut self, key: Key, existing: &[Session]) -> Outcome {
         if self.stage.is_some() {
             if key == Key::Escape && self.stage == Some(Stage::Failed) {
                 self.stage = None;
@@ -228,7 +228,7 @@ impl Form {
         }
     }
 
-    fn submit(&mut self, existing: &[SessionInfo]) -> Outcome {
+    fn submit(&mut self, existing: &[Session]) -> Outcome {
         let session_name = self.session_name.value().trim().to_string();
         let repository = self.repository.value().trim().to_string();
         let base_branch = self.base_branch.value().trim().to_string();
@@ -281,7 +281,7 @@ mod tests {
 
     #[test]
     fn selected_worktree_uses_main_checkout_and_branch() {
-        let session = SessionInfo {
+        let session = Session {
             repo_root: Some("/stripe/pay-server".into()),
             branch: Some("master".into()),
             ..Default::default()

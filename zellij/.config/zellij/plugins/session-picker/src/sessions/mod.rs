@@ -1,3 +1,7 @@
+pub mod state;
+
+pub use state::{Sessions, SessionsSnapshot, SessionsUpdate};
+
 use std::collections::{BTreeMap, HashSet};
 
 use serde::{Deserialize, Serialize};
@@ -12,7 +16,7 @@ pub enum SessionLifecycle {
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
-pub struct SessionInfo {
+pub struct Session {
     pub name: String,
     pub lifecycle: SessionLifecycle,
     /// Git branch checked out in the session's cwd, if resolved. `None` until a lookup
@@ -22,13 +26,11 @@ pub struct SessionInfo {
     /// worktree of the same repo.
     pub repo_root: Option<String>,
     /// True if this session's cwd is `repo_root` itself (the main checkout, not a worktree).
-    pub is_main_checkout: bool,
-    /// Set by `group_by_repo`: true if this session was nested under its repo's main-checkout
-    /// session for display, and should be rendered indented.
-    pub nested_worktree: bool,
+    #[serde(alias = "is_main_checkout")]
+    pub is_main_worktree: bool,
 }
 
-impl SessionInfo {
+impl Session {
     pub fn is_active(&self) -> bool {
         matches!(self.lifecycle, SessionLifecycle::Active { .. })
     }
@@ -39,22 +41,20 @@ impl SessionInfo {
 }
 
 /// Reorders `sessions` so each repo's worktrees sit directly after its main-checkout session
-/// (sorted by name), marking them `nested_worktree` for indented display. Repos with no
-/// main-checkout session currently open are left untouched — there's nothing to nest an orphaned
-/// worktree under.
-pub fn group_by_repo(sessions: Vec<SessionInfo>) -> Vec<SessionInfo> {
+/// (sorted by name). Repos with no main-checkout session currently open are left untouched —
+/// there's nothing to nest an orphaned worktree under.
+pub fn group_by_repo(sessions: Vec<Session>) -> Vec<Session> {
     let repos_with_main_checkout: HashSet<String> = sessions
         .iter()
-        .filter(|s| s.is_main_checkout)
+        .filter(|s| s.is_main_worktree)
         .filter_map(|s| s.repo_root.clone())
         .collect();
 
-    let mut worktrees_by_repo: BTreeMap<String, Vec<SessionInfo>> = BTreeMap::new();
-    let mut remaining: Vec<SessionInfo> = Vec::new();
-    for mut session in sessions {
+    let mut worktrees_by_repo: BTreeMap<String, Vec<Session>> = BTreeMap::new();
+    let mut remaining: Vec<Session> = Vec::new();
+    for session in sessions {
         match &session.repo_root {
-            Some(root) if !session.is_main_checkout && repos_with_main_checkout.contains(root) => {
-                session.nested_worktree = true;
+            Some(root) if !session.is_main_worktree && repos_with_main_checkout.contains(root) => {
                 worktrees_by_repo
                     .entry(root.clone())
                     .or_default()
@@ -70,7 +70,7 @@ pub fn group_by_repo(sessions: Vec<SessionInfo>) -> Vec<SessionInfo> {
     let mut result = Vec::new();
     for session in remaining {
         let repo_with_worktrees = session
-            .is_main_checkout
+            .is_main_worktree
             .then(|| session.repo_root.clone())
             .flatten()
             .filter(|root| worktrees_by_repo.contains_key(root));
@@ -88,19 +88,19 @@ pub fn group_by_repo(sessions: Vec<SessionInfo>) -> Vec<SessionInfo> {
 mod tests {
     use super::*;
 
-    fn session(name: &str, root: &str, main: bool) -> SessionInfo {
-        SessionInfo {
+    fn session(name: &str, root: &str, main: bool) -> Session {
+        Session {
             name: name.into(),
             lifecycle: SessionLifecycle::Active { current: false },
             repo_root: Some(root.into()),
-            is_main_checkout: main,
+            is_main_worktree: main,
             ..Default::default()
         }
     }
 
     #[test]
     fn lifecycle_cannot_represent_current_resurrectable_session() {
-        let dead = SessionInfo::default();
+        let dead = Session::default();
         assert!(!dead.is_active());
         assert!(!dead.is_current());
     }
@@ -118,6 +118,5 @@ mod tests {
                 .collect::<Vec<_>>(),
             vec!["main", "feature"]
         );
-        assert!(grouped[1].nested_worktree);
     }
 }

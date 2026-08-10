@@ -6,7 +6,7 @@ pub mod worktree;
 use std::path::PathBuf;
 
 use crate::input::Key;
-use crate::sessions::SessionInfo;
+use crate::sessions::Session;
 
 /// The screen create-mode is currently showing. Dispatch only — no field definitions, discovery
 /// parsing, or git logic belongs here; that's each flow module's job.
@@ -47,7 +47,7 @@ pub enum CreateOutcome {
     StartWorktree(worktree::Request),
 }
 
-pub fn apply_key(flow: &mut CreateFlow, key: Key, existing_names: &[SessionInfo]) -> CreateOutcome {
+pub fn apply_key(flow: &mut CreateFlow, key: Key, existing_names: &[Session]) -> CreateOutcome {
     match flow {
         CreateFlow::Directory(form) => match form.apply_key(key, existing_names) {
             directory::Outcome::Continue => CreateOutcome::Continue,

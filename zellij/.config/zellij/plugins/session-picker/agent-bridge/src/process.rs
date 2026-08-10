@@ -1,10 +1,10 @@
 use std::io;
 
-use agent_core::AgentRecord;
+use agent_core::Agent;
 
 /// `0` denotes a pane-owned record. Hook lifecycle events and SessionEnd manage it, while the
 /// picker filters it to active Zellij sessions. Do not mistake a hook subprocess for its owner.
-pub(crate) fn process_is_alive(record: &AgentRecord) -> bool {
+pub(crate) fn process_is_alive(record: &Agent) -> bool {
     if record.owner_pid == 0 {
         return true;
     }
@@ -19,7 +19,7 @@ mod tests {
 
     #[test]
     fn liveness_falls_back_when_process_metadata_is_unavailable() {
-        let record = AgentRecord {
+        let record = Agent {
             id: "id".into(),
             agent_label: "codex".into(),
             state: AgentState::Working,
@@ -44,7 +44,7 @@ mod tests {
 
     #[test]
     fn pane_owned_record_is_not_pruned_as_a_dead_hook_process() {
-        let record = AgentRecord {
+        let record = Agent {
             id: "id".into(),
             agent_label: "claude".into(),
             state: AgentState::Working,

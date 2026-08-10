@@ -7,10 +7,8 @@ pub mod effects;
 pub mod git_info;
 pub mod host_protocol;
 pub mod input;
-pub mod list_screen;
+
 pub mod persistence;
-pub mod picker;
 pub mod picker_refresh;
-pub mod session_catalog;
 pub mod sessions;
 pub mod ui;

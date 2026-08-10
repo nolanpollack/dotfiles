@@ -6,8 +6,8 @@ use ratatui::text::{Line, Span};
 use ratatui::widgets::{List, ListItem, ListState, Paragraph};
 use ratatui::Frame;
 
-use super::components;
-use crate::ui::model::{ChoiceRow, CreateView};
+use super::model::{ChoiceRow, CreateView};
+use crate::ui::components::render as components;
 use crate::ui::Theme;
 
 pub fn draw(frame: &mut Frame, view: &CreateView, theme: &Theme) {

@@ -2,7 +2,7 @@ use std::path::{Path, PathBuf};
 
 use super::form::{Combobox, TextField};
 use crate::input::{directory_action, DirectoryAction, Key};
-use crate::sessions::SessionInfo;
+use crate::sessions::Session;
 
 /// A zoxide-known directory, offered as a combobox candidate.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -88,7 +88,7 @@ impl DirectoryForm {
         self.error.as_deref()
     }
 
-    pub fn apply_key(&mut self, key: Key, existing_names: &[SessionInfo]) -> Outcome {
+    pub fn apply_key(&mut self, key: Key, existing_names: &[Session]) -> Outcome {
         self.error = None;
         let Some(action) = directory_action(key) else {
             return Outcome::Continue;
@@ -159,7 +159,7 @@ impl DirectoryForm {
         }
     }
 
-    fn submit(&mut self, existing_names: &[SessionInfo]) -> Outcome {
+    fn submit(&mut self, existing_names: &[Session]) -> Outcome {
         let Some(candidate) = self.directory.committed() else {
             self.error = Some("choose a directory".to_string());
             return Outcome::Continue;
@@ -217,7 +217,7 @@ mod tests {
         form.set_candidates(vec![PathBuf::from("/tmp/project")]);
         form.apply_key(Key::Enter, &[]);
         form.apply_key(Key::Enter, &[]);
-        let existing = [SessionInfo {
+        let existing = [Session {
             name: "project".into(),
             ..Default::default()
         }];

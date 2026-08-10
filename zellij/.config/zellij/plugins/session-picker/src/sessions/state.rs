@@ -1,4 +1,4 @@
-//! Session ownership, filtering, ordering, and asynchronous git enrichment.
+//! Persistent session data, Git enrichment, and asynchronous lookup state.
 
 use std::collections::BTreeMap;
 use std::path::PathBuf;
@@ -8,8 +8,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::effects::GitLookup;
 use crate::git_info::GitInfo;
-use crate::picker::{Picker, PickerState, View};
-use crate::sessions::{self, SessionInfo};
+use crate::sessions::{self, Session};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum GitStatus {
@@ -25,40 +24,30 @@ pub struct CachedGit {
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
-pub struct SessionCatalogSnapshot {
+pub struct SessionsSnapshot {
     #[serde(default)]
-    pub sessions: Vec<SessionInfo>,
+    pub sessions: Vec<Session>,
     #[serde(default)]
     pub git: BTreeMap<String, CachedGit>,
 }
 
-pub struct CatalogUpdate {
+pub struct SessionsUpdate {
     pub changed: bool,
     pub lookups: Vec<GitLookup>,
 }
 
-pub struct SessionCatalog {
-    picker: Picker<SessionInfo>,
+#[derive(Default)]
+pub struct Sessions {
+    items: Vec<Session>,
     git: BTreeMap<String, GitStatus>,
 }
 
-impl Default for SessionCatalog {
-    fn default() -> Self {
-        Self {
-            picker: Picker::new(|session: &SessionInfo| session.name.as_str()),
-            git: BTreeMap::new(),
-        }
-    }
-}
-
-impl SessionCatalog {
+impl Sessions {
     const GIT_FRESHNESS_MS: u64 = 5 * 60 * 1_000;
 
-    pub fn from_snapshot(snapshot: SessionCatalogSnapshot) -> Self {
-        let mut picker = Picker::new(|session: &SessionInfo| session.name.as_str());
-        picker.set_items(snapshot.sessions);
+    pub fn from_snapshot(snapshot: SessionsSnapshot) -> Self {
         Self {
-            picker,
+            items: snapshot.sessions,
             git: snapshot
                 .git
                 .into_iter()
@@ -67,9 +56,9 @@ impl SessionCatalog {
         }
     }
 
-    pub fn snapshot(&self) -> SessionCatalogSnapshot {
-        SessionCatalogSnapshot {
-            sessions: self.picker.items().to_vec(),
+    pub fn snapshot(&self) -> SessionsSnapshot {
+        SessionsSnapshot {
+            sessions: self.items.clone(),
             git: self
                 .git
                 .iter()
@@ -83,11 +72,7 @@ impl SessionCatalog {
         }
     }
 
-    pub fn replace(
-        &mut self,
-        picker_state: &mut PickerState,
-        mut incoming: Vec<SessionInfo>,
-    ) -> CatalogUpdate {
+    pub fn replace(&mut self, mut incoming: Vec<Session>) -> SessionsUpdate {
         self.git
             .retain(|name, _| incoming.iter().any(|session| &session.name == name));
 
@@ -95,8 +80,7 @@ impl SessionCatalog {
         for session in &mut incoming {
             session.branch = None;
             session.repo_root = None;
-            session.is_main_checkout = false;
-            session.nested_worktree = false;
+            session.is_main_worktree = false;
 
             let status = self
                 .git
@@ -128,25 +112,19 @@ impl SessionCatalog {
             if let Some(info) = status.cached().and_then(|cached| cached.info.as_ref()) {
                 session.branch = info.branch.clone();
                 session.repo_root = info.repo_root.clone();
-                session.is_main_checkout = info.is_main_checkout;
+                session.is_main_worktree = info.is_main_worktree;
             }
         }
 
         let incoming = sessions::group_by_repo(incoming);
-        let changed = incoming != self.picker.items();
+        let changed = incoming != self.items;
         if changed {
-            self.picker.set_items(incoming);
-            self.picker.clamp(picker_state);
+            self.items = incoming;
         }
-        CatalogUpdate { changed, lookups }
+        SessionsUpdate { changed, lookups }
     }
 
-    pub fn apply_git(
-        &mut self,
-        picker_state: &mut PickerState,
-        session_name: String,
-        info: GitInfo,
-    ) -> CatalogUpdate {
+    pub fn apply_git(&mut self, session_name: String, info: GitInfo) -> SessionsUpdate {
         let info = (info != GitInfo::default()).then_some(info);
         self.git.insert(
             session_name,
@@ -155,11 +133,12 @@ impl SessionCatalog {
                 observed_at_ms: now_ms(),
             }),
         );
-        self.replace(picker_state, self.picker.items().to_vec())
+        let current = self.items.clone();
+        self.replace(current)
     }
 
     pub fn lookup_current(&self, cwd: PathBuf) -> Option<GitLookup> {
-        self.items()
+        self.items
             .iter()
             .find(|session| session.is_current())
             .map(|session| GitLookup::AtDirectory {
@@ -168,40 +147,12 @@ impl SessionCatalog {
             })
     }
 
-    pub fn items(&self) -> &[SessionInfo] {
-        self.picker.items()
-    }
-
-    pub fn selected(&self, picker_state: &PickerState) -> Option<&SessionInfo> {
-        self.picker.selected_item(picker_state)
-    }
-
-    pub fn view<'a>(&'a self, picker_state: &'a PickerState) -> View<'a, SessionInfo> {
-        self.picker.view(picker_state)
-    }
-
-    pub fn move_up(&self, picker_state: &mut PickerState) {
-        self.picker.move_up(picker_state);
-    }
-
-    pub fn move_down(&self, picker_state: &mut PickerState) {
-        self.picker.move_down(picker_state);
-    }
-
-    pub fn push_char(&self, picker_state: &mut PickerState, character: char) {
-        self.picker.push_char(picker_state, character);
-    }
-
-    pub fn pop_char(&self, picker_state: &mut PickerState) {
-        self.picker.pop_char(picker_state);
-    }
-
-    pub fn clear_query(&self, picker_state: &mut PickerState) {
-        self.picker.clear_query(picker_state);
+    pub fn items(&self) -> &[Session] {
+        &self.items
     }
 
     #[cfg(test)]
-    fn git_status(&self, name: &str) -> Option<&GitStatus> {
+    pub(crate) fn git_status(&self, name: &str) -> Option<&GitStatus> {
         self.git.get(name)
     }
 }
@@ -228,8 +179,8 @@ mod tests {
     use super::*;
     use crate::sessions::SessionLifecycle;
 
-    fn active(name: &str) -> SessionInfo {
-        SessionInfo {
+    fn active(name: &str) -> Session {
+        Session {
             name: name.into(),
             lifecycle: SessionLifecycle::Active { current: false },
             ..Default::default()
@@ -238,50 +189,42 @@ mod tests {
 
     #[test]
     fn lookup_state_is_explicit_and_not_restarted() {
-        let mut catalog = SessionCatalog::default();
-        let mut picker_state = PickerState::default();
-        let first = catalog.replace(&mut picker_state, vec![active("one")]);
+        let mut sessions = Sessions::default();
+        let first = sessions.replace(vec![active("one")]);
         assert_eq!(first.lookups.len(), 1);
         assert!(matches!(
-            catalog.git_status("one"),
+            sessions.git_status("one"),
             Some(GitStatus::Loading { cached: None })
         ));
-        let second = catalog.replace(&mut picker_state, vec![active("one")]);
+        let second = sessions.replace(vec![active("one")]);
         assert!(second.lookups.is_empty());
     }
 
     #[test]
     fn removed_sessions_are_pruned() {
-        let mut catalog = SessionCatalog::default();
-        let mut picker_state = PickerState::default();
-        catalog.replace(&mut picker_state, vec![active("gone")]);
-        catalog.replace(&mut picker_state, vec![active("kept")]);
-        assert_eq!(catalog.git_status("gone"), None);
+        let mut sessions = Sessions::default();
+        sessions.replace(vec![active("gone")]);
+        sessions.replace(vec![active("kept")]);
+        assert_eq!(sessions.git_status("gone"), None);
     }
 
     #[test]
     fn empty_git_result_is_a_loaded_result() {
-        let mut catalog = SessionCatalog::default();
-        let mut picker_state = PickerState::default();
-        catalog.replace(&mut picker_state, vec![active("one")]);
-        catalog.apply_git(&mut picker_state, "one".into(), GitInfo::default());
+        let mut sessions = Sessions::default();
+        sessions.replace(vec![active("one")]);
+        sessions.apply_git("one".into(), GitInfo::default());
         assert!(matches!(
-            catalog.git_status("one"),
+            sessions.git_status("one"),
             Some(GitStatus::Loaded(CachedGit { info: None, .. }))
         ));
-        assert!(catalog
-            .replace(&mut picker_state, vec![active("one")])
-            .lookups
-            .is_empty());
+        assert!(sessions.replace(vec![active("one")]).lookups.is_empty());
     }
 
     #[test]
     fn snapshot_restores_fresh_git_without_restarting_lookup() {
-        let mut catalog = SessionCatalog::default();
-        let mut picker_state = PickerState::default();
-        catalog.replace(&mut picker_state, vec![active("one")]);
-        catalog.apply_git(
-            &mut picker_state,
+        let mut sessions = Sessions::default();
+        sessions.replace(vec![active("one")]);
+        sessions.apply_git(
             "one".into(),
             GitInfo {
                 branch: Some("cached".into()),
@@ -289,8 +232,8 @@ mod tests {
             },
         );
 
-        let mut restored = SessionCatalog::from_snapshot(catalog.snapshot());
-        let update = restored.replace(&mut PickerState::default(), vec![active("one")]);
+        let mut restored = Sessions::from_snapshot(sessions.snapshot());
+        let update = restored.replace(vec![active("one")]);
         assert!(update.lookups.is_empty());
         assert_eq!(restored.items()[0].branch.as_deref(), Some("cached"));
     }

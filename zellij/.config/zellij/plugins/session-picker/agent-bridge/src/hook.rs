@@ -1,7 +1,7 @@
 use std::env;
 use std::io::{self, Read};
 
-use agent_core::{Activity, AgentRecord, AgentState, AgentTarget};
+use agent_core::{Activity, Agent, AgentState, AgentTarget};
 use serde_json::{json, Value};
 
 use crate::{aliases, store};
@@ -135,13 +135,13 @@ pub(crate) enum RecordUpdate {
     /// A stale/out-of-order event — no-op.
     Ignore,
     /// Write this record.
-    Upsert(AgentRecord),
+    Upsert(Agent),
 }
 
 /// Pure decision function: no filesystem, env, or locking. Folds in SessionEnd removal, the
 /// staleness check, state derivation, pending-permission tracking, the seen-flag ladder, and
 /// activity derivation.
-pub(crate) fn decide(ctx: &HookContext, previous: Option<&AgentRecord>) -> RecordUpdate {
+pub(crate) fn decide(ctx: &HookContext, previous: Option<&Agent>) -> RecordUpdate {
     if ctx.event == HookEvent::SessionEnd {
         return RecordUpdate::Remove;
     }
@@ -160,7 +160,7 @@ pub(crate) fn decide(ctx: &HookContext, previous: Option<&AgentRecord>) -> Recor
     let seen = compute_seen(state, previous);
     let activity = activity_for(ctx.event, &ctx.raw_event, &ctx.tool, &ctx.payload, previous);
 
-    RecordUpdate::Upsert(AgentRecord {
+    RecordUpdate::Upsert(Agent {
         id: ctx.id.clone(),
         agent_label: ctx.agent.to_string(),
         state,
@@ -180,7 +180,7 @@ pub(crate) fn decide(ctx: &HookContext, previous: Option<&AgentRecord>) -> Recor
 
 /// A freshly-idle agent is unseen (surfaces as "done") only if it was previously mid-task;
 /// otherwise seen status carries over from the previous record (or defaults to seen).
-fn compute_seen(state: AgentState, previous: Option<&AgentRecord>) -> bool {
+fn compute_seen(state: AgentState, previous: Option<&Agent>) -> bool {
     if state == AgentState::Idle {
         !previous.is_some_and(|r| matches!(r.state, AgentState::Working | AgentState::Blocked))
     } else {
@@ -197,9 +197,10 @@ fn update_pending_permissions(event: HookEvent, tool: &str, pending: &mut Vec<St
             }
         }
         HookEvent::PostToolUse | HookEvent::PostToolUseFailure => pending.retain(|p| p != key),
-        HookEvent::SessionStart | HookEvent::UserPromptSubmit | HookEvent::Stop | HookEvent::SessionEnd => {
-            pending.clear()
-        }
+        HookEvent::SessionStart
+        | HookEvent::UserPromptSubmit
+        | HookEvent::Stop
+        | HookEvent::SessionEnd => pending.clear(),
         _ => {}
     }
 }
@@ -215,7 +216,9 @@ fn event_state(event: HookEvent, tool: &str, payload: &Value) -> AgentState {
         | HookEvent::SubagentStop
         | HookEvent::PostToolUse
         | HookEvent::PostToolUseFailure => AgentState::Working,
-        HookEvent::PreToolUse if tool.eq_ignore_ascii_case("AskUserQuestion") => AgentState::Blocked,
+        HookEvent::PreToolUse if tool.eq_ignore_ascii_case("AskUserQuestion") => {
+            AgentState::Blocked
+        }
         HookEvent::PreToolUse => AgentState::Working,
         _ if payload.get("error").is_some() => AgentState::Blocked,
         _ => AgentState::Unknown,
@@ -227,7 +230,7 @@ fn activity_for(
     raw_event: &str,
     tool: &str,
     payload: &Value,
-    previous: Option<&AgentRecord>,
+    previous: Option<&Agent>,
 ) -> Activity {
     let (kind, label, candidate) = match event {
         HookEvent::SessionStart => (
@@ -345,8 +348,8 @@ mod tests {
     use super::*;
     use serde_json::json;
 
-    fn record(state: AgentState, seen: bool, pending: Vec<String>) -> AgentRecord {
-        AgentRecord {
+    fn record(state: AgentState, seen: bool, pending: Vec<String>) -> Agent {
+        Agent {
             id: "id".into(),
             agent_label: "codex".into(),
             state,
@@ -445,7 +448,10 @@ mod tests {
     fn stale_event_is_ignored() {
         let previous = record(AgentState::Working, true, Vec::new());
         let ctx = ctx(HookEvent::Stop, "", json!({}), 0);
-        assert!(matches!(decide(&ctx, Some(&previous)), RecordUpdate::Ignore));
+        assert!(matches!(
+            decide(&ctx, Some(&previous)),
+            RecordUpdate::Ignore
+        ));
     }
 
     #[test]

@@ -57,7 +57,6 @@ pub enum Effect {
         title: &'static str,
     },
     HidePlugin,
-    ScheduleAnimationFrame,
 }
 
 pub enum GitLookup {

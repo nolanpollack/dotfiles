@@ -6,10 +6,10 @@ use ratatui::text::{Line, Span};
 use ratatui::widgets::{List, ListItem, ListState, Paragraph};
 use ratatui::Frame;
 
-use super::components;
+use super::model::{AgentRow, AgentState, Focus, ListView, SessionRow};
 use crate::agent_refresh::RefreshView;
 use crate::picker_refresh::RefreshView as PickerRefreshView;
-use crate::ui::model::{AgentRow, AgentState, Focus, ListView, SessionRow};
+use crate::ui::components::render as components;
 use crate::ui::Theme;
 
 const SPINNER: &[&str] = &["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];

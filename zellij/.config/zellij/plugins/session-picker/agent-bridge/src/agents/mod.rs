@@ -19,7 +19,7 @@ pub(crate) fn find(label: &str) -> Option<&'static dyn Agent> {
 /// `hooks.<Event> = [{"hooks": [{...}]}]` shape both Codex and Claude use today; an agent
 /// whose config format differs can override any of them.
 pub(crate) trait Agent {
-    /// Name written into `AgentRecord.agent_label` and matched against `--agent <label>`.
+    /// Name written into `Agent.agent_label` and matched against `--agent <label>`.
     fn label(&self) -> &'static str;
     fn config_path(&self) -> Result<std::path::PathBuf, String>;
     fn supported_events(&self) -> &'static [&'static str];
@@ -46,7 +46,9 @@ fn hooks_object(root: &mut Value) -> Result<&mut Map<String, Value>, String> {
         .unwrap()
         .entry("hooks")
         .or_insert_with(|| json!({}));
-    hooks.as_object_mut().ok_or_else(|| "hooks must be an object".into())
+    hooks
+        .as_object_mut()
+        .ok_or_else(|| "hooks must be an object".into())
 }
 
 fn remove_owned_groups(value: &mut Value) {

@@ -1,4 +1,4 @@
-use agent_core::AgentRecord;
+use agent_core::Agent;
 
 use crate::effects::Effect;
 
@@ -60,8 +60,8 @@ impl AgentRefresh {
     pub fn finish(
         &mut self,
         request_id: RequestId,
-        result: Result<Vec<AgentRecord>, ()>,
-    ) -> Option<Result<Vec<AgentRecord>, ()>> {
+        result: Result<Vec<Agent>, ()>,
+    ) -> Option<Result<Vec<Agent>, ()>> {
         let LoadState::Refreshing {
             request_id: active_request_id,
             cached,
@@ -73,9 +73,9 @@ impl AgentRefresh {
             return None;
         }
         Some(match result {
-            Ok(records) => {
+            Ok(agents) => {
                 self.state = LoadState::Ready;
-                Ok(records)
+                Ok(agents)
             }
             Err(_) => {
                 self.state = LoadState::Failed { cached };
